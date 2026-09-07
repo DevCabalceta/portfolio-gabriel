@@ -64,3 +64,17 @@ test("LAN preview loads interactive mobile navigation", async ({ page }) => {
   await expect(page.locator(".mobile-menu-panel")).toHaveCSS("opacity", "1");
   expect(errors).toEqual([]);
 });
+
+test("mobile About navigation and return preserve readable content", async ({ page }) => {
+  await page.goto("/es");
+  await page.getByRole("button", { name: "Abrir menú" }).tap();
+  await page.getByRole("dialog").getByRole("link", { name: "02 Sobre mí" }).tap();
+  await expect(page.getByRole("dialog")).not.toBeVisible();
+  await expect(page).toHaveURL(/#about$/);
+  await expect(page.locator("[data-about-line]").last()).toHaveCSS("opacity", "1");
+  await expect(page.getByRole("heading", { level: 2 })).toBeInViewport({ ratio: 1 });
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+  await page.getByRole("link", { name: "Volver al inicio" }).tap();
+  await expect.poll(() => page.evaluate(() => window.scrollY)).toBe(0);
+  await expect(page.locator(".chapter-frame")).toHaveCSS("opacity", "1");
+});

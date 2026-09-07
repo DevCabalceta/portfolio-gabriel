@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@import "../styles/chapters.css";
 
 :root {
   --background: #111110;
@@ -85,8 +86,9 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--accent); outlin
 .accent-cross { color: var(--accent); font-size: 18px; display: inline-block; vertical-align: middle; margin-right: 13px; }
 .hero-edition { text-align: right; }
 .hero-content { position: relative; margin-top: clamp(60px, 9vh, 112px); padding-bottom: 60px; }
-.hero-role { display: flex; align-items: center; gap: 10px; margin: 0 0 24px; color: var(--accent); }
-.status-dot { display: block; width: 5px; height: 5px; background: var(--accent); }
+.hero-role { display: flex; align-items: center; gap: 14px; margin: 0 0 24px; color: var(--accent); font-size: clamp(24px, 2.6vw, 40px); font-weight: 600; line-height: 1.15; letter-spacing: -0.04em; }
+.hero-role > span:last-child { text-wrap: balance; }
+.status-dot { display: block; flex-shrink: 0; width: 24px; height: 2px; background: var(--accent); }
 .hero-title { font-family: var(--font-display), Impact, sans-serif; font-size: clamp(90px, 11.8vw, 210px); font-weight: 400; letter-spacing: -0.025em; line-height: 1.04; margin: 0 0 28px -0.005em; }
 .title-mask { display: block; overflow: hidden; }
 .title-mask > span { display: block; width: fit-content; }
@@ -167,7 +169,7 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--accent); outlin
   .hero-description { max-width: 470px; }
   .hero-description p { font-size: 12px; line-height: 1.5; }
   .hero-description .hero-introduction { font-size: 17px; margin-bottom: 4px; }
-  .hero-role { margin-bottom: 8px; }
+  .hero-role { font-size: 22px; margin-bottom: 8px; }
   .hero-actions { margin-top: 12px; }
   .hero-footer { padding-block: 6px; }
 }
@@ -187,7 +189,8 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--accent); outlin
   .hero-visual { position: static; width: clamp(56px, 11svh, 72px); flex-shrink: 0; transform: none; }
   .hero-portrait { inset: 0; }
   .portrait-caption { display: none; }
-  .hero-role { margin-bottom: 0; }
+  .hero-role { font-size: clamp(20px, 5.5vw, 28px); gap: 10px; margin-bottom: 0; }
+  .status-dot { width: 16px; }
   .hero-title { font-size: min(15.7vw, 12svh, 106px); margin-bottom: 18px; line-height: 1.06; }
   .hero-edition { display: none; }
   .hero-location { margin-right: 0; }
@@ -197,7 +200,6 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--accent); outlin
   .wordmark { font-size: 34px; }
   .header-controls { gap: 10px; }
   .hero-topline .micro-label { font-size: 8px; }
-  .hero-role { font-size: 9px; }
   .hero-description { max-width: 350px; }
   .hero-description p { font-size: 13px; }
   .hero-description .hero-introduction { font-size: 19px; }

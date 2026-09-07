@@ -4,12 +4,13 @@ Portfolio profesional bilingüe desarrollado con Next.js, TypeScript y Tailwind 
 
 ## Estado de la entrega
 
-**Sección 01: Hero + navegación, lista para revisión visual.** El desarrollo continúa sección por sección después de la revisión de Gabriel. No se han construido las secciones posteriores.
+**Sección 01 aprobada. Sección 02: Sobre mí + transición de scroll, lista para revisión visual.** El desarrollo continúa sección por sección después de la revisión de Gabriel. Proyectos y las secciones posteriores permanecen pendientes.
 
 - [x] Revisar y limpiar la plantilla inicial de Next.js.
 - [x] Arquitectura de componentes, traducciones y datos tipados.
 - [x] Hero responsive con fotografía original, entrada tipográfica animada y altura de `100vh` en desktop.
 - [x] Retrato con bordes difuminados y galería diagonal de fondo con control de pausa.
+- [x] Rol «Full Stack Developer» destacado con mayor tamaño, peso tipográfico y acento naranja.
 - [x] Navegación de escritorio y menú móvil a pantalla completa.
 - [x] Español e inglés con rutas `/es` y `/en`.
 - [x] Preferencia de idioma persistente mediante cookie.
@@ -17,8 +18,10 @@ Portfolio profesional bilingüe desarrollado con Next.js, TypeScript y Tailwind 
 - [x] Framer Motion para interacciones y menú; GSAP y ScrollTrigger para animación y parallax.
 - [x] Metadata por idioma, Open Graph, Twitter y favicon propio.
 - [x] Datos iniciales de proyectos, tecnologías y experiencia, preparados para próximas entregas.
-- [ ] Revisión y aprobación visual del Hero.
-- [ ] Sección 02: Sobre mí.
+- [x] Revisión y aprobación visual del Hero.
+- [x] Sección 02: Sobre mí, con contenido del CV y traducciones ES/EN.
+- [x] Transición de Hero a Sobre mí: reducción de escala y desvanecimiento vinculados al scroll.
+- [ ] Revisión y aprobación visual de Sobre mí.
 - [ ] Sección 03: Proyectos y casos de estudio.
 - [ ] Sección 04: Experiencia.
 - [ ] Sección 05: Tecnologías e iconos interactivos.
@@ -62,11 +65,12 @@ src/
   components/
     animations/              Ciclo de vida de GSAP y ScrollTrigger
     layout/                  Header, menú móvil y selector de idioma
-    sections/                Hero; próximas secciones independientes
+    sections/                Hero, galería y Sobre mí
     ui/                      Enlaces animados e iconos reutilizables
   data/                      Perfil, navegación, proyectos, experiencia y tecnologías
   i18n/                      Configuración y diccionarios tipados ES/EN
   types/                     Contratos para proyectos, multimedia y experiencia
+  styles/                    Estilos del capítulo Sobre mí y transición narrativa
   proxy.ts                   Redirección de la raíz según cookie de idioma
 scripts/preview.mjs           Capturas locales de escritorio y móvil
 tests/portfolio.spec.ts       Pruebas funcionales en navegador
@@ -83,7 +87,7 @@ Las páginas, el Hero y los datos se renderizan en servidor. Los componentes cli
 - Tecnologías solicitadas: `src/data/technologies.ts`.
 - Secciones del menú: `src/data/navigation.ts`. Activar `ready` cuando se implemente la sección y exista su ancla.
 
-Por ahora la navegación ofrece Inicio, CV y correo. Los enlaces hacia Sobre mí, Proyectos, Experiencia, Tecnologías y Contacto se incorporarán con sus respectivas secciones. No hay enlaces a anclas inexistentes.
+Por ahora la navegación ofrece Inicio, Sobre mí, CV y correo. Los enlaces hacia Proyectos, Experiencia, Tecnologías y Contacto se incorporarán con sus respectivas secciones. El ancla `#home` está en el contenedor estable de la transición para que el regreso al inicio funcione incluso cuando el Hero está fijado y reducido.
 
 El CV es la fuente de experiencia y proyectos. El perfil de GitHub fue proporcionado directamente por Gabriel. No se han inventado años, métricas, repositorios ni tecnologías por proyecto. Los campos aún no confirmados permanecen vacíos u opcionales. Las tecnologías de los clones Astro sí están especificadas en el CV. Los estados de los proyectos reflejan el documento recibido, no una auditoría de los sitios externos.
 
@@ -106,6 +110,20 @@ El CV descargable es el original en inglés en ambos idiomas. No se muestra disp
 - Enlaces semánticos, foco visible, salto al contenido, `lang` correcto por ruta y texto alternativo de la fotografía.
 - El contenido principal y los enlaces de idioma funcionan sin JavaScript. La persistencia de la preferencia requiere JavaScript/cookies.
 - La imagen principal utiliza `next/image`, tamaños responsivos y precarga. La foto original no fue retocada: la integración visual se hace mediante CSS.
+
+## Sección 02: Sobre mí y transición
+
+`src/components/sections/about.tsx` presenta el perfil de Gabriel con una composición editorial, títulos de gran escala, tonos oscuros y una iluminación naranja discreta. El contenido se toma del CV: desarrollo full stack en Cedes Don Bosco desde 2025, trayectoria en infraestructura y soporte entre 2022 y 2025, plataformas institucionales, APIs REST y bases de datos. No se añaden cifras de impacto ni credenciales no verificadas. Todos los textos traducibles están en `about` dentro de `src/i18n/dictionaries.ts`.
+
+`ChapterTransition` (`src/components/animations/chapter-transition.tsx`) coordina la salida del capítulo anterior y la entrada del siguiente mediante GSAP ScrollTrigger:
+
+- En desktop, el Hero conserva su altura de `100vh` y permanece en posición sticky mientras Sobre mí asciende por delante. La escala baja de 1 a 0.84 y la opacidad de 1 a 0.08 según el avance real del scroll.
+- En móvil se conserva el desplazamiento natural y la reducción es más sutil (hasta 0.96). El contenido de Sobre mí fluye verticalmente y puede ocupar más de una pantalla.
+- Los títulos y el contenido de Sobre mí aparecen progresivamente. Al volver arriba, la secuencia se invierte y el Hero recupera su tamaño y opacidad.
+- El Hero cubierto pasa a `inert` para retirar sus controles de la navegación por teclado, y la galería deja de animarse. Al retroceder, se restauran las interacciones.
+- Sin JavaScript o con `prefers-reduced-motion`, ambas secciones siguen en el flujo normal, visibles y sin fijación ni cambios de escala. `gsap.matchMedia()` limpia estilos y triggers al desmontar o cambiar de breakpoint/preferencia.
+
+El menú de escritorio y el móvil ya incluyen Sobre mí. El cierre de la sección permite regresar al inicio. Los estilos específicos están separados en `src/styles/chapters.css`.
 
 ## Galería de fondo del Hero
 
@@ -136,7 +154,7 @@ npx playwright install chromium webkit
 npm run test:e2e
 ```
 
-Playwright inicia el servidor o reutiliza uno existente en el puerto 3000. Las pruebas cubren rutas e idioma persistente, enlaces de contacto, descarga del PDF, idioma inexistente, menú con teclado, movimiento reducido y contenido sin JavaScript. La regresión de desktop comprueba `100vh`, ausencia de scroll y contenido sin recortes en ambos idiomas, incluyendo 1366 × 768, 1920 × 720 y 1280 × 500. Los proyectos móviles emulan Pixel 7 en Chromium e iPhone 13 en WebKit: apertura táctil, cierre, reapertura, cambio de idioma y acceso mediante la IP local. La prueba LAN se omite cuando el equipo no tiene una interfaz de red disponible.
+Playwright inicia el servidor o reutiliza uno existente en el puerto 3000. Las pruebas cubren rutas e idioma persistente, enlaces de contacto, descarga del PDF, idioma inexistente, menú con teclado, movimiento reducido y contenido sin JavaScript. La regresión de desktop comprueba que el Hero mantiene `100vh` y su contenido sin recortes en ambos idiomas, incluyendo 1366 × 768, 1920 × 720 y 1280 × 500; el documento ahora tiene scroll para acceder a Sobre mí. También se verifica la reducción y el desvanecimiento del Hero, la entrada de Sobre mí y el regreso al inicio. Los proyectos móviles emulan Pixel 7 en Chromium e iPhone 13 en WebKit: apertura táctil, cierre, reapertura, cambio de idioma, navegación a Sobre mí y acceso mediante la IP local. La prueba LAN se omite cuando el equipo no tiene una interfaz de red disponible.
 
 Para generar capturas con el servidor activo:
 
@@ -144,7 +162,7 @@ Para generar capturas con el servidor activo:
 npm run preview:captures
 ```
 
-Se guardan en `artifacts/hero-desktop.png` (1366 × 768), `artifacts/hero-mobile.png` (390 × 600 para revisar el espacio disponible con barras de navegador) y `artifacts/menu-mobile.png`. Las pruebas móviles comprueban ambos botones completamente dentro del primer viewport, sin scroll, en ES/EN y con áreas visibles de 320 × 480 a 430 × 740. Capturas, trazas y resultados están excluidos de Git. Las comprobaciones funcionales y los dispositivos emulados no sustituyen una auditoría Lighthouse ni la revisión en el teléfono físico de Gabriel.
+Se guardan en `artifacts/hero-desktop.png` (1366 × 768), `artifacts/hero-mobile.png` (390 × 600), `artifacts/menu-mobile.png`, `artifacts/chapter-transition.png`, `artifacts/about-desktop.png` y `artifacts/about-mobile.png`. Las pruebas móviles comprueban ambos botones completamente dentro del primer viewport, sin scroll, en ES/EN y con áreas visibles de 320 × 480 a 430 × 740. Capturas, trazas y resultados están excluidos de Git. Las comprobaciones funcionales y los dispositivos emulados no sustituyen una auditoría Lighthouse ni la revisión en el teléfono físico de Gabriel.
 
 ## Referencias de diseño y técnicas
 
@@ -158,3 +176,5 @@ Documentación: [internacionalización de Next.js](https://nextjs.org/docs/app/g
 - **Revisión 01:** Hero desktop de `100vh` con escala tipográfica según la altura; menú móvil con ciclo de vida independiente y panel editorial animado; acceso LAN en desarrollo; corrección de discrepancia de hidratación en enlaces con movimiento reducido; pruebas táctiles en Chromium/WebKit y regresión de altura. Se mantiene el trabajo en la primera sección.
 - **Revisión 02:** retrato discreto en desktop y móvil; contenido móvil más arriba y dos acciones visibles en la primera pantalla; tamaños de imagen ajustados al nuevo encuadre; indicador de desarrollo oculto para que no tape el contenido de la vista previa. Se añaden comprobaciones con alturas reducidas en ambos motores móviles y ambos idiomas.
 - **Revisión 03:** bordes del retrato suavizados mediante degradados; galería diagonal descendente con seis capturas temporales de sitios públicos; oscurecimiento para mantener legible el contenido; pausa manual y automática; fuentes y procedimiento de reemplazo documentados. Continúa la revisión del Hero.
+- **Revisión 04:** «Full Stack Developer» pasa de una microetiqueta a una presentación destacada en naranja, con tipografía de 24–40 px en desktop (22 px en pantallas bajas) y 20–28 px en móvil/tablet. La composición conserva el nombre como título principal y las acciones visibles en el primer viewport móvil.
+- **Entrega 02:** Sobre mí bilingüe, basado en el CV, con composición editorial y transición cinematográfica reversible desde el Hero. Se activa la navegación a Sobre mí, se mantiene el primer viewport móvil y se añaden comprobaciones de scroll, regreso al inicio, teclado y movimiento reducido. Pendiente de revisión antes de continuar con Proyectos.

@@ -9,7 +9,7 @@ import { HeroGallery } from "./hero-gallery";
 export function Hero({ copy }: { copy: Dictionary["hero"] }) {
   return (
     <HeroMotion>
-      <section className="hero" id="home" aria-labelledby="hero-title">
+      <section className="hero" aria-labelledby="hero-title">
         <HeroGallery copy={copy} />
         <div className="hero-topline" data-hero-reveal>
           <span className="micro-label"><span className="accent-cross">+</span>{copy.eyebrow}</span>
@@ -17,7 +17,7 @@ export function Hero({ copy }: { copy: Dictionary["hero"] }) {
         </div>
         <div className="hero-content">
           <div className="hero-intro">
-            <p className="hero-role micro-label" data-hero-reveal><span className="status-dot" />{copy.role}</p>
+            <p className="hero-role" data-hero-reveal><span className="status-dot" aria-hidden="true" /><span>{copy.role}</span></p>
             <figure className="hero-visual">
               <div className="hero-photo-frame">
                 <div className="hero-portrait" data-hero-portrait>

@@ -88,7 +88,7 @@ test("gallery moves diagonally downwards, pauses and resumes without blocking co
   await expect(page.getByRole("link", { name: "Hablemos de tu próximo proyecto" })).toBeInViewport({ ratio: 1 });
 });
 
-test("desktop Hero fits one viewport without scrolling or clipping its content", async ({ page }) => {
+test("desktop Hero retains one viewport above the next chapter without clipping", async ({ page }) => {
   await page.emulateMedia({ reducedMotion: "reduce" });
   for (const locale of ["es", "en"]) {
     await page.goto(`/${locale}`);
@@ -98,7 +98,7 @@ test("desktop Hero fits one viewport without scrolling or clipping its content",
       await expect.poll(() => page.locator(".hero").evaluate((element) => element.getBoundingClientRect().height)).toBe(height);
       const dimensions = await page.locator(".hero").evaluate((element) => ({ height: element.getBoundingClientRect().height, pageHeight: document.documentElement.scrollHeight, viewport: window.innerHeight }));
       expect(dimensions.height).toBe(dimensions.viewport);
-      expect(dimensions.pageHeight).toBeLessThanOrEqual(dimensions.viewport);
+      expect(dimensions.pageHeight).toBeGreaterThan(dimensions.viewport);
       const topLine = await page.locator(".hero-topline").boundingBox();
       const role = await page.locator(".hero-role").boundingBox();
       const actions = await page.locator(".hero-actions").boundingBox();
@@ -123,5 +123,38 @@ test("the introduction and locale links work without JavaScript", async ({ brows
   await expect(page.locator("html")).toHaveAttribute("lang", "en");
   await expect(page.getByRole("link", { name: "Download CV" })).toBeVisible();
   await expect(page.locator(".gallery-track").first()).toHaveCSS("animation-play-state", "paused");
+  await expect(page.getByRole("heading", { level: 2 })).toHaveAccessibleName("Behind the code.");
+  expect(await page.locator(".chapter-outgoing").evaluate((element) => getComputedStyle(element).position)).toBe("relative");
   await context.close();
+});
+
+test("scroll transition shrinks and fades the Hero, reveals About and reverses", async ({ page }) => {
+  await page.setViewportSize({ width: 1366, height: 768 });
+  await page.goto("/es");
+  await expect(page.locator(".chapter-transition")).toHaveAttribute("data-motion", "desktop");
+  const frame = page.locator(".chapter-frame");
+  await page.evaluate(() => window.scrollTo({ top: window.innerHeight * 0.5, behavior: "instant" }));
+  await expect.poll(() => frame.evaluate((element) => Number(getComputedStyle(element).opacity))).toBeLessThan(0.7);
+  const scale = await frame.evaluate((element) => new DOMMatrixReadOnly(getComputedStyle(element).transform).a);
+  expect(scale).toBeLessThan(1);
+  expect(scale).toBeGreaterThan(0.83);
+  await page.evaluate(() => window.scrollTo({ top: document.getElementById("about")!.offsetTop, behavior: "instant" }));
+  await expect(page.locator(".chapter-outgoing")).toHaveAttribute("inert", "");
+  await expect(page.locator("[data-about-line]").last()).toHaveCSS("opacity", "1");
+  await expect(page.getByRole("heading", { level: 2 })).toBeInViewport({ ratio: 1 });
+  await page.getByRole("link", { name: "Volver al inicio" }).click();
+  await expect.poll(() => page.evaluate(() => window.scrollY)).toBe(0);
+  await expect(frame).toHaveCSS("opacity", "1");
+  await expect(page.locator(".chapter-outgoing")).not.toHaveAttribute("inert", "");
+});
+
+test("About navigation works with reduced motion and reveals real profile content", async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await page.goto("/en");
+  await page.getByRole("navigation", { name: "Main navigation" }).getByRole("link", { name: "About", exact: true }).click();
+  await expect(page).toHaveURL(/\/en#about$/);
+  await expect(page.getByRole("heading", { level: 2 })).toBeInViewport({ ratio: 1 });
+  await expect(page.locator("#about")).toContainText("Cedes Don Bosco");
+  await expect(page.locator(".chapter-transition")).not.toHaveAttribute("data-motion");
+  await expect(page.locator(".chapter-frame")).toHaveCSS("transform", "none");
 });

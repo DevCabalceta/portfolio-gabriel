@@ -15,6 +15,7 @@ export function MobileMenu({ locale, copy, links, onClose, trigger }: {
   trigger: RefObject<HTMLButtonElement | null>;
 }) {
   const dialog = useRef<HTMLDialogElement>(null);
+  const pendingAnchor = useRef<string | null>(null);
   const reducedMotion = useReducedMotion();
 
   // Mount the native modal before animating its contents. Its lifecycle must
@@ -46,7 +47,18 @@ export function MobileMenu({ locale, copy, links, onClose, trigger }: {
       element.close();
       element.removeEventListener("keydown", trapFocus);
       document.body.style.overflow = previousOverflow;
-      triggerElement?.focus();
+      triggerElement?.focus({ preventScroll: true });
+      const anchor = pendingAnchor.current;
+      if (anchor) {
+        // Navigate after the modal has released focus and the scroll lock.
+        requestAnimationFrame(() => {
+          const target = document.querySelector<HTMLElement>(anchor);
+          if (!target) return;
+          window.history.pushState(null, "", anchor);
+          target.focus({ preventScroll: true });
+          target.scrollIntoView({ behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "instant" : "smooth", block: "start" });
+        });
+      }
     };
   }, [trigger]);
 
@@ -71,7 +83,14 @@ export function MobileMenu({ locale, copy, links, onClose, trigger }: {
         <nav aria-label={copy.label}>
           <p className="micro-label mobile-menu-label">{copy.menu}</p>
           {links.map((link, index) => (
-            <motion.a key={link.href} href={link.href} onClick={onClose}
+            <motion.a key={link.href} href={link.href} onClick={(event) => {
+              if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey || event.button !== 0) return;
+              if (link.href.startsWith("#")) {
+                event.preventDefault();
+                pendingAnchor.current = link.href;
+              }
+              onClose();
+            }}
               initial={reducedMotion ? false : { y: 24, opacity: 0 }} animate={{ y: 0, opacity: 1 }}
               transition={{ duration: 0.4, delay: reducedMotion ? 0 : 0.08 + index * 0.06, ease: [0.22, 1, 0.36, 1] }}>
               <span className="micro-label">0{index + 1}</span>{link.label}<ArrowIcon />

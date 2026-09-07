@@ -3,6 +3,8 @@ import { isLocale } from "@/i18n/config";
 import { getDictionary } from "@/i18n/dictionaries";
 import { SiteHeader } from "@/components/layout/site-header";
 import { Hero } from "@/components/sections/hero";
+import { About } from "@/components/sections/about";
+import { ChapterTransition } from "@/components/animations/chapter-transition";
 
 export default async function Home({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
@@ -12,7 +14,9 @@ export default async function Home({ params }: { params: Promise<{ locale: strin
     <>
       <a href="#main" className="skip-link">{copy.hero.skip}</a>
       <SiteHeader locale={locale} copy={copy.nav} />
-      <main id="main" tabIndex={-1}><Hero copy={copy.hero} /></main>
+      <main id="main" tabIndex={-1}>
+        <ChapterTransition id="home" previous={<Hero copy={copy.hero} />}><About copy={copy.about} /></ChapterTransition>
+      </main>
     </>
   );
 }
