@@ -33,6 +33,27 @@ test("both Hero actions fit in the first mobile screen without a robot", async (
   expect(sceneRequests).toEqual([]);
 });
 
+test("Hero stays sharp at the top when browser chrome changes the visible height", async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 664 });
+  await page.goto("/es");
+  await expect(page.locator(".chapter-transition")).toHaveAttribute("data-motion", "mobile");
+  const frame = page.locator(".chapter-frame");
+  await expect(frame).toHaveCSS("filter", "none");
+  // Reproduce the 100svh/current viewport difference caused by mobile toolbars.
+  await page.addStyleTag({ content: ".hero { min-height: 564px !important; height: 564px; }" });
+  await page.evaluate(() => window.dispatchEvent(new Event("resize")));
+  await page.waitForTimeout(700);
+  expect(await page.evaluate(() => scrollY)).toBe(0);
+  await expect(frame).toHaveCSS("filter", "none");
+  await expect(frame).toHaveCSS("transform", "none");
+  await expect(frame).toHaveCSS("opacity", "1");
+  await page.evaluate(() => window.scrollTo({ top: 200, behavior: "instant" }));
+  await expect.poll(() => frame.evaluate((element) => parseFloat(getComputedStyle(element).filter.slice(5)))).toBeGreaterThan(0);
+  await page.evaluate(() => window.scrollTo({ top: 0, behavior: "instant" }));
+  await expect(frame).toHaveCSS("filter", "none");
+  await expect(frame).toHaveCSS("transform", "none");
+});
+
 test("touch menu opens, closes and reopens with visible interactive content", async ({ page }) => {
   const errors: string[] = [];
   page.on("pageerror", (error) => errors.push(error.message));
