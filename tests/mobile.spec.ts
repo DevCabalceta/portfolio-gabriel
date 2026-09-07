@@ -1,7 +1,14 @@
 import { test, expect } from "@playwright/test";
 import { networkInterfaces } from "node:os";
 
-test("both Hero actions fit in the first mobile screen with a compact portrait", async ({ page }) => {
+// Layout/navigation checks hold the external 3D download; the real scene is verified separately.
+test.beforeEach(async ({ page }) => {
+  await page.route("https://prod.spline.design/**/scene.splinecode", () => {});
+});
+
+test("both Hero actions fit in the first mobile screen without a robot", async ({ page }) => {
+  const sceneRequests: string[] = [];
+  page.on("request", (request) => { if (request.url().endsWith("scene.splinecode")) sceneRequests.push(request.url()); });
   await page.emulateMedia({ reducedMotion: "reduce" });
   for (const locale of ["es", "en"]) {
     await page.goto(`/${locale}`);
@@ -18,12 +25,12 @@ test("both Hero actions fit in the first mobile screen with a compact portrait",
         expect(box!.y + box!.height).toBeLessThanOrEqual(viewport.top + viewport.height);
         expect(box!.height).toBeGreaterThanOrEqual(44);
       }
-      const portrait = await page.locator(".hero-photo-frame").boundingBox();
-      const title = await page.locator(".hero-title").boundingBox();
-      expect(portrait!.width).toBeLessThanOrEqual(72);
-      expect(portrait!.y + portrait!.height).toBeLessThanOrEqual(title!.y);
+      await expect(page.locator(".hero-robot")).toHaveCount(0);
+      await expect(page.locator(".hero img[alt*=Gabriel]")).toHaveCount(0);
+      await expect(page.locator("#about .profile-photo-frame img")).toHaveCount(1);
     }
   }
+  expect(sceneRequests).toEqual([]);
 });
 
 test("touch menu opens, closes and reopens with visible interactive content", async ({ page }) => {
@@ -71,10 +78,10 @@ test("mobile About navigation and return preserve readable content", async ({ pa
   await page.getByRole("dialog").getByRole("link", { name: "02 Sobre mí" }).tap();
   await expect(page.getByRole("dialog")).not.toBeVisible();
   await expect(page).toHaveURL(/#about$/);
-  await expect(page.locator("[data-about-line]").last()).toHaveCSS("opacity", "1");
+  await expect(page.locator("[data-about-char]").last()).toHaveCSS("opacity", "1");
   await expect(page.getByRole("heading", { level: 2 })).toBeInViewport({ ratio: 1 });
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
-  await page.getByRole("link", { name: "Volver al inicio" }).tap();
+  await page.getByRole("button", { name: "Volver al inicio" }).tap();
   await expect.poll(() => page.evaluate(() => window.scrollY)).toBe(0);
   await expect(page.locator(".chapter-frame")).toHaveCSS("opacity", "1");
 });

@@ -1,10 +1,10 @@
-import Image from "next/image";
 import { profile } from "@/data/profile";
 import type { Dictionary } from "@/i18n/dictionaries";
 import { HeroMotion } from "@/components/animations/hero-motion";
 import { ActionLink } from "@/components/ui/action-link";
 import { ArrowIcon } from "@/components/ui/arrow-icon";
 import { HeroGallery } from "./hero-gallery";
+import { HeroRobot } from "./hero-robot";
 
 export function Hero({ copy }: { copy: Dictionary["hero"] }) {
   return (
@@ -18,14 +18,7 @@ export function Hero({ copy }: { copy: Dictionary["hero"] }) {
         <div className="hero-content">
           <div className="hero-intro">
             <p className="hero-role" data-hero-reveal><span className="status-dot" aria-hidden="true" /><span>{copy.role}</span></p>
-            <figure className="hero-visual">
-              <div className="hero-photo-frame">
-                <div className="hero-portrait" data-hero-portrait>
-                  <Image src={profile.portrait} alt={copy.portraitAlt} fill sizes="(max-width: 899px) 72px, (max-width: 1100px) 24vw, 320px" preload quality={85} />
-                </div>
-              </div>
-              <figcaption className="portrait-caption micro-label" data-hero-reveal><span className="caption-line" />{copy.locationLabel}</figcaption>
-            </figure>
+            <HeroRobot copy={copy.robot} />
           </div>
           <h1 id="hero-title" className="hero-title" aria-label={profile.name}>
             <span className="title-mask"><span data-hero-line>GABRIEL</span></span>

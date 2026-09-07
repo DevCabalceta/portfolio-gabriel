@@ -15,6 +15,7 @@ const es = {
     approachLabel: "Cómo construyo", approach: "De la interfaz a los datos",
     approachDetail: "Experiencias web · APIs REST · SQL",
     back: "Volver al inicio",
+    portraitAlt: "Retrato de Gabriel Cabalceta sobre un fondo naranja",
   },
   meta: {
     title: "Gabriel Cabalceta — Full Stack Developer",
@@ -37,6 +38,7 @@ const es = {
     chapter: "La introducción", portfolio: "Portfolio personal", skip: "Saltar al contenido",
     linkedin: "Visitar mi perfil de LinkedIn", github: "Visitar mi perfil de GitHub",
     pauseGallery: "Pausar galería de fondo", playGallery: "Reanudar galería de fondo",
+    robot: { label: "Robot 3D interactivo", loading: "Cargando robot", error: "El robot no pudo cargar", retry: "Reintentar", pause: "Pausar robot", play: "Animar robot" },
   },
 };
 
@@ -57,6 +59,7 @@ const en: Dictionary = {
     approachLabel: "How I build", approach: "From interface to data",
     approachDetail: "Web experiences · REST APIs · SQL",
     back: "Back to the top",
+    portraitAlt: "Portrait of Gabriel Cabalceta against an orange background",
   },
   meta: {
     title: "Gabriel Cabalceta — Full Stack Developer",
@@ -79,6 +82,7 @@ const en: Dictionary = {
     chapter: "The introduction", portfolio: "Personal portfolio", skip: "Skip to content",
     linkedin: "Visit my LinkedIn profile", github: "Visit my GitHub profile",
     pauseGallery: "Pause background gallery", playGallery: "Resume background gallery",
+    robot: { label: "Interactive 3D robot", loading: "Loading robot", error: "The robot could not load", retry: "Retry", pause: "Pause robot", play: "Animate robot" },
   },
 };
 

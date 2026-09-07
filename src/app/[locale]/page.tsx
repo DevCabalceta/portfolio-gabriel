@@ -2,6 +2,7 @@ import { notFound } from "next/navigation";
 import { isLocale } from "@/i18n/config";
 import { getDictionary } from "@/i18n/dictionaries";
 import { SiteHeader } from "@/components/layout/site-header";
+import { FloatingActions } from "@/components/layout/floating-actions";
 import { Hero } from "@/components/sections/hero";
 import { About } from "@/components/sections/about";
 import { ChapterTransition } from "@/components/animations/chapter-transition";
@@ -17,6 +18,7 @@ export default async function Home({ params }: { params: Promise<{ locale: strin
       <main id="main" tabIndex={-1}>
         <ChapterTransition id="home" previous={<Hero copy={copy.hero} />}><About copy={copy.about} /></ChapterTransition>
       </main>
+      <FloatingActions copy={copy} />
     </>
   );
 }

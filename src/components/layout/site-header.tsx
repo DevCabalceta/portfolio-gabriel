@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { AnimatePresence } from "framer-motion";
 import { profile } from "@/data/profile";
 import { sections } from "@/data/navigation";
@@ -13,6 +13,13 @@ import { ArrowIcon } from "@/components/ui/arrow-icon";
 export function SiteHeader({ locale, copy }: { locale: Locale; copy: Dictionary["nav"] }) {
   const [open, setOpen] = useState(false);
   const trigger = useRef<HTMLButtonElement>(null);
+  const header = useRef<HTMLElement>(null);
+  useEffect(() => {
+    const update = () => { if (header.current) header.current.dataset.scrolled = String(window.scrollY > 32); };
+    update();
+    window.addEventListener("scroll", update, { passive: true });
+    return () => window.removeEventListener("scroll", update);
+  }, []);
   const closeMenu = useCallback(() => setOpen(false), []);
   const links = [
     ...sections.filter((section) => section.ready).map((section) => ({ href: `#${section.id}`, label: copy[section.label] })),
@@ -22,7 +29,7 @@ export function SiteHeader({ locale, copy }: { locale: Locale; copy: Dictionary[
 
   return (
     <>
-      <header className="site-header">
+      <header ref={header} className="site-header">
         <a className="wordmark" href={`/${locale}#home`} aria-label={`${profile.name} — ${copy.home}`}>gc<span>✳</span></a>
         <nav className="desktop-nav" aria-label={copy.label}>
           {links.map((link, index) => <a key={link.href} href={link.href} className={index === links.length - 1 ? "nav-contact" : ""}>{link.label}{index === links.length - 1 && <ArrowIcon />}</a>)}

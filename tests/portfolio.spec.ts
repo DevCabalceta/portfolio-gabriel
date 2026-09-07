@@ -1,5 +1,10 @@
 import { expect, test } from "@playwright/test";
 
+// Layout/navigation checks hold the external 3D download; the real scene is verified separately.
+test.beforeEach(async ({ page }) => {
+  await page.route("https://prod.spline.design/**/scene.splinecode", () => {});
+});
+
 test("localized routes, persistence and real contact/download destinations", async ({ page, request }) => {
   const errors: string[] = [];
   page.on("pageerror", (error) => errors.push(error.message));
@@ -83,7 +88,7 @@ test("gallery moves diagonally downwards, pauses and resumes without blocking co
   await expect(track).toHaveCSS("animation-play-state", "paused");
   await page.getByRole("button", { name: "Reanudar galería de fondo" }).click();
   await expect(track).toHaveCSS("animation-play-state", "running");
-  const masked = await page.locator(".hero-photo-frame").evaluate((element) => getComputedStyle(element).maskImage);
+  const masked = await page.locator(".profile-photo-frame").evaluate((element) => getComputedStyle(element).maskImage);
   expect(masked).toContain("linear-gradient");
   await expect(page.getByRole("link", { name: "Hablemos de tu próximo proyecto" })).toBeInViewport({ ratio: 1 });
 });
@@ -128,21 +133,28 @@ test("the introduction and locale links work without JavaScript", async ({ brows
   await context.close();
 });
 
-test("scroll transition shrinks and fades the Hero, reveals About and reverses", async ({ page }) => {
+test("scroll transition blurs, shrinks and fades the Hero, reveals About and reverses", async ({ page }) => {
   await page.setViewportSize({ width: 1366, height: 768 });
   await page.goto("/es");
   await expect(page.locator(".chapter-transition")).toHaveAttribute("data-motion", "desktop");
   const frame = page.locator(".chapter-frame");
+  await expect(page.locator(".floating-actions")).not.toBeVisible();
   await page.evaluate(() => window.scrollTo({ top: window.innerHeight * 0.5, behavior: "instant" }));
   await expect.poll(() => frame.evaluate((element) => Number(getComputedStyle(element).opacity))).toBeLessThan(0.7);
   const scale = await frame.evaluate((element) => new DOMMatrixReadOnly(getComputedStyle(element).transform).a);
   expect(scale).toBeLessThan(1);
+  expect(await frame.evaluate((element) => parseFloat(getComputedStyle(element).filter.slice(5)))).toBeGreaterThan(0);
+  await expect(page.locator(".site-header")).toHaveCSS("position", "fixed");
+  await expect(page.locator(".site-header")).toBeInViewport({ ratio: 1 });
   expect(scale).toBeGreaterThan(0.83);
   await page.evaluate(() => window.scrollTo({ top: document.getElementById("about")!.offsetTop, behavior: "instant" }));
   await expect(page.locator(".chapter-outgoing")).toHaveAttribute("inert", "");
-  await expect(page.locator("[data-about-line]").last()).toHaveCSS("opacity", "1");
+  await expect(page.locator(".floating-actions")).toBeVisible();
+  await expect(page.locator(".floating-actions").getByRole("link", { name: "WhatsApp" })).toHaveAttribute("href", "https://wa.me/50683442305");
+  await expect(page.locator(".floating-actions a").first()).toHaveAttribute("href", "https://github.com/DevCabalceta");
+  await expect(page.locator("[data-about-char]").last()).toHaveCSS("opacity", "1");
   await expect(page.getByRole("heading", { level: 2 })).toBeInViewport({ ratio: 1 });
-  await page.getByRole("link", { name: "Volver al inicio" }).click();
+  await page.getByRole("button", { name: "Volver al inicio" }).click();
   await expect.poll(() => page.evaluate(() => window.scrollY)).toBe(0);
   await expect(frame).toHaveCSS("opacity", "1");
   await expect(page.locator(".chapter-outgoing")).not.toHaveAttribute("inert", "");

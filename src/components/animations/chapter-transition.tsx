@@ -33,14 +33,21 @@ export function ChapterTransition({ id, previous, children }: { id: string; prev
         },
       });
       timeline.fromTo(frame,
-        { scale: 1, opacity: 1 },
-        { scale: desktop ? 0.84 : 0.96, opacity: 0.08, ease: "none", duration: 1 }, 0);
-      timeline.fromTo(incoming.querySelectorAll("[data-about-line]"),
-        { yPercent: desktop ? 55 : 20, opacity: 0.3 },
-        { yPercent: 0, opacity: 1, stagger: 0.08, duration: 0.65, ease: "power2.out" }, 0.18);
-      timeline.fromTo(incoming.querySelectorAll("[data-about-reveal]"),
-        { y: desktop ? 38 : 16, opacity: 0.25 },
-        { y: 0, opacity: 1, stagger: 0.05, duration: 0.55, ease: "power2.out" }, 0.3);
+        { scale: 1, opacity: 1, filter: "blur(0px)" },
+        { scale: desktop ? 0.84 : 0.96, opacity: 0.08, filter: `blur(${desktop ? 9 : 5}px)`, ease: "none", duration: 1 }, 0);
+
+      // Reveal at the title itself, so the letters animate while they are readable.
+      gsap.from(incoming.querySelectorAll("[data-about-char]"), {
+        yPercent: 110, rotate: 7, opacity: 0, duration: 0.85, stagger: 0.045,
+        ease: "power3.out",
+        scrollTrigger: { trigger: incoming.querySelector(".about-title"), start: "top 82%", toggleActions: "play none none reverse" },
+      });
+      incoming.querySelectorAll("[data-about-reveal]").forEach((item) => {
+        gsap.from(item, {
+          y: desktop ? 32 : 20, opacity: 0, duration: 0.8, ease: "power2.out",
+          scrollTrigger: { trigger: item, start: "top 90%", toggleActions: "play none none reverse" },
+        });
+      });
 
       return () => {
         delete element.dataset.motion;

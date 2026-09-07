@@ -1,5 +1,10 @@
 import type { Dictionary } from "@/i18n/dictionaries";
-import { ArrowIcon } from "@/components/ui/arrow-icon";
+import Image from "next/image";
+import { profile } from "@/data/profile";
+
+function AnimatedLetters({ text }: { text: string }) {
+  return <span data-about-line aria-hidden="true">{Array.from(text).map((letter, index) => <span className="about-character" data-about-char key={index}>{letter === " " ? "\u00a0" : letter}</span>)}</span>;
+}
 
 export function About({ copy }: { copy: Dictionary["about"] }) {
   return (
@@ -14,13 +19,17 @@ export function About({ copy }: { copy: Dictionary["about"] }) {
         <div className="about-heading">
           <p className="about-kicker" data-about-reveal>{copy.kicker}</p>
           <h2 id="about-title" className="about-title" aria-label={`${copy.titleFirst} ${copy.titleSecond}.`}>
-            <span className="title-mask"><span data-about-line>{copy.titleFirst}</span></span>
-            <span className="title-mask"><span data-about-line>{copy.titleSecond}<span className="about-period">.</span></span></span>
+            <span className="title-mask"><AnimatedLetters text={copy.titleFirst} /></span>
+            <span className="title-mask"><AnimatedLetters text={`${copy.titleSecond}.`} /></span>
           </h2>
           <p className="about-statement" data-about-reveal>{copy.statement}</p>
         </div>
 
         <div className="about-narrative">
+          <figure className="about-portrait" data-about-reveal>
+            <div className="profile-photo-frame"><Image src={profile.portrait} alt={copy.portraitAlt} fill sizes="(max-width: 899px) 120px, 150px" quality={85} /></div>
+            <figcaption className="micro-label">Gabriel Cabalceta<span>Full Stack Developer</span></figcaption>
+          </figure>
           <p className="about-lead" data-about-reveal>{copy.introduction}</p>
           <p className="about-description" data-about-reveal>{copy.description}</p>
           <div className="about-signature" data-about-reveal>
@@ -38,7 +47,6 @@ export function About({ copy }: { copy: Dictionary["about"] }) {
 
       <div className="about-footer" data-about-reveal>
         <span className="micro-label">San José, Costa Rica</span>
-        <a href="#home" className="about-back"><span>{copy.back}</span><ArrowIcon /></a>
       </div>
     </section>
   );
