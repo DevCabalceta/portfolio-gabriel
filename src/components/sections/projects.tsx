@@ -3,7 +3,7 @@ import { profile } from "@/data/profile";
 import type { Locale } from "@/i18n/config";
 import type { Dictionary } from "@/i18n/dictionaries";
 import { ProjectsMotion } from "@/components/animations/projects-motion";
-import { ProjectGallery } from "@/components/ui/project-gallery";
+import { ProjectGallery, ProjectGalleryProvider } from "@/components/ui/project-gallery";
 import { ProjectCarousel } from "@/components/ui/project-carousel";
 import { ProjectDetails, ProjectLinks } from "@/components/ui/project-details";
 import { ArrowIcon } from "@/components/ui/arrow-icon";
@@ -22,14 +22,15 @@ export function Projects({ locale, copy }: { locale: Locale; copy: Dictionary["w
         <span className="work-watermark" aria-hidden="true">03</span>
       </header>
 
-      <ProjectCarousel copy={copy}>
+      <ProjectGalleryProvider projects={collection.map((project) => ({ id: project.id, title: project.displayTitle?.[locale] ?? project.title, owner: project.owner, media: project.media }))} locale={locale} copy={copy}>
+      <ProjectCarousel copy={copy} titles={collection.map((project) => project.displayTitle?.[locale] ?? project.title)}>
         {collection.map((project, index) => {
           const title = project.displayTitle?.[locale] ?? project.title;
           return <article key={project.id} className="featured-project" data-project={project.id} aria-labelledby={`project-${project.id}`}>
             <div className="project-topline micro-label"><span>{String(index + 1).padStart(2, "0")} / {String(collection.length).padStart(2, "0")}</span><span>{copy[project.category]}{project.year && ` / ${project.year}`}</span></div>
             <div className="project-composition">
               <div className="project-visual">
-                {project.media[0] ? <ProjectGallery media={project.media} title={title} locale={locale} copy={copy} /> : <div className="project-cover" aria-hidden="true">{title}</div>}
+                {project.media[0] ? <ProjectGallery projectId={project.id} media={project.media} title={title} locale={locale} copy={copy} /> : <div className="project-cover" aria-hidden="true">{title}</div>}
               </div>
               <div className="project-caption">
                 <p className="project-status micro-label"><span />{project.status === "published" ? copy.published : copy.development}</p>
@@ -44,6 +45,7 @@ export function Projects({ locale, copy }: { locale: Locale; copy: Dictionary["w
           </article>;
         })}
       </ProjectCarousel>
+      </ProjectGalleryProvider>
 
       <footer className="work-footer" data-work-reveal><p>{copy.closing}</p><a href={`mailto:${profile.email}`}>{copy.contact}<ArrowIcon /></a></footer>
     </section>

@@ -19,13 +19,14 @@ try {
     const cropStyle = ".site-header, .floating-actions { visibility: hidden !important; }";
     await feature.screenshot({ path: `artifacts/project-${name}.png`, style: cropStyle });
     await page.locator(".project-carousel").screenshot({ path: `artifacts/project-carousel-${name}.png`, style: cropStyle });
-    await page.locator("#project-track").focus();
+    await page.locator(".carousel-viewport").focus();
     await page.keyboard.press("End");
-    await expect(page.getByRole("button", { name: "Proyecto siguiente" })).toBeDisabled();
+    await expect(page.locator(".project-carousel")).toHaveAttribute("data-selected", "10");
     await expect(page.locator(".carousel-position")).toContainText("11 / 11");
     // Capture the viewport without locator.screenshot's automatic scrolling:
     // scrolling the carousel wrapper into view can reset native scroll-snap.
     await page.screenshot({ path: `artifacts/project-carousel-end-${name}.png`, style: cropStyle });
+    await page.locator(".carousel-dots button").first().click();
     await page.locator('[data-project="upgrade"] .project-gallery-trigger').click();
     await page.getByRole("dialog").locator(".gallery-stage img").evaluate((image) => image.decode());
     await page.screenshot({ path: `artifacts/project-gallery-${name}.png` });

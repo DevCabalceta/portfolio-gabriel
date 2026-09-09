@@ -22,7 +22,7 @@ test("Work navigation opens a complete, localized project selection", async ({ p
   await expect(page.locator("#work [data-project]")).toHaveCount(11);
   await expect(page.locator(".featured-project")).toHaveCount(11);
   await expect(page.locator(".project-index, .project-row")).toHaveCount(0);
-  expect(await page.locator(".featured-project").evaluateAll((items) => items.slice(0, 5).map((item) => item.getAttribute("data-project")))).toEqual(["fan-de-maiz", "gif-search", "upgrade", "todo", "spotify"]);
+  expect(await page.locator(".featured-project").evaluateAll((items) => items.slice(0, 5).map((item) => item.getAttribute("data-project")))).toEqual(["upgrade", "fan-de-maiz", "spotify", "gif-search", "todo"]);
   const feature = page.locator('[data-project="fan-de-maiz"]');
   await feature.scrollIntoViewIfNeeded();
   await expect(feature.locator(".project-links a")).toHaveAttribute("href", "https://fandemaiz.com/");
@@ -47,8 +47,9 @@ test("all carousel cards retain images, ownership and real destinations", async 
   await expect(upgrade.locator(".project-links a")).toHaveCount(0);
   await expect(page.locator('[data-project="todo"] .project-status')).toHaveText("En desarrollo");
   await expect(page.locator('[data-project="todo"] .project-links a')).toHaveCount(0);
-  for (const row of await page.locator(".featured-project").all()) {
-    await row.scrollIntoViewIfNeeded();
+  const rows = await page.locator(".featured-project").all();
+  for (const [index, row] of rows.entries()) {
+    await page.locator(".carousel-dots button").nth(index).click();
     await expect(row.locator(".project-media img")).toBeVisible();
     await expect.poll(() => row.locator("img").evaluate((image: HTMLImageElement) => image.complete && image.naturalWidth > 0)).toBe(true);
     if (await row.locator(".project-owner").count()) {
@@ -57,8 +58,8 @@ test("all carousel cards retain images, ownership and real destinations", async 
     }
   }
   await expect(page.locator(".project-owner")).toHaveCount(5);
-  await expect(page.locator('[data-project="bosnet"] h3')).toHaveText("BosNet");
-  await expect(page.locator('[data-project="bosnet"] .project-links a')).toHaveAttribute("href", "https://bosconet.cedesdonbosco.ed.cr/v1/");
+  await expect(page.locator('[data-project="bosconet"] h3')).toHaveText("BoscoNet");
+  await expect(page.locator('[data-project="bosconet"] .project-links a')).toHaveAttribute("href", "https://bosconet.cedesdonbosco.ed.cr/v1/");
   await expect(page.locator("[data-work-char]").first()).toHaveCSS("transform", "none");
   await expect(page.locator(".about-frame")).toHaveCSS("filter", "none");
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
@@ -93,20 +94,22 @@ test("carousel stays in one row and screenshot galleries support keyboard and to
     expect(boxes[1].x).toBeGreaterThan(boxes[0].x);
   }
   expect(boxes.every((box) => box.y === boxes[0].y)).toBe(true);
-  expect(boxes[10].x).toBeGreaterThan(page.viewportSize()!.width);
   for (const id of ["upgrade", "todo"]) {
+    const start = id === "upgrade" ? 0 : 6;
+    await page.locator(".carousel-dots button").nth(id === "upgrade" ? 0 : 4).click();
     const trigger = page.locator(`[data-project="${id}"] .project-gallery-trigger`);
     await trigger.click();
     const dialog = page.getByRole("dialog");
     await expect(dialog).toBeVisible();
-    await expect(dialog.locator(".gallery-caption")).toContainText("1 de 3");
+    await expect(dialog.locator(".gallery-caption")).toContainText(`${start + 1} de 15 · 1/3`);
+    await expect(dialog.locator(".gallery-thumbnails button")).toHaveCount(15);
     await expect(dialog.locator(".gallery-stage img")).toHaveAttribute("src", new RegExp(`${id}-1`));
     await dialog.getByRole("button", { name: "Imagen siguiente" }).click();
-    await expect(dialog.locator(".gallery-caption")).toContainText("2 de 3");
+    await expect(dialog.locator(".gallery-caption")).toContainText("2/3");
     await page.keyboard.press("ArrowRight");
     await expect(dialog.locator(".gallery-stage img")).toHaveAttribute("src", new RegExp(`${id}-3`));
-    await dialog.locator(".gallery-thumbnails button").first().click();
-    await expect(dialog.locator(".gallery-caption")).toContainText("1 de 3");
+    await dialog.locator(".gallery-thumbnails button").nth(start).click();
+    await expect(dialog.locator(".gallery-caption")).toContainText("1/3");
     await expect(page.locator("body")).toHaveCSS("overflow", "hidden");
     await dialog.getByRole("button", { name: "Cerrar galería" }).focus();
     await page.keyboard.press("Shift+Tab");
@@ -119,31 +122,116 @@ test("carousel stays in one row and screenshot galleries support keyboard and to
   }
 });
 
-test("carousel controls and keyboard reach both ends without vertical scrolling", async ({ page }) => {
+test("carousel controls, dots and keyboard loop in both directions", async ({ page }) => {
   await page.emulateMedia({ reducedMotion: "reduce" });
   await page.goto("/es#selected-projects");
-  const track = page.locator("#project-track");
+  const track = page.locator(".carousel-viewport");
+  const carousel = page.locator(".project-carousel");
   const previous = page.getByRole("button", { name: "Proyecto anterior", exact: true });
   const next = page.getByRole("button", { name: "Proyecto siguiente", exact: true });
-  await expect(previous).toBeDisabled();
+  await expect(carousel).toHaveAttribute("data-enhanced", "true");
+  await expect(previous).toBeEnabled();
   await next.click();
-  await expect.poll(() => track.evaluate((element) => element.scrollLeft)).toBeGreaterThan(0);
+  await expect(carousel).toHaveAttribute("data-selected", "1");
   await expect(previous).toBeEnabled();
   await track.focus();
   const initialY = await page.evaluate(() => scrollY);
   await page.keyboard.press("End");
-  await expect(next).toBeDisabled();
-  await expect(page.locator(".carousel-position")).toContainText("11 / 11");
+  await expect(next).toBeEnabled();
+  await expect(carousel).toHaveAttribute("data-selected", "10");
   const last = page.locator('[data-project="tesla"]');
   await expect(last).toBeInViewport();
   expect(await page.evaluate(() => scrollY)).toBe(initialY);
-  await page.keyboard.press("Home");
-  await expect(previous).toBeDisabled();
   await page.keyboard.press("ArrowRight");
-  await expect(previous).toBeEnabled();
+  await expect(carousel).toHaveAttribute("data-selected", "0");
   await page.keyboard.press("ArrowLeft");
-  await expect(previous).toBeDisabled();
+  await expect(carousel).toHaveAttribute("data-selected", "10");
+  await page.keyboard.press("Home");
+  await expect(carousel).toHaveAttribute("data-selected", "0");
+  await page.keyboard.press("ArrowRight");
+  await expect(carousel).toHaveAttribute("data-selected", "1");
+  await page.keyboard.press("ArrowLeft");
+  await expect(carousel).toHaveAttribute("data-selected", "0");
+  await page.locator(".carousel-dots button").nth(6).click();
+  await expect(carousel).toHaveAttribute("data-selected", "6");
+  await expect(page.locator(".carousel-dots button").nth(6)).toHaveAttribute("aria-current", "true");
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+});
+
+test("shared gallery crosses project boundaries and wraps to the first project", async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await page.goto("/es#selected-projects");
+  await page.locator(".carousel-dots button").first().click();
+  await page.locator('[data-project="upgrade"] .project-gallery-trigger').click();
+  const dialog = page.getByRole("dialog");
+  await expect(dialog).toHaveAccessibleName("Upgrade! Comunicación y Entretenimiento");
+  await dialog.locator(".gallery-thumbnails button").nth(2).click();
+  await dialog.getByRole("button", { name: "Imagen siguiente" }).click();
+  await expect(dialog).toHaveAccessibleName("Fan de Maíz");
+  await expect(dialog.locator(".gallery-stage img")).toHaveAttribute("src", /fan-de-maiz/);
+  await dialog.locator(".gallery-thumbnails button").nth(13).click();
+  await expect(dialog).toHaveAccessibleName("BoscoNet");
+  await expect(dialog.locator(".project-owner")).toHaveText("Colaboración · CEDES Don Bosco");
+  await dialog.locator(".gallery-thumbnails button").last().click();
+  await expect(dialog).toHaveAccessibleName("Tesla Landing Page Clone");
+  await dialog.getByRole("button", { name: "Imagen siguiente" }).click();
+  await expect(dialog).toHaveAccessibleName("Upgrade! Comunicación y Entretenimiento");
+  await expect(dialog.locator(".gallery-caption")).toContainText("1 de 15");
+  await dialog.getByRole("button", { name: "Imagen anterior" }).click();
+  await expect(dialog).toHaveAccessibleName("Tesla Landing Page Clone");
+});
+
+test("autoplay advances every three seconds and pauses for interaction and galleries", async ({ page }) => {
+  await page.goto("/es#selected-projects");
+  const carousel = page.locator(".project-carousel");
+  await expect(carousel).toHaveAttribute("data-enhanced", "true");
+  await page.locator(".carousel-viewport").focus();
+  await page.keyboard.press("Home");
+  await expect(carousel).toHaveAttribute("data-playing", "false");
+  await page.mouse.move(1, 1);
+  await page.locator(".carousel-viewport").evaluate((element: HTMLElement) => element.blur());
+  await expect(carousel).toHaveAttribute("data-playing", "true");
+  await page.waitForTimeout(2300);
+  await expect(carousel).toHaveAttribute("data-selected", "0");
+  await expect(carousel).toHaveAttribute("data-selected", "1", { timeout: 1800 });
+  await page.getByRole("button", { name: "Pausar carrusel", exact: true }).click();
+  await expect(carousel).toHaveAttribute("data-playing", "false");
+  const stopped = await carousel.getAttribute("data-selected");
+  await page.waitForTimeout(3100);
+  await expect(carousel).toHaveAttribute("data-selected", stopped!);
+  await page.locator(".carousel-dots button").nth(1).click();
+  await page.locator('[data-project="fan-de-maiz"] .project-gallery-trigger').click();
+  await expect(carousel).toHaveAttribute("data-playing", "false");
+  await page.keyboard.press("Escape");
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await expect(carousel).toHaveAttribute("data-playing", "false");
+});
+
+test("mouse dragging changes cards without accidentally opening a gallery", async ({ page }, testInfo) => {
+  test.skip(testInfo.project.name !== "desktop", "Mouse dragging is a desktop interaction");
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await page.goto("/es#selected-projects");
+  await expect(page.locator(".project-carousel")).toHaveAttribute("data-enhanced", "true");
+  const cover = page.locator('[data-project="fan-de-maiz"] .project-media');
+  await cover.scrollIntoViewIfNeeded();
+  const box = (await cover.boundingBox())!;
+  await page.mouse.move(box.x + box.width * 0.8, box.y + box.height / 2);
+  await page.mouse.down();
+  await page.mouse.move(box.x - box.width * 0.5, box.y + box.height / 2, { steps: 20 });
+  await page.mouse.up();
+  await expect(page.locator(".project-carousel")).not.toHaveAttribute("data-selected", "0");
+  await expect(page.getByRole("dialog")).toHaveCount(0);
+});
+
+test("About overlaps the sticky Hero in mobile and desktop", async ({ page }) => {
+  await page.goto("/es");
+  await expect(page.locator(".chapter-transition")).toHaveAttribute("data-motion");
+  await page.evaluate(() => scrollTo({ top: document.querySelector('#about')!.getBoundingClientRect().top + scrollY - innerHeight * 0.5, behavior: 'instant' }));
+  await expect(page.locator(".chapter-outgoing")).toHaveCSS("position", "sticky");
+  expect(Math.abs((await page.locator(".chapter-outgoing").boundingBox())!.y)).toBeLessThan(2);
+  expect(await page.evaluate(() => Boolean(document.elementFromPoint(innerWidth / 2, innerHeight * 0.8)?.closest('#about')))).toBe(true);
+  await page.evaluate(() => scrollTo({ top: 0, behavior: 'instant' }));
+  await expect(page.locator(".chapter-frame")).toHaveCSS("filter", "none");
 });
 
 test("About remains visible when scrolling back after passing the pin and resizing", async ({ page }) => {

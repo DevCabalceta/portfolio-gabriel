@@ -3,7 +3,7 @@
 .chapter-frame { transform-origin: center 45%; }
 /* Avoid even zero-value filter/transform compositing while reading the Hero. */
 .chapter-transition[data-resting="true"] .chapter-frame { filter: none !important; transform: none !important; opacity: 1 !important; }
-.chapter-transition[data-motion="desktop"] .chapter-outgoing { position: sticky; top: 0; }
+.chapter-transition[data-motion] .chapter-outgoing { position: sticky; top: 0; }
 .chapter-outgoing[inert] .gallery-track { animation-play-state: paused; }
 
 .about {

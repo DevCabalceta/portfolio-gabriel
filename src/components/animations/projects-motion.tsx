@@ -44,10 +44,14 @@ export function ProjectsMotion({ children }: { children: ReactNode }) {
           scrollTrigger: { trigger: item, start: "top 94%", toggleActions: "play none none reverse" },
         });
       });
-      gsap.from(element.querySelector(".project-carousel"), { y: 24, opacity: 0, duration: 0.8, ease: "power2.out",
+      gsap.from(element.querySelector(".project-carousel"), { y: 48, opacity: 0, duration: 1, ease: "power3.out",
         scrollTrigger: { trigger: element.querySelector(".project-carousel"), start: "top 92%", once: true },
       });
       ScrollTrigger.refresh();
+      // Embla owns the track/slide transforms; animate their inner content only.
+      gsap.from(element.querySelectorAll(".project-composition"), { y: 32, opacity: 0, filter: "blur(5px)", duration: 0.9, stagger: 0.07, ease: "power3.out", clearProps: "transform,opacity,filter",
+        scrollTrigger: { trigger: element.querySelector(".carousel-viewport"), start: "top 88%", once: true },
+      });
       return () => { if (about) { about.inert = false; delete about.dataset.resting; } };
     }, element);
     let refreshFrame = 0;

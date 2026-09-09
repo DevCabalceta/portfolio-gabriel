@@ -129,23 +129,36 @@
 }
 
 .selected-projects {
-  display: grid;
-  grid-auto-flow: column;
-  grid-auto-columns: calc((100% - 56px) / 3);
+  display: flex;
   gap: 28px;
-  overflow-x: auto;
-  overscroll-behavior-x: contain;
-  scroll-snap-type: x mandatory;
-  scrollbar-width: thin;
-  scrollbar-color: #ff784b #292b24;
   padding: 4px 0 24px;
 }
 
-.selected-projects>article {
-  scroll-snap-align: start;
+.carousel-viewport {
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
 }
 
-.selected-projects:focus-visible {
+.project-carousel[data-enhanced="true"] .carousel-viewport {
+  overflow: hidden;
+  cursor: grab;
+  touch-action: pan-y pinch-zoom;
+}
+
+.project-carousel[data-dragging="true"] .carousel-viewport {
+  cursor: grabbing;
+}
+
+.selected-projects img {
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
+.selected-projects>article {
+  flex: 0 0 calc((100% - 56px) / 3);
+}
+
+.carousel-viewport:focus-visible {
   outline: 2px solid var(--accent);
   outline-offset: 4px;
 }
@@ -178,18 +191,20 @@
 }
 
 .carousel-navigation button {
-  width: 48px;
-  height: 48px;
-  border: 1px solid #44463c;
-  background: #20211d;
-  color: var(--foreground);
-  font-size: 24px;
+  width: 52px;
+  height: 52px;
+  border: 2px solid var(--accent);
+  color: var(--accent);
+  font-size: 28px;
   cursor: pointer;
+  box-shadow: 0 4px 22px rgb(255 120 75 / 15%);
+  transition: background 180ms, transform 180ms;
 }
 
-.carousel-navigation button:hover:not(:disabled) {
-  color: var(--accent);
-  border-color: var(--accent);
+.carousel-navigation button:hover {
+  color: #fdfdfd;
+  background: var(--accent);
+  transform: scale(1.02);
 }
 
 .carousel-navigation button:disabled {
@@ -204,6 +219,69 @@
 
 .project-carousel[data-enhanced="false"] .carousel-navigation {
   visibility: hidden;
+}
+
+.project-carousel[data-enhanced="false"] .carousel-footer {
+  display: none;
+}
+
+.carousel-footer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 18px;
+  margin-top: 14px;
+}
+
+.carousel-dots {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.carousel-dots button {
+  width: 32px;
+  height: 44px;
+  display: grid;
+  place-items: center;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+}
+
+.carousel-dots button span {
+  width: 6px;
+  height: 6px;
+  border-radius: 100%;
+  background: #68695e;
+  transition: width 180ms, background 180ms;
+}
+
+.carousel-dots button[aria-current="true"] span {
+  width: 20px;
+  border-radius: 6px;
+  background: var(--accent);
+}
+
+.carousel-dots button:hover span {
+  background: var(--foreground);
+}
+
+.carousel-dots button:focus-visible,
+.carousel-play:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.carousel-play {
+  width: 44px;
+  height: 44px;
+  flex-shrink: 0;
+  color: var(--accent);
+  background: #20211d;
+  border: 1px solid #44463c;
+  border-radius: 50%;
+  cursor: pointer;
 }
 
 .featured-project {
@@ -704,15 +782,27 @@
 }
 
 @media (min-width: 700px) and (max-width: 1099px) {
-  .selected-projects {
-    grid-auto-columns: calc((100% - 28px) / 2);
+  .selected-projects>article {
+    flex-basis: calc((100% - 28px) / 2);
   }
 }
 
 @media (max-width: 699px) {
   .selected-projects {
-    grid-auto-columns: 100%;
     gap: 20px;
+  }
+
+  .selected-projects>article {
+    flex-basis: 100%;
+  }
+
+  .carousel-footer {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .carousel-dots button {
+    width: 24px;
   }
 
   .project-carousel {
@@ -866,10 +956,20 @@
 }
 
 .gallery-thumbnails button {
-  width: 80px;
+  width: 110px;
   min-height: 50px;
   flex-shrink: 0;
   padding: 3px;
+  overflow: hidden;
+}
+
+.gallery-thumb-title {
+  display: block;
+  padding: 5px 2px 2px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 9px;
 }
 
 .gallery-thumbnails .project-media {
@@ -877,8 +977,13 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .carousel-play {
+    display: none;
+  }
 
   .project-row-plus,
+  .carousel-navigation button,
+  .carousel-dots button span,
   .project-links svg {
     transition: none;
   }

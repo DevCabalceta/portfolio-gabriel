@@ -1,60 +1,74 @@
 "use client";
 
 import { useEffect, useRef, useState, type ReactNode } from "react";
+import useEmblaCarousel from "embla-carousel-react";
+import { useReducedMotion } from "framer-motion";
 import type { Dictionary } from "@/i18n/dictionaries";
+import { useProjectGallery } from "./project-gallery";
 
-export function ProjectCarousel({ children, copy }: { children: ReactNode; copy: Dictionary["work"] }) {
-  const track = useRef<HTMLDivElement>(null);
-  const [range, setRange] = useState({ first: 1, last: 3, count: 11, atStart: true, atEnd: false });
-  const [ready, setReady] = useState(false);
+export function ProjectCarousel({ children, titles, copy }: { children: ReactNode; titles: string[]; copy: Dictionary["work"] }) {
+  const root = useRef<HTMLDivElement>(null);
+  const reduced = useReducedMotion();
+  const [viewport, api] = useEmblaCarousel({ loop: true, align: "start", duration: 30 });
+  const [selected, setSelected] = useState(0);
+  const [visible, setVisible] = useState(false);
+  const [hidden, setHidden] = useState(false);
+  const [hovered, setHovered] = useState(false);
+  const [focused, setFocused] = useState(false);
+  const [dragging, setDragging] = useState(false);
+  const [paused, setPaused] = useState(false);
+  const { isOpen } = useProjectGallery();
+  const playing = Boolean(api && visible && !hidden && !hovered && !focused && !dragging && !paused && !reduced && !isOpen);
 
   useEffect(() => {
-    const element = track.current;
-    if (!element) return;
-    const update = () => {
-      const bounds = element.getBoundingClientRect();
-      const items = Array.from(element.children);
-      const visible = items.map((item, index) => ({ index, box: item.getBoundingClientRect() }))
-        .filter(({ box }) => box.left < bounds.right - 4 && box.right > bounds.left + 4);
-      setRange({ first: (visible[0]?.index ?? 0) + 1, last: (visible.at(-1)?.index ?? 0) + 1, count: items.length,
-        atStart: element.scrollLeft < 2, atEnd: element.scrollLeft >= element.scrollWidth - element.clientWidth - 2 });
-    };
-    const observer = new ResizeObserver(update);
-    observer.observe(element);
-    element.addEventListener("scroll", update, { passive: true });
+    if (!api) return;
+    const update = () => setSelected(api.selectedScrollSnap());
+    const down = () => setDragging(true);
+    const up = () => setDragging(false);
     update();
-    setReady(true);
-    return () => { observer.disconnect(); element.removeEventListener("scroll", update); };
+    api.on("select", update).on("reInit", update).on("pointerDown", down).on("pointerUp", up);
+    return () => { api.off("select", update).off("reInit", update).off("pointerDown", down).off("pointerUp", up); };
+  }, [api]);
+
+  useEffect(() => {
+    const element = root.current;
+    if (!element) return;
+    const observer = new IntersectionObserver(([entry]) => setVisible(entry.isIntersecting), { threshold: 0.2 });
+    observer.observe(element);
+    const visibility = () => setHidden(document.hidden);
+    visibility();
+    document.addEventListener("visibilitychange", visibility);
+    return () => { observer.disconnect(); document.removeEventListener("visibilitychange", visibility); };
   }, []);
 
-  const goTo = (index: number) => {
-    const element = track.current;
-    const card = element?.children[index] as HTMLElement | undefined;
-    if (!element || !card) return;
-    const left = card.getBoundingClientRect().left - element.getBoundingClientRect().left + element.scrollLeft;
-    element.scrollTo({ left, behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "instant" : "smooth" });
-  };
-  const move = (direction: number) => {
-    const element = track.current;
-    if (!element) return;
-    const nearest = Array.from(element.children).reduce((best, item, index, items) =>
-      Math.abs(item.getBoundingClientRect().left - element.getBoundingClientRect().left) < Math.abs(items[best].getBoundingClientRect().left - element.getBoundingClientRect().left) ? index : best, 0);
-    goTo(Math.max(0, Math.min(element.children.length - 1, nearest + direction)));
-  };
+  useEffect(() => {
+    if (!playing || !api) return;
+    const timer = window.setInterval(() => api.scrollNext(), 3000);
+    return () => window.clearInterval(timer);
+  }, [api, playing]);
 
-  return <div id="selected-projects" className="project-carousel" role="region" aria-label={copy.selected} aria-roledescription={copy.carousel} data-enhanced={ready}>
+  return <div ref={root} id="selected-projects" className="project-carousel" role="region" aria-label={copy.selected} aria-roledescription={copy.carousel}
+    data-enhanced={Boolean(api)} data-selected={selected} data-playing={playing} data-dragging={dragging}
+    onMouseEnter={() => setHovered(true)} onMouseLeave={() => setHovered(false)}
+    onFocusCapture={() => setFocused(true)} onBlurCapture={(event) => { if (!event.currentTarget.contains(event.relatedTarget)) setFocused(false); }}>
     <div className="carousel-toolbar">
-      <p className="micro-label carousel-instruction">{copy.browse}</p>
+      <p className="micro-label carousel-instruction">{copy.drag}</p>
       <div className="carousel-navigation">
-        <span className="carousel-position micro-label" aria-live="polite" aria-atomic="true">{String(range.first).padStart(2, "0")}–{String(range.last).padStart(2, "0")} / {String(range.count).padStart(2, "0")}</span>
-        <button type="button" aria-label={copy.previousProject} aria-controls="project-track" disabled={range.atStart} onClick={() => move(-1)}>←</button>
-        <button type="button" aria-label={copy.nextProject} aria-controls="project-track" disabled={range.atEnd} onClick={() => move(1)}>→</button>
+        <span className="carousel-position micro-label" aria-live={playing ? "off" : "polite"} aria-atomic="true">{String(selected + 1).padStart(2, "0")} / {String(titles.length).padStart(2, "0")}</span>
+        <button type="button" aria-label={copy.previousProject} aria-controls="project-track" onClick={() => api?.scrollPrev(Boolean(reduced))}>←</button>
+        <button type="button" aria-label={copy.nextProject} aria-controls="project-track" onClick={() => api?.scrollNext(Boolean(reduced))}>→</button>
       </div>
     </div>
-    <div ref={track} id="project-track" className="selected-projects" tabIndex={0} aria-label={copy.selected} onKeyDown={(event) => {
+    <div ref={viewport} className="carousel-viewport" tabIndex={0} aria-label={copy.selected} onKeyDown={(event) => {
       if (event.target !== event.currentTarget) return;
-      if (event.key === "ArrowRight" || event.key === "ArrowLeft") { event.preventDefault(); move(event.key === "ArrowRight" ? 1 : -1); }
-      if (event.key === "Home" || event.key === "End") { event.preventDefault(); goTo(event.key === "Home" ? 0 : range.count - 1); }
-    }}>{children}</div>
+      if (event.key === "ArrowRight" || event.key === "ArrowLeft") { event.preventDefault(); if (event.key === "ArrowRight") api?.scrollNext(Boolean(reduced)); else api?.scrollPrev(Boolean(reduced)); }
+      if (event.key === "Home" || event.key === "End") { event.preventDefault(); api?.scrollTo(event.key === "Home" ? 0 : titles.length - 1, Boolean(reduced)); }
+    }}><div id="project-track" className="selected-projects">{children}</div></div>
+    <div className="carousel-footer">
+      <div className="carousel-dots" role="group" aria-label={copy.selected}>{titles.map((title, index) => <button type="button" key={title}
+        aria-label={`${copy.goToProject}: ${title}`} aria-current={selected === index ? "true" : undefined} aria-controls="project-track"
+        onClick={() => api?.scrollTo(index, Boolean(reduced))}><span /></button>)}</div>
+      <button type="button" className="carousel-play" onClick={() => setPaused((value) => !value)} aria-label={paused ? copy.playCarousel : copy.pauseCarousel} aria-pressed={paused}>{paused ? "▷" : "Ⅱ"}</button>
+    </div>
   </div>;
 }
