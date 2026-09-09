@@ -47,12 +47,14 @@ export function ChapterTransition({ id, previous, children }: { id: string; prev
       gsap.from(incoming.querySelectorAll("[data-about-char]"), {
         yPercent: 110, rotate: 7, opacity: 0, duration: 0.85, stagger: 0.045,
         ease: "power3.out",
-        scrollTrigger: { trigger: incoming.querySelector(".about-title"), start: "top 82%", toggleActions: "play none none reverse" },
+        // These elements live inside the pin owned by ProjectsMotion. Account
+        // for that offset, and keep revealed content visible on the return trip.
+        scrollTrigger: { trigger: incoming.querySelector(".about-title"), pinnedContainer: ".about-pin", start: "top 82%", once: true },
       });
       incoming.querySelectorAll("[data-about-reveal]").forEach((item) => {
         gsap.from(item, {
           y: desktop ? 32 : 20, opacity: 0, duration: 0.8, ease: "power2.out",
-          scrollTrigger: { trigger: item, start: "top 90%", toggleActions: "play none none reverse" },
+          scrollTrigger: { trigger: item, pinnedContainer: ".about-pin", start: "top 90%", once: true },
         });
       });
 

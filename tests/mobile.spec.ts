@@ -100,7 +100,7 @@ test("mobile About navigation and return preserve readable content", async ({ pa
   await expect(page.getByRole("dialog")).not.toBeVisible();
   await expect(page).toHaveURL(/#about$/);
   await expect(page.locator("[data-about-char]").last()).toHaveCSS("opacity", "1");
-  await expect(page.getByRole("heading", { level: 2 })).toBeInViewport({ ratio: 1 });
+  await expect(page.locator("#about-title")).toBeInViewport({ ratio: 1 });
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
   await page.getByRole("button", { name: "Volver al inicio" }).tap();
   await expect.poll(() => page.evaluate(() => window.scrollY)).toBe(0);

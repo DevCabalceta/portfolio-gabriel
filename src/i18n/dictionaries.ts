@@ -1,6 +1,19 @@
 import type { Locale } from "./config";
 
 const es = {
+  work: {
+    label: "Proyectos", eyebrow: "Del concepto a la pantalla",
+    titleFirst: "Código en", titleSecond: "acción",
+    introduction: "Plataformas que resuelven. Experiencias que conectan. Una selección de lo que he construido.",
+    selected: "Todos los proyectos", explore: "Explorar los proyectos", index: "Más proyectos",
+    carousel: "carrusel", browse: "Explora los proyectos", previousProject: "Proyecto anterior", nextProject: "Proyecto siguiente",
+    indexDescription: "Sistemas institucionales, productos en desarrollo y exploraciones frontend.",
+    professional: "Profesional", personal: "Personal", published: "Publicado", development: "En desarrollo",
+    visit: "Visitar proyecto", repository: "Ver código", details: "Explorar el proyecto", gallery: "Más imágenes",
+    description: "El proyecto", problem: "El reto", solution: "La solución", results: "Resultados",
+    technologies: "Tecnologías", closing: "¿Construimos lo siguiente?", contact: "Hablemos de tu proyecto",
+    collaboration: "Colaboración", ownership: "Colaboré en este proyecto. Pertenece a", preview: "Ver capturas", closeGallery: "Cerrar galería", previousImage: "Imagen anterior", nextImage: "Imagen siguiente", imageOf: "de",
+  },
   about: {
     label: "Sobre mí", eyebrow: "La persona detrás de la pantalla",
     kicker: "Soy Gabriel. Esto es lo que me mueve.",
@@ -45,6 +58,19 @@ const es = {
 export type Dictionary = typeof es;
 
 const en: Dictionary = {
+  work: {
+    label: "Work", eyebrow: "From concept to screen",
+    titleFirst: "Code in", titleSecond: "action",
+    introduction: "Platforms that solve problems. Experiences that connect. A selection of what I've built.",
+    selected: "All projects", explore: "Explore the projects", index: "More projects",
+    carousel: "carousel", browse: "Browse the projects", previousProject: "Previous project", nextProject: "Next project",
+    indexDescription: "Institutional systems, products in development and frontend explorations.",
+    professional: "Professional", personal: "Personal", published: "Published", development: "In development",
+    visit: "Visit project", repository: "View code", details: "Explore the project", gallery: "More images",
+    description: "The project", problem: "The challenge", solution: "The solution", results: "Results",
+    technologies: "Technologies", closing: "What shall we build next?", contact: "Let's talk about your project",
+    collaboration: "Collaboration", ownership: "I collaborated on this project. It belongs to", preview: "View screenshots", closeGallery: "Close gallery", previousImage: "Previous image", nextImage: "Next image", imageOf: "of",
+  },
   about: {
     label: "About me", eyebrow: "The person behind the screen",
     kicker: "I'm Gabriel. Here's what drives me.",

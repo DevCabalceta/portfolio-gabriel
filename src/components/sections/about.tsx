@@ -10,6 +10,7 @@ export function About({ copy }: { copy: Dictionary["about"] }) {
   return (
     <section id="about" className="about" aria-labelledby="about-title" tabIndex={-1} data-chapter-incoming>
       <div className="about-atmosphere" aria-hidden="true" />
+      <div className="about-pin"><div className="about-frame">
       <div className="about-topline" data-about-reveal>
         <p className="micro-label"><span className="about-chapter">02 /</span> {copy.label}</p>
         <p className="micro-label about-edition">{copy.eyebrow}</p>
@@ -47,6 +48,8 @@ export function About({ copy }: { copy: Dictionary["about"] }) {
 
       <div className="about-footer" data-about-reveal>
         <span className="micro-label">San José, Costa Rica</span>
+      </div>
+      </div>
       </div>
     </section>
   );

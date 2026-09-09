@@ -10,6 +10,9 @@ export interface ProjectMedia {
 export interface Project {
   id: string;
   title: string;
+  displayTitle?: Localized<string>;
+  featured?: boolean;
+  owner?: string;
   category: "professional" | "personal";
   status: "published" | "in-development";
   summary: Localized<string>;

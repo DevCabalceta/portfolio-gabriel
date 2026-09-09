@@ -5,6 +5,7 @@ import { SiteHeader } from "@/components/layout/site-header";
 import { FloatingActions } from "@/components/layout/floating-actions";
 import { Hero } from "@/components/sections/hero";
 import { About } from "@/components/sections/about";
+import { Projects } from "@/components/sections/projects";
 import { ChapterTransition } from "@/components/animations/chapter-transition";
 
 export default async function Home({ params }: { params: Promise<{ locale: string }> }) {
@@ -17,6 +18,7 @@ export default async function Home({ params }: { params: Promise<{ locale: strin
       <SiteHeader locale={locale} copy={copy.nav} />
       <main id="main" tabIndex={-1}>
         <ChapterTransition id="home" previous={<Hero copy={copy.hero} />}><About copy={copy.about} /></ChapterTransition>
+        <Projects locale={locale} copy={copy.work} />
       </main>
       <FloatingActions copy={copy} />
     </>

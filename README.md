@@ -4,7 +4,7 @@ Portfolio profesional bilingüe desarrollado con Next.js, TypeScript y Tailwind 
 
 ## Estado de la entrega
 
-**Sección 01 aprobada. Sección 02: Sobre mí + transición de scroll, lista para revisión visual.** El desarrollo continúa sección por sección después de la revisión de Gabriel. Proyectos y las secciones posteriores permanecen pendientes.
+**Hero y Sobre mí aprobados. Sección 03: Proyectos, lista para revisión visual.** El desarrollo continúa sección por sección después de la revisión de Gabriel. Experiencia y las secciones posteriores permanecen pendientes.
 
 - [x] Revisar y limpiar la plantilla inicial de Next.js.
 - [x] Arquitectura de componentes, traducciones y datos tipados.
@@ -21,11 +21,15 @@ Portfolio profesional bilingüe desarrollado con Next.js, TypeScript y Tailwind 
 - [x] Revisión y aprobación visual del Hero.
 - [x] Sección 02: Sobre mí, con contenido del CV y traducciones ES/EN.
 - [x] Transición de Hero a Sobre mí: reducción de escala, desvanecimiento y desenfoque vinculados al scroll.
-- [ ] Revisión y aprobación visual de Sobre mí.
-- [ ] Sección 03: Proyectos y casos de estudio.
+- [x] Revisión y aprobación visual de Sobre mí.
+- [x] Sección 03: Proyectos con once tarjetas en carrusel y galerías de capturas.
+- [x] Transición de Sobre mí a Proyectos, título animado y revelado de imágenes.
+- [ ] Revisión y aprobación visual de Proyectos.
+- [ ] Completar casos de estudio y tecnologías por proyecto con información confirmada.
 - [ ] Sección 04: Experiencia.
 - [ ] Sección 05: Tecnologías e iconos interactivos.
 - [ ] Formación y certificaciones.
+- [ ] Preguntas y respuestas con el diseño de lista desplegable.
 - [ ] Contacto y cierre.
 - [x] Botones flotantes monocromáticos de GitHub, LinkedIn, correo, WhatsApp y regreso arriba después del Hero.
 - [ ] Indicador de progreso global de lectura.
@@ -66,12 +70,12 @@ src/
   components/
     animations/              Ciclo de vida de GSAP y ScrollTrigger
     layout/                  Header fijo, menú móvil, idiomas y botones flotantes
-    sections/                Hero, robot de Spline, galería y Sobre mí
-    ui/                      Enlaces animados e iconos reutilizables
+    sections/                Hero, robot de Spline, galería, Sobre mí y Proyectos
+    ui/                      Enlaces animados, iconos, multimedia y detalles de proyectos
   data/                      Perfil, navegación, proyectos, experiencia y tecnologías
   i18n/                      Configuración y diccionarios tipados ES/EN
   types/                     Contratos para proyectos, multimedia y experiencia
-  styles/                    Estilos del capítulo Sobre mí y transición narrativa
+    styles/                    Estilos de Sobre mí, Proyectos y transiciones narrativas
   proxy.ts                   Redirección de la raíz según cookie de idioma
 scripts/preview.mjs           Capturas locales de escritorio y móvil
 tests/portfolio.spec.ts       Pruebas funcionales en navegador
@@ -88,7 +92,7 @@ Las páginas, el Hero y los datos se renderizan en servidor. Los componentes cli
 - Tecnologías solicitadas: `src/data/technologies.ts`.
 - Secciones del menú: `src/data/navigation.ts`. Activar `ready` cuando se implemente la sección y exista su ancla.
 
-Por ahora la navegación ofrece Inicio, Sobre mí, CV y correo. Los enlaces hacia Proyectos, Experiencia, Tecnologías y Contacto se incorporarán con sus respectivas secciones. El ancla `#home` está en el contenedor estable de la transición para que el regreso al inicio funcione incluso cuando el Hero está fijado y reducido.
+Por ahora la navegación ofrece Inicio, Sobre mí, Proyectos, CV y correo. Los enlaces hacia Experiencia, Tecnologías y Contacto se incorporarán con sus respectivas secciones. Las anclas `#home`, `#about` y `#work` permanecen en contenedores estables; se animan sus contenidos para evitar que los enlaces de navegación apunten a posiciones transformadas.
 
 El CV es la fuente de experiencia y proyectos. El perfil de GitHub fue proporcionado directamente por Gabriel. No se han inventado años, métricas, repositorios ni tecnologías por proyecto. Los campos aún no confirmados permanecen vacíos u opcionales. Las tecnologías de los clones Astro sí están especificadas en el CV. Los estados de los proyectos reflejan el documento recibido, no una auditoría de los sitios externos.
 
@@ -121,11 +125,35 @@ El CV descargable es el original en inglés en ambos idiomas. No se muestra disp
 - En desktop, el Hero conserva su altura de `100vh` y permanece en posición sticky mientras Sobre mí asciende por delante. La escala baja de 1 a 0.84, la opacidad de 1 a 0.08 y el desenfoque aumenta de 0 a 9 px según el avance real del scroll.
 - En móvil se conserva el desplazamiento natural y la reducción es más sutil (hasta 0.96), con desenfoque de hasta 5 px. El contenido de Sobre mí fluye verticalmente y puede ocupar más de una pantalla.
 - El inicio de la transición nunca es negativo: las diferencias entre `100svh` y la altura visible al cambiar las barras del navegador móvil no adelantan el efecto. En reposo, el Hero usa `filter: none`, `transform: none` y opacidad completa; al volver arriba recupera esa nitidez.
-- El título entra letra por letra, con desplazamiento vertical y una ligera rotación, cuando alcanza el 82 % de la altura de pantalla. Su animación tiene duración propia para que un scroll rápido no la salte. Cada bloque de contenido se revela al llegar al 90 % de la pantalla. Al volver arriba, la secuencia se invierte y el Hero recupera tamaño, opacidad y nitidez. El título conserva un nombre accesible completo.
+- El título entra letra por letra, con desplazamiento vertical y una ligera rotación, cuando alcanza el 82 % de la altura de pantalla. Su animación tiene duración propia para que un scroll rápido no la salte. Cada bloque de contenido se revela al llegar al 90 % de la pantalla. Las entradas de texto se ejecutan una vez para conservar su visibilidad al regresar; la transición del Hero sigue siendo reversible y recupera tamaño, opacidad y nitidez. El título conserva un nombre accesible completo.
 - El Hero cubierto pasa a `inert` para retirar sus controles de la navegación por teclado, y la galería deja de animarse. Al retroceder, se restauran las interacciones.
 - Sin JavaScript o con `prefers-reduced-motion`, ambas secciones siguen en el flujo normal, visibles y sin fijación ni cambios de escala. `gsap.matchMedia()` limpia estilos y triggers al desmontar o cambiar de breakpoint/preferencia.
 
 El menú de escritorio y el móvil ya incluyen Sobre mí. El regreso al inicio está en el grupo flotante. Los estilos específicos están separados en `src/styles/chapters.css`.
+
+## Sección 03: Proyectos
+
+Los once proyectos comparten un **carrusel horizontal** con el diseño de tarjetas aprobado. Se muestran tres tarjetas en escritorio (desde 1100 px), dos en tablet (700–1099 px) y una en móvil. Los primeros cinco conservan su orden: Fan de Maíz, GIF Search App, Upgrade! Comunicación y Entretenimiento, Academic ToDo y Spotify Clone. Después siguen Matrícula, Intranet, CDC, EXPOTEC, BosNet y Tesla.
+
+- Navegación: botones anterior/siguiente, contador de tarjetas visibles, desplazamiento táctil y con trackpad, y ajuste a cada tarjeta mediante CSS scroll-snap. Al enfocar el carrusel, las flechas recorren los proyectos y Home/End llevan a los extremos. No hay avance automático ni bloqueo del scroll vertical de la página. Los botones se desactivan al alcanzar los extremos.
+- Sin JavaScript: todas las tarjetas y sus enlaces siguen en una fila desplazable, con barra horizontal. Los controles que requieren JavaScript permanecen ocultos. Con movimiento reducido, el desplazamiento de los botones es inmediato.
+- Atribución: los cinco proyectos profesionales mantienen «Colaboración · CEDES Don Bosco» y aclaran que Gabriel colaboró y que pertenecen a la institución. Upgrade y Academic ToDo están identificados como «En desarrollo», sin enlace de producción.
+- Galerías: pulsar una portada abre sus capturas a pantalla completa, con miniaturas, botones anterior/siguiente, flechas del teclado, Escape y restauración del foco. Upgrade y ToDo conservan tres capturas originales cada uno. Sin JavaScript, la portada enlaza al archivo original.
+- Datos: src/data/projects.ts conserva los once proyectos; featuredProjectIds determina cuáles aparecen primero. owner registra la propiedad institucional. Las tecnologías, repositorios y casos de estudio solo aparecen cuando hay información confirmada.
+- Implementación: project-carousel.tsx gestiona el desplazamiento nativo y el contador mediante ResizeObserver. projects.tsx renderiza todas las tarjetas; project-gallery.tsx administra el diálogo y project-media.tsx las imágenes, GIF y videos.
+- Transición: Proyectos asciende por encima de Sobre mí. El espacio del contenido fijado conserva su altura mediante una base flex automática, evitando que la sección se colapse durante el pin y desplace los anclajes. El pin se recalcula antes de los triggers dependientes; las animaciones del contenido de Sobre mí consideran su contenedor fijado y se ejecutan una vez, evitando ocultar nuevamente los textos al regresar. El contenedor exterior permite pintar el contenido fijado sin recortarlo. Fuera de la transición, Sobre mí recupera opacidad completa y elimina filtro y transformación. Se conserva la reducción, el desvanecimiento y el blur durante la superposición.
+
+El índice desplegable se retiró de Proyectos. Su dirección visual queda **reservada para una futura sección de preguntas y respuestas**, pendiente de implementación y revisión, igual que Experiencia.
+
+Spotify usa el [enlace Vercel confirmado](https://spotify-clone-silk-chi.vercel.app/) y el portal para familias se llama [BosNet](https://bosconet.cedesdonbosco.ed.cr/v1/). Las capturas públicas de los nueve proyectos publicados se guardan localmente en public/images/projects/ y scripts/capture-projects.mjs conserva las URLs de origen. Solo se capturan páginas públicas, sin iniciar sesión ni enviar formularios. Las seis imágenes de Upgrade/ToDo fueron proporcionadas por Gabriel y se conservan intactas; no se deducen métricas ni stacks de sus paneles.
+
+Para cambiar capturas, editar el arreglo media en los datos del proyecto. Para actualizar las capturas públicas:
+
+```bash
+node scripts/capture-projects.mjs
+```
+
+Con el servidor activo, node scripts/preview-projects.mjs genera vistas del carrusel y las galerías en escritorio y móvil dentro de artifacts/. tests/projects.spec.ts comprueba los once proyectos, los extremos del carrusel, teclado, galerías, atribuciones, capturas, enlaces y movimiento reducido. La regresión de Sobre mí incluye regreso después de pasar el pin, cambio de altura de ventana, visibilidad real del título y recuperación del texto en Chromium y WebKit.
 
 ## Navbar y botones flotantes
 
@@ -211,3 +239,8 @@ Documentación: [internacionalización de Next.js](https://nextjs.org/docs/app/g
 - **Revisión de Entrega 02:** desenfoque en la salida del Hero; navbar fijo; controles flotantes monocromáticos después del Hero; fotografía trasladada a Sobre mí; título animado letra por letra al entrar en pantalla; robot interactivo de Spline con pausa, movimiento reducido y recuperación de errores. README y verificaciones actualizados. Continúa la revisión de estas dos secciones antes de pasar a Proyectos.
 - **Ajustes de Hero y navegación:** robot exclusivo de desktop, sin control de pausa visible; WhatsApp añadido al grupo flotante con el número confirmado de Costa Rica; navbar más bajo, transparente y con desenfoque. Se conservan la pausa automática del robot, el movimiento reducido y la revisión sección por sección.
 - **Nitidez móvil:** corregido el inicio anticipado de la transición cuando la altura visible supera `100svh`. Se eliminan filtros y transformaciones del Hero en reposo y se verifica el caso en Chromium y WebKit.
+- **2026-09-08 — Entrega 03:** Proyectos bilingüe con tres destacados y capturas reales de sus páginas públicas, siete proyectos en un índice desplegable y soporte para multimedia y casos de estudio. Navegación a Proyectos, animaciones de entrada y transición reversible desde Sobre mí. Pendiente de revisión antes de continuar con Experiencia.
+
+- **2026-09-09 — Revisión de Entrega 03:** cinco destacados en cuadrícula, seis proyectos en índice animado con capturas, galerías ampliables y las seis imágenes de Upgrade/ToDo. Sobre mí queda fijado mientras Proyectos asciende por encima. Atribución explícita de colaboración y propiedad de CEDES Don Bosco, nombre BosNet y enlaces de BosNet/Spotify corregidos. README y pruebas actualizados; continúa la revisión de Proyectos.
+
+- **Carrusel y regreso a Sobre mí:** los once proyectos comparten las tarjetas del diseño aprobado en un carrusel responsive, con controles, contador, teclado y desplazamiento táctil. Se retira el índice y se reserva para preguntas y respuestas. Se corrige la coordinación de las entradas de texto con el pin de Sobre mí, se elimina el recorte del contenido fijado y se restaura la nitidez al regresar. README y pruebas de regresión actualizados.

@@ -7,7 +7,7 @@
 .chapter-outgoing[inert] .gallery-track { animation-play-state: paused; }
 
 .about {
-  position: relative; z-index: 2; isolation: isolate; overflow: clip;
+  position: relative; z-index: 2; isolation: isolate;
   min-height: 100svh; padding: clamp(36px, 5vw, 88px) var(--page-gutter) 0;
   display: flex; flex-direction: column; scroll-margin-top: 0;
   background: #171412; color: var(--foreground);

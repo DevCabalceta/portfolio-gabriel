@@ -128,7 +128,13 @@ test("the introduction and locale links work without JavaScript", async ({ brows
   await expect(page.locator("html")).toHaveAttribute("lang", "en");
   await expect(page.getByRole("link", { name: "Download CV" })).toBeVisible();
   await expect(page.locator(".gallery-track").first()).toHaveCSS("animation-play-state", "paused");
-  await expect(page.getByRole("heading", { level: 2 })).toHaveAccessibleName("Behind the code.");
+  await expect(page.locator("#about-title")).toHaveAccessibleName("Behind the code.");
+  await expect(page.locator("#work-title")).toHaveAccessibleName("Code in action.");
+  const archivedProject = page.locator('[data-project="tesla"]');
+  await archivedProject.scrollIntoViewIfNeeded();
+  await expect(archivedProject).toBeInViewport();
+  await expect(archivedProject.locator(".project-links a")).toHaveAttribute("href", "https://gabriel-tesla-landing.netlify.app/");
+  await expect(archivedProject.locator(".project-gallery-trigger")).toHaveAttribute("href", "/images/projects/tesla.jpg");
   expect(await page.locator(".chapter-outgoing").evaluate((element) => getComputedStyle(element).position)).toBe("relative");
   await context.close();
 });
@@ -153,7 +159,7 @@ test("scroll transition blurs, shrinks and fades the Hero, reveals About and rev
   await expect(page.locator(".floating-actions").getByRole("link", { name: "WhatsApp" })).toHaveAttribute("href", "https://wa.me/50683442305");
   await expect(page.locator(".floating-actions a").first()).toHaveAttribute("href", "https://github.com/DevCabalceta");
   await expect(page.locator("[data-about-char]").last()).toHaveCSS("opacity", "1");
-  await expect(page.getByRole("heading", { level: 2 })).toBeInViewport({ ratio: 1 });
+  await expect(page.locator("#about-title")).toBeInViewport({ ratio: 1 });
   await page.getByRole("button", { name: "Volver al inicio" }).click();
   await expect.poll(() => page.evaluate(() => window.scrollY)).toBe(0);
   await expect(frame).toHaveCSS("opacity", "1");
@@ -165,7 +171,7 @@ test("About navigation works with reduced motion and reveals real profile conten
   await page.goto("/en");
   await page.getByRole("navigation", { name: "Main navigation" }).getByRole("link", { name: "About", exact: true }).click();
   await expect(page).toHaveURL(/\/en#about$/);
-  await expect(page.getByRole("heading", { level: 2 })).toBeInViewport({ ratio: 1 });
+  await expect(page.locator("#about-title")).toBeInViewport({ ratio: 1 });
   await expect(page.locator("#about")).toContainText("Cedes Don Bosco");
   await expect(page.locator(".chapter-transition")).not.toHaveAttribute("data-motion");
   await expect(page.locator(".chapter-frame")).toHaveCSS("transform", "none");
