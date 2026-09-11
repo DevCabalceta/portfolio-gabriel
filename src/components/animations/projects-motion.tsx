@@ -3,6 +3,7 @@
 import { useLayoutEffect, useRef, type ReactNode } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { createCinematicSectionTransition } from "./cinematic-section-transition";
 
 export function ProjectsMotion({ children }: { children: ReactNode }) {
   const root = useRef<HTMLDivElement>(null);
@@ -17,24 +18,9 @@ export function ProjectsMotion({ children }: { children: ReactNode }) {
       const about = document.querySelector<HTMLElement>(".about-frame");
       const aboutSection = document.querySelector<HTMLElement>("#about");
       const aboutPin = document.querySelector<HTMLElement>(".about-pin");
-      if (aboutSection && aboutPin) {
-        ScrollTrigger.create({
-          trigger: aboutSection, pin: aboutPin, pinSpacing: false,
-          start: "bottom bottom", endTrigger: element, end: "top top",
-          invalidateOnRefresh: true, anticipatePin: 1, refreshPriority: 1,
-        });
-      }
-      if (about) {
-        gsap.fromTo(about, { scale: 1, opacity: 1, filter: "blur(0px)" }, {
-          scale: desktop ? 0.9 : 0.97, opacity: 0.12, filter: `blur(${desktop ? 7 : 4}px)`,
-          ease: "none", force3D: false,
-          scrollTrigger: {
-            trigger: element, start: "top bottom", end: "top top", scrub: 0.35,
-            onUpdate: (self) => { about.inert = self.progress >= 0.98; about.dataset.resting = String(self.progress === 0); },
-            onRefresh: (self) => { about.inert = self.progress >= 0.98; about.dataset.resting = String(self.progress === 0); },
-          },
-        });
-      }
+      const cleanupTransition = about && aboutSection && aboutPin
+        ? createCinematicSectionTransition({ incoming: element, outgoing: about, desktop, pin: { trigger: aboutSection, target: aboutPin }, restingTarget: about })
+        : undefined;
       gsap.from(element.querySelectorAll("[data-work-char]"), {
         yPercent: 110, opacity: 0, rotate: 5, stagger: 0.045, duration: 0.9, ease: "power3.out",
         scrollTrigger: { trigger: element.querySelector(".work-title"), start: "top 85%", toggleActions: "play none none reverse" },
@@ -52,7 +38,7 @@ export function ProjectsMotion({ children }: { children: ReactNode }) {
       gsap.from(element.querySelectorAll(".project-composition"), { y: 32, opacity: 0, filter: "blur(5px)", duration: 0.9, stagger: 0.07, ease: "power3.out", clearProps: "transform,opacity,filter",
         scrollTrigger: { trigger: element.querySelector(".carousel-viewport"), start: "top 88%", once: true },
       });
-      return () => { if (about) { about.inert = false; delete about.dataset.resting; } };
+      return () => { cleanupTransition?.(); };
     }, element);
     let refreshFrame = 0;
     const refresh = () => {

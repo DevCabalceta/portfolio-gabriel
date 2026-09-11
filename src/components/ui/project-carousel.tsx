@@ -2,23 +2,17 @@
 
 import { useEffect, useRef, useState, type ReactNode } from "react";
 import useEmblaCarousel from "embla-carousel-react";
-import { useReducedMotion } from "framer-motion";
 import type { Dictionary } from "@/i18n/dictionaries";
-import { useProjectGallery } from "./project-gallery";
 
 export function ProjectCarousel({ children, titles, copy }: { children: ReactNode; titles: string[]; copy: Dictionary["work"] }) {
   const root = useRef<HTMLDivElement>(null);
-  const reduced = useReducedMotion();
+  const [reduced, setReduced] = useState(true);
   const [viewport, api] = useEmblaCarousel({ loop: true, align: "start", duration: 30 });
   const [selected, setSelected] = useState(0);
   const [visible, setVisible] = useState(false);
   const [hidden, setHidden] = useState(false);
-  const [hovered, setHovered] = useState(false);
-  const [focused, setFocused] = useState(false);
   const [dragging, setDragging] = useState(false);
-  const [paused, setPaused] = useState(false);
-  const { isOpen } = useProjectGallery();
-  const playing = Boolean(api && visible && !hidden && !hovered && !focused && !dragging && !paused && !reduced && !isOpen);
+  const playing = Boolean(api && visible && !hidden && !reduced);
 
   useEffect(() => {
     if (!api) return;
@@ -36,9 +30,13 @@ export function ProjectCarousel({ children, titles, copy }: { children: ReactNod
     const observer = new IntersectionObserver(([entry]) => setVisible(entry.isIntersecting), { threshold: 0.2 });
     observer.observe(element);
     const visibility = () => setHidden(document.hidden);
+    const media = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const motionPreference = () => setReduced(media.matches);
     visibility();
+    motionPreference();
+    media.addEventListener("change", motionPreference);
     document.addEventListener("visibilitychange", visibility);
-    return () => { observer.disconnect(); document.removeEventListener("visibilitychange", visibility); };
+    return () => { observer.disconnect(); media.removeEventListener("change", motionPreference); document.removeEventListener("visibilitychange", visibility); };
   }, []);
 
   useEffect(() => {
@@ -48,9 +46,7 @@ export function ProjectCarousel({ children, titles, copy }: { children: ReactNod
   }, [api, playing]);
 
   return <div ref={root} id="selected-projects" className="project-carousel" role="region" aria-label={copy.selected} aria-roledescription={copy.carousel}
-    data-enhanced={Boolean(api)} data-selected={selected} data-playing={playing} data-dragging={dragging}
-    onMouseEnter={() => setHovered(true)} onMouseLeave={() => setHovered(false)}
-    onFocusCapture={() => setFocused(true)} onBlurCapture={(event) => { if (!event.currentTarget.contains(event.relatedTarget)) setFocused(false); }}>
+    data-enhanced={Boolean(api)} data-selected={selected} data-playing={playing} data-dragging={dragging}>
     <div className="carousel-toolbar">
       <p className="micro-label carousel-instruction">{copy.drag}</p>
       <div className="carousel-navigation">
@@ -68,7 +64,6 @@ export function ProjectCarousel({ children, titles, copy }: { children: ReactNod
       <div className="carousel-dots" role="group" aria-label={copy.selected}>{titles.map((title, index) => <button type="button" key={title}
         aria-label={`${copy.goToProject}: ${title}`} aria-current={selected === index ? "true" : undefined} aria-controls="project-track"
         onClick={() => api?.scrollTo(index, Boolean(reduced))}><span /></button>)}</div>
-      <button type="button" className="carousel-play" onClick={() => setPaused((value) => !value)} aria-label={paused ? copy.playCarousel : copy.pauseCarousel} aria-pressed={paused}>{paused ? "▷" : "Ⅱ"}</button>
     </div>
   </div>;
 }

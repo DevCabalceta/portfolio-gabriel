@@ -3,6 +3,7 @@
 import { useEffect, useRef, type ReactNode } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { createCinematicSectionTransition } from "./cinematic-section-transition";
 
 export function ChapterTransition({ id, previous, children }: { id: string; previous: ReactNode; children: ReactNode }) {
   const root = useRef<HTMLDivElement>(null);
@@ -21,27 +22,9 @@ export function ChapterTransition({ id, previous, children }: { id: string; prev
       if (context.conditions?.reduced) return;
       const desktop = Boolean(context.conditions?.desktop);
       element.dataset.motion = desktop ? "desktop" : "mobile";
-      const updateFrame = (self: ScrollTrigger) => {
-        outgoing.inert = self.progress >= 0.98;
-        element.dataset.resting = String(self.scroll() <= Math.max(0, self.start));
-      };
-
-      const timeline = gsap.timeline({
-        scrollTrigger: {
-          trigger: incoming,
-          // Mobile browser chrome can make 100svh shorter than the current
-          // viewport. A negative start would blur the Hero before any scroll.
-          start: () => Math.max(0, incoming.getBoundingClientRect().top + window.scrollY - window.innerHeight),
-          end: "top top",
-          scrub: desktop ? 0.5 : 0.25,
-          invalidateOnRefresh: true,
-          onUpdate: updateFrame,
-          onRefresh: updateFrame,
-        },
+      const cleanupTransition = createCinematicSectionTransition({
+        incoming, outgoing: frame, desktop, safeViewportStart: true, restingTarget: element, inertTarget: outgoing,
       });
-      timeline.fromTo(frame,
-        { scale: 1, opacity: 1, filter: "blur(0px)" },
-        { scale: desktop ? 0.84 : 0.96, opacity: 0.08, filter: `blur(${desktop ? 9 : 5}px)`, force3D: false, ease: "none", duration: 1 }, 0);
 
       // Reveal at the title itself, so the letters animate while they are readable.
       gsap.from(incoming.querySelectorAll("[data-about-char]"), {
@@ -59,9 +42,8 @@ export function ChapterTransition({ id, previous, children }: { id: string; prev
       });
 
       return () => {
+        cleanupTransition();
         delete element.dataset.motion;
-        element.dataset.resting = "true";
-        outgoing.inert = false;
       };
     }, element);
 
@@ -69,7 +51,7 @@ export function ChapterTransition({ id, previous, children }: { id: string; prev
   }, []);
 
   return (
-    <div ref={root} id={id} className="chapter-transition" data-resting="true" tabIndex={-1}>
+    <div ref={root} id={id} className="chapter-transition" tabIndex={-1}>
       <div className="chapter-outgoing"><div className="chapter-frame">{previous}</div></div>
       {children}
     </div>

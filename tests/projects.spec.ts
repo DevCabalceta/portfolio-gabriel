@@ -53,8 +53,8 @@ test("all carousel cards retain images, ownership and real destinations", async 
     await expect(row.locator(".project-media img")).toBeVisible();
     await expect.poll(() => row.locator("img").evaluate((image: HTMLImageElement) => image.complete && image.naturalWidth > 0)).toBe(true);
     if (await row.locator(".project-owner").count()) {
-      await expect(row.locator(".project-owner")).toContainText("Colaboración · CEDES Don Bosco");
-      await expect(row.locator(".project-ownership")).toHaveText("Colaboré en este proyecto. Pertenece a CEDES Don Bosco.");
+      await expect(row.locator(".project-owner")).toContainText("Colaboración frontend · CEDES Don Bosco");
+      await expect(row.locator(".project-ownership")).toHaveText("Colaboré en el desarrollo frontend de este proyecto. Pertenece a CEDES Don Bosco.");
     }
   }
   await expect(page.locator(".project-owner")).toHaveCount(5);
@@ -102,19 +102,27 @@ test("carousel stays in one row and screenshot galleries support keyboard and to
     const dialog = page.getByRole("dialog");
     await expect(dialog).toBeVisible();
     await expect(dialog.locator(".gallery-caption")).toContainText(`${start + 1} de 15 · 1/3`);
-    await expect(dialog.locator(".gallery-thumbnails button")).toHaveCount(15);
+    await expect(dialog.locator(".gallery-thumbnails")).toHaveCount(0);
     await expect(dialog.locator(".gallery-stage img")).toHaveAttribute("src", new RegExp(`${id}-1`));
     await dialog.getByRole("button", { name: "Imagen siguiente" }).click();
     await expect(dialog.locator(".gallery-caption")).toContainText("2/3");
     await page.keyboard.press("ArrowRight");
     await expect(dialog.locator(".gallery-stage img")).toHaveAttribute("src", new RegExp(`${id}-3`));
-    await dialog.locator(".gallery-thumbnails button").nth(start).click();
+    await page.keyboard.press("ArrowLeft");
+    await page.keyboard.press("ArrowLeft");
     await expect(dialog.locator(".gallery-caption")).toContainText("1/3");
     await expect(page.locator("body")).toHaveCSS("overflow", "hidden");
     await dialog.getByRole("button", { name: "Cerrar galería" }).focus();
     await page.keyboard.press("Shift+Tab");
-    await expect(dialog.locator(".gallery-thumbnails button").last()).toBeFocused();
+    await expect(dialog.getByRole("button", { name: "Imagen siguiente" })).toBeFocused();
     expect(await dialog.evaluate((element) => element.scrollHeight <= element.clientHeight)).toBe(true);
+    expect(await dialog.evaluate((element) => element.scrollWidth <= element.clientWidth)).toBe(true);
+    const imageBox = (await dialog.locator(".gallery-stage img").boundingBox())!;
+    const titleBox = (await dialog.locator("h2").boundingBox())!;
+    expect(titleBox.y).toBeGreaterThanOrEqual(imageBox.y + imageBox.height);
+    expect(imageBox.y).toBeGreaterThanOrEqual(0);
+    expect(await dialog.evaluate((element) => getComputedStyle(element, "::backdrop").backdropFilter)).toBe("blur(18px)");
+    await expect(dialog.locator(".gallery-arrow").first()).toHaveCSS("border-top-color", await page.locator(".carousel-navigation button").first().evaluate((element) => getComputedStyle(element).borderTopColor));
     await page.keyboard.press("Escape");
     await expect(dialog).toHaveCount(0);
     await expect(trigger).toBeFocused();
@@ -165,14 +173,15 @@ test("shared gallery crosses project boundaries and wraps to the first project",
   await page.locator('[data-project="upgrade"] .project-gallery-trigger').click();
   const dialog = page.getByRole("dialog");
   await expect(dialog).toHaveAccessibleName("Upgrade! Comunicación y Entretenimiento");
-  await dialog.locator(".gallery-thumbnails button").nth(2).click();
+  await page.keyboard.press("ArrowRight");
+  await page.keyboard.press("ArrowRight");
   await dialog.getByRole("button", { name: "Imagen siguiente" }).click();
   await expect(dialog).toHaveAccessibleName("Fan de Maíz");
   await expect(dialog.locator(".gallery-stage img")).toHaveAttribute("src", /fan-de-maiz/);
-  await dialog.locator(".gallery-thumbnails button").nth(13).click();
+  for (let step = 0; step < 5; step++) await page.keyboard.press("ArrowLeft");
   await expect(dialog).toHaveAccessibleName("BoscoNet");
-  await expect(dialog.locator(".project-owner")).toHaveText("Colaboración · CEDES Don Bosco");
-  await dialog.locator(".gallery-thumbnails button").last().click();
+  await expect(dialog.locator(".project-owner")).toHaveText("Colaboración frontend · CEDES Don Bosco");
+  await page.keyboard.press("ArrowRight");
   await expect(dialog).toHaveAccessibleName("Tesla Landing Page Clone");
   await dialog.getByRole("button", { name: "Imagen siguiente" }).click();
   await expect(dialog).toHaveAccessibleName("Upgrade! Comunicación y Entretenimiento");
@@ -181,27 +190,28 @@ test("shared gallery crosses project boundaries and wraps to the first project",
   await expect(dialog).toHaveAccessibleName("Tesla Landing Page Clone");
 });
 
-test("autoplay advances every three seconds and pauses for interaction and galleries", async ({ page }) => {
+test("autoplay continues every three seconds through hover, controls and galleries", async ({ page }) => {
   await page.goto("/es#selected-projects");
   const carousel = page.locator(".project-carousel");
   await expect(carousel).toHaveAttribute("data-enhanced", "true");
+  await carousel.scrollIntoViewIfNeeded();
   await page.locator(".carousel-viewport").focus();
   await page.keyboard.press("Home");
-  await expect(carousel).toHaveAttribute("data-playing", "false");
-  await page.mouse.move(1, 1);
-  await page.locator(".carousel-viewport").evaluate((element: HTMLElement) => element.blur());
+  await page.locator('[data-project="upgrade"] .project-gallery-trigger').hover();
   await expect(carousel).toHaveAttribute("data-playing", "true");
-  await page.waitForTimeout(2300);
-  await expect(carousel).toHaveAttribute("data-selected", "0");
-  await expect(carousel).toHaveAttribute("data-selected", "1", { timeout: 1800 });
-  await page.getByRole("button", { name: "Pausar carrusel", exact: true }).click();
-  await expect(carousel).toHaveAttribute("data-playing", "false");
-  const stopped = await carousel.getAttribute("data-selected");
-  await page.waitForTimeout(3100);
-  await expect(carousel).toHaveAttribute("data-selected", stopped!);
-  await page.locator(".carousel-dots button").nth(1).click();
-  await page.locator('[data-project="fan-de-maiz"] .project-gallery-trigger').click();
-  await expect(carousel).toHaveAttribute("data-playing", "false");
+  await expect(carousel).toHaveAttribute("data-selected", "1", { timeout: 4000 });
+  await expect(page.locator(".carousel-play")).toHaveCount(0);
+  await page.getByRole("button", { name: "Proyecto siguiente", exact: true }).click();
+  await expect(carousel).toHaveAttribute("data-selected", "2");
+  await expect(carousel).toHaveAttribute("data-playing", "true");
+  await expect(carousel).toHaveAttribute("data-selected", "3", { timeout: 4000 });
+  await page.locator(".carousel-dots button").nth(1).evaluate((button: HTMLButtonElement) => button.click());
+  await page.locator('[data-project="fan-de-maiz"] .project-gallery-trigger').focus();
+  await page.keyboard.press("Enter");
+  await expect(page.getByRole("dialog")).toBeVisible();
+  await expect(carousel).toHaveAttribute("data-playing", "true");
+  const behindGallery = await carousel.getAttribute("data-selected");
+  await expect(carousel).not.toHaveAttribute("data-selected", behindGallery!, { timeout: 4000 });
   await page.keyboard.press("Escape");
   await page.emulateMedia({ reducedMotion: "reduce" });
   await expect(carousel).toHaveAttribute("data-playing", "false");

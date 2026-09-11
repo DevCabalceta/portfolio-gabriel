@@ -4,7 +4,7 @@ Portfolio profesional bilingüe desarrollado con Next.js, TypeScript y Tailwind 
 
 ## Estado de la entrega
 
-**Hero y Sobre mí aprobados. Sección 03: Proyectos, lista para revisión visual.** El desarrollo continúa sección por sección después de la revisión de Gabriel. Experiencia y las secciones posteriores permanecen pendientes.
+**Hero, Sobre mí y Proyectos aprobados. Sección 05: Servicios / Planes, lista para revisión visual.** El cierre de Cómo trabajamos ya tiene una entrada coreografiada. El desarrollo continúa sección por sección después de la revisión de Gabriel; Experiencia y las secciones posteriores permanecen pendientes.
 
 - [x] Revisar y limpiar la plantilla inicial de Next.js.
 - [x] Arquitectura de componentes, traducciones y datos tipados.
@@ -24,10 +24,14 @@ Portfolio profesional bilingüe desarrollado con Next.js, TypeScript y Tailwind 
 - [x] Revisión y aprobación visual de Sobre mí.
 - [x] Sección 03: Proyectos con once tarjetas en carrusel y galerías de capturas.
 - [x] Transición de Sobre mí a Proyectos, título animado y revelado de imágenes.
-- [ ] Revisión y aprobación visual de Proyectos.
+- [x] Revisión y aprobación visual de Proyectos.
 - [ ] Completar casos de estudio y tecnologías por proyecto con información confirmada.
-- [ ] Sección 04: Experiencia.
-- [ ] Sección 05: Tecnologías e iconos interactivos.
+- [x] Sección 04: Cómo trabajamos, con narrativa GSAP fijada, siete capítulos y contacto general por WhatsApp.
+- [x] Cierre de Cómo trabajamos con reveal de palabras, detalle y CTA en secuencia.
+- [x] Sección 05: Servicios / Planes con tres alcances editoriales y CTA de WhatsApp.
+- [ ] Revisión y aprobación visual de Servicios / Planes.
+- [ ] Sección 06: Experiencia.
+- [ ] Sección 07: Tecnologías e iconos interactivos.
 - [ ] Formación y certificaciones.
 - [ ] Preguntas y respuestas con el diseño de lista desplegable.
 - [ ] Contacto y cierre.
@@ -70,7 +74,7 @@ src/
   components/
     animations/              Ciclo de vida de GSAP y ScrollTrigger
     layout/                  Header fijo, menú móvil, idiomas y botones flotantes
-    sections/                Hero, robot de Spline, galería, Sobre mí y Proyectos
+    sections/                Hero, Sobre mí, Proyectos, Proceso y Servicios
     ui/                      Enlaces animados, iconos, multimedia y detalles de proyectos
   data/                      Perfil, navegación, proyectos, experiencia y tecnologías
   i18n/                      Configuración y diccionarios tipados ES/EN
@@ -81,7 +85,7 @@ scripts/preview.mjs           Capturas locales de escritorio y móvil
 tests/portfolio.spec.ts       Pruebas funcionales en navegador
 ```
 
-Las páginas, el Hero y los datos se renderizan en servidor. Los componentes cliente se limitan a la navegación interactiva, el selector, las microinteracciones, el robot 3D y el ciclo de vida de las animaciones. Los datos de secciones futuras aún no se importan en la página.
+Las páginas, el Hero y los datos se renderizan en servidor. Los componentes cliente se limitan a la navegación interactiva, las galerías, las microinteracciones, el robot 3D y el ciclo de vida de las animaciones. Los datos de secciones futuras aún no se importan en la página.
 
 ## Contenido e idiomas
 
@@ -92,7 +96,7 @@ Las páginas, el Hero y los datos se renderizan en servidor. Los componentes cli
 - Tecnologías solicitadas: `src/data/technologies.ts`.
 - Secciones del menú: `src/data/navigation.ts`. Activar `ready` cuando se implemente la sección y exista su ancla.
 
-Por ahora la navegación ofrece Inicio, Sobre mí, Proyectos, CV y correo. Los enlaces hacia Experiencia, Tecnologías y Contacto se incorporarán con sus respectivas secciones. Las anclas `#home`, `#about` y `#work` permanecen en contenedores estables; se animan sus contenidos para evitar que los enlaces de navegación apunten a posiciones transformadas.
+La navegación ofrece Inicio, Sobre mí, Proyectos, Proceso, Servicios, CV y correo. Los enlaces hacia Experiencia, Tecnologías y Contacto se incorporarán con sus respectivas secciones. Las anclas de las secciones permanecen en contenedores estables; se animan sus contenidos para evitar que la navegación apunte a posiciones transformadas.
 
 El CV es la fuente de experiencia y proyectos. El perfil de GitHub fue proporcionado directamente por Gabriel. No se han inventado años, métricas, repositorios ni tecnologías por proyecto. Los campos aún no confirmados permanecen vacíos u opcionales. Las tecnologías de los clones Astro sí están especificadas en el CV. Los estados de los proyectos reflejan el documento recibido, no una auditoría de los sitios externos.
 
@@ -136,12 +140,13 @@ El menú de escritorio y el móvil ya incluyen Sobre mí. El regreso al inicio e
 Los once proyectos comparten un **carrusel horizontal** con el diseño de tarjetas aprobado. Se muestran tres tarjetas en escritorio (desde 1100 px), dos en tablet (700–1099 px) y una en móvil. Se conserva el orden actual de los datos: Upgrade! Comunicación y Entretenimiento, Fan de Maíz, Spotify Clone, GIF Search App y Academic ToDo; después siguen Matrícula, Intranet, CDC, EXPOTEC, BoscoNet y Tesla.
 
 - Navegación: carrusel infinito en ambas direcciones, arrastre con el mouse en desktop y deslizamiento táctil. Las flechas naranjas permanecen activas al llegar al último proyecto y continúan desde el primero. Once indicadores reemplazan la barra inferior y permiten ir directamente a cualquier proyecto. Al enfocar el carrusel, las flechas del teclado recorren las tarjetas y Home/End seleccionan el primer/último proyecto.
-- Avance automático: cada 3000 ms mientras el carrusel está visible. Se pausa al pasar el mouse, enfocar controles, arrastrar, abrir la galería, ocultar la pestaña o salir de pantalla. Incluye pausa manual y respeta movimiento reducido. Todos los listeners y temporizadores se limpian al desmontar.
+- Avance automático: cada 3000 ms mientras el carrusel está visible, incluso con el mouse encima, al usar los controles o mientras la galería está abierta. No incluye botón de pausa ni pausas por interacción. Respeta movimiento reducido y suspende el temporizador al ocultar la pestaña o salir de pantalla. Todos los listeners y temporizadores se limpian al desmontar.
 - Sin JavaScript: todas las tarjetas y sus enlaces siguen en una fila desplazable, con barra horizontal. Los controles que requieren JavaScript permanecen ocultos. Con movimiento reducido, el desplazamiento de los botones es inmediato.
-- Atribución: los cinco proyectos profesionales mantienen «Colaboración · CEDES Don Bosco» y aclaran que Gabriel colaboró y que pertenecen a la institución. Upgrade y Academic ToDo están identificados como «En desarrollo», sin enlace de producción.
-- Galería continua: pulsar una portada abre una colección única de las 15 capturas de los once proyectos, empezando por la portada seleccionada. Al terminar las imágenes de un proyecto continúa el siguiente y actualiza el nombre superior y la atribución institucional. La última imagen vuelve a la primera. Todas las miniaturas están disponibles abajo en una tira horizontal con nombres y seguimiento de la imagen activa. Incluye anterior/siguiente, teclado, Escape y restauración del foco. Upgrade y ToDo conservan tres capturas originales cada uno. Sin JavaScript, la portada enlaza al archivo original.
+- Información de las tarjetas: descripción, créditos y enlaces siguen un flujo natural. «Visitar proyecto» queda cerca de la información de su tarjeta, sin espacios añadidos para alinearlo con los proyectos de texto más largo.
+- Atribución: los cinco proyectos profesionales muestran «Colaboración frontend · CEDES Don Bosco» y aclaran la contribución de Gabriel al frontend y la propiedad institucional, tanto en español como en inglés. Upgrade y Academic ToDo están identificados como «En desarrollo», sin enlace de producción.
+- Galería continua: pulsar una portada abre una colección única de las 15 capturas de los once proyectos, empezando por la portada seleccionada. La imagen ampliada tiene bordes redondeados sobre un fondo oscuro transparente con desenfoque. El título, la atribución, la descripción y el contador aparecen centrados debajo; no hay miniaturas ni barra de scroll. Las flechas comparten el borde y acento naranja del carrusel exterior y las imágenes cambian con desplazamiento y desvanecimiento animados. Al terminar las imágenes de un proyecto continúa el siguiente y actualiza su título; la última vuelve a la primera. Incluye teclado, Escape y restauración del foco. Upgrade y ToDo conservan tres capturas originales cada uno. Sin JavaScript, la portada enlaza al archivo original.
 - Datos: src/data/projects.ts conserva los once proyectos; featuredProjectIds determina cuáles aparecen primero. owner registra la propiedad institucional. Las tecnologías, repositorios y casos de estudio solo aparecen cuando hay información confirmada.
-- Implementación: project-carousel.tsx utiliza [Embla Carousel React 8.6](https://www.embla-carousel.com/docs/v8/get-started/react), con loop y arrastre, sin duplicar las tarjetas ni sus IDs. project-gallery.tsx comparte el estado de apertura con el carrusel mediante un proveedor y administra un único diálogo. projects.tsx conserva el renderizado de las tarjetas y project-media.tsx las imágenes, GIF y videos.
+- Implementación: project-carousel.tsx utiliza [Embla Carousel React 8.6](https://www.embla-carousel.com/docs/v8/get-started/react), con loop y arrastre, sin duplicar las tarjetas ni sus IDs. project-gallery.tsx administra un único diálogo compartido por las portadas, con transiciones de Framer Motion. projects.tsx conserva el renderizado de las tarjetas y project-media.tsx las imágenes, GIF y videos.
 - Entrada animada: el carrusel asciende y se desvanece desde abajo; el contenido de las tarjetas aparece escalonado con un desenfoque que se disipa. GSAP anima los bloques interiores para no interferir con las transformaciones de Embla. Las entradas se ejecutan una vez y se omiten con movimiento reducido.
 - Transición: Proyectos asciende por encima de Sobre mí. El espacio del contenido fijado conserva su altura mediante una base flex automática, evitando que la sección se colapse durante el pin y desplace los anclajes. El pin se recalcula antes de los triggers dependientes; las animaciones del contenido de Sobre mí consideran su contenedor fijado y se ejecutan una vez, evitando ocultar nuevamente los textos al regresar. El contenedor exterior permite pintar el contenido fijado sin recortarlo. Fuera de la transición, Sobre mí recupera opacidad completa y elimina filtro y transformación. Se conserva la reducción, el desvanecimiento y el blur durante la superposición.
 
@@ -155,7 +160,35 @@ Para cambiar capturas, editar el arreglo media en los datos del proyecto. Para a
 node scripts/capture-projects.mjs
 ```
 
-Con el servidor activo, node scripts/preview-projects.mjs genera vistas del carrusel y las galerías en escritorio y móvil dentro de artifacts/. tests/projects.spec.ts comprueba los once proyectos, navegación circular, puntos, teclado, arrastre con mouse, avance a los tres segundos, pausa, galería entre proyectos, atribuciones y movimiento reducido. La regresión de Sobre mí incluye superposición sobre el Hero en móvil, regreso después de pasar el pin, cambio de altura de ventana, visibilidad real del título y recuperación del texto en Chromium y WebKit.
+Con el servidor activo, node scripts/preview-projects.mjs genera vistas del carrusel y las galerías en escritorio y móvil dentro de artifacts/. tests/projects.spec.ts comprueba los once proyectos, navegación circular, puntos, teclado, arrastre con mouse, avance a los tres segundos sin detenerse por interacción, galería entre proyectos sin desbordamiento, atribuciones frontend y movimiento reducido. La regresión de Sobre mí incluye superposición sobre el Hero en móvil, regreso después de pasar el pin, cambio de altura de ventana, visibilidad real del título y recuperación del texto en Chromium y WebKit.
+
+## Sección 04: Cómo trabajamos
+
+Disponible en `#process`, después de Proyectos, y desde «Proceso» en la navegación de desktop y móvil. Presenta el recorrido de contratación en siete capítulos: primer contacto, descubrimiento, acuerdo, desarrollo, revisión y ajustes, lanzamiento con dominio y cierre/pago. Alcance, plazos, inversión y condiciones de pago se acuerdan antes de comenzar; el contenido no establece precios, anticipos, plazos fijos ni revisiones ilimitadas.
+
+- Composición cinematográfica: una escena de pantalla completa permanece fijada durante el recorrido. El título ocupa el plano izquierdo y los capítulos se sustituyen en el derecho con grandes números delineados, órbitas, puntos de luz y una palabra de fondo que se desplaza con parallax. En móvil, ambos planos se apilan dentro de la misma escena sin convertirse en tarjetas.
+- Coreografía GSAP: la entrada comienza con la microetiqueta, continúa por las tres líneas del título, el símbolo, la introducción, la acción y después revela etiqueta, título, descripción y detalle del primer capítulo. El scroll conduce las transiciones posteriores mediante máscaras, desplazamiento vertical, escala y blur; la línea inferior mide el avance y revierte naturalmente al subir.
+- El selector de servicios y sus controles se eliminaron por completo. «Iniciar una conversación» conserva un contacto general a `https://wa.me/50683442305`; la comparación de alcances vive únicamente en la sección 05 y el enlace no envía mensajes automáticamente.
+- Textos traducidos en `src/i18n/dictionaries.ts`, bajo `process`. El contenido se renderiza en `src/components/sections/process.tsx`, la secuencia en `src/components/animations/process-motion.tsx` y la dirección visual en `src/styles/process.css`.
+- Sin JavaScript o con movimiento reducido, los siete capítulos vuelven al flujo normal y permanecen legibles; la lista conserva su semántica ordenada y el contacto sigue disponible.
+- El cierre claro «Todo empieza con una conversación» ya no aparece directamente: la microetiqueta introduce la escena, el título se revela palabra por palabra mediante máscara y desplazamiento, y después entran el texto secundario y el CTA con blur progresivo. Esta secuencia usa la misma utilidad de reveals que Servicios.
+
+Todas las fronteras entre capítulos utilizan `src/components/animations/cinematic-section-transition.ts`. Esta utilidad fija el plano anterior cuando corresponde y aplica los mismos valores base de dirección, profundidad, escala, opacidad, desenfoque, easing y scrub. Hero → Sobre mí, Sobre mí → Proyectos, Proyectos → Proceso y Proceso → Servicios comparten este sistema. `src/components/animations/cinematic-reveal.ts` unifica el easing y el ritmo de los reveals secuenciales sin imponer una composición idéntica a cada capítulo.
+
+`tests/process.spec.ts` comprueba navegación, contacto ES/EN, ausencia del selector, secuencia y reversión, transición compartida sobre Proyectos, regreso al Hero, tamaños pequeños, movimiento reducido y contenido sin JavaScript en Chromium y WebKit. Con el servidor activo, `node scripts/preview-process.mjs` guarda las capturas de revisión en `artifacts/process-*.png`.
+
+## Sección 05: Servicios / Planes
+
+Disponible en `#services`, después de Cómo trabajamos y desde «Servicios» en la navegación. Presenta tres formas de trabajar con Gabriel: Landing Page por $150, Sitio Web por $300 y Proyecto Personalizado con alcance conversado. Los precios se muestran en USD. Cada acción abre WhatsApp con el servicio elegido dentro de un mensaje editable; nunca envía el mensaje automáticamente.
+
+- Composición: tres módulos editoriales paralelos en desktop, separados por líneas verticales finas y grandes números de fondo. No se usan cards redondeadas, sombras, iconos repetidos, badges ni glow. El plan Sitio Web se destaca con una línea naranja, una frase editorial y un cambio mínimo de profundidad.
+- Contenido: Landing Page enumera dominio, despliegue, responsive, redes/WhatsApp, rendimiento, SEO técnico, metadata, favicon, SSL, animaciones y CTA o formulario. Sitio Web incluye ese alcance y añade múltiples páginas, arquitectura, navegación, formulario, SEO por página, integraciones básicas y preparación para ampliaciones. El plan personalizado cubre plataformas, aplicaciones, sistemas e integraciones a medida.
+- Movimiento: la microetiqueta precede al título enmascarado y al texto introductorio. En desktop, los planes se revelan 01 → 02 → 03 y cada uno encadena línea, número, nombre, precio, resumen, beneficios y CTA. En móvil, la misma microsecuencia se activa de manera independiente al alcanzar cada plan. Los números y la geometría ambiental responden suavemente al avance del scroll.
+- Interacción: en desktop, el plan bajo el cursor gana presencia tipográfica, extiende una línea naranja y reduce con suavidad la presencia de los otros. Los CTA desplazan la flecha y mantienen foco visible; en móvil miden al menos 58 px de alto.
+- Transición: Servicios asciende por encima del cierre claro de Proceso mientras ese plano reduce escala, pierde opacidad y se desenfoca. Se usa la transición común y el navbar permanece fuera de los planos animados.
+- Accesibilidad y rendimiento: la lista de planes y las listas de beneficios conservan semántica nativa. Sin JavaScript o con movimiento reducido, todo queda visible en flujo normal; se eliminan transiciones decorativas y no se fijan secciones. Las animaciones principales usan transform y opacidad, y el blur se reserva para entradas breves.
+
+La implementación está dividida entre `src/components/sections/services.tsx`, `src/components/animations/services-motion.tsx`, `src/styles/services.css` y el bloque `services` de `src/i18n/dictionaries.ts`. `tests/services.spec.ts` comprueba contenido ES/EN, precios, 28 beneficios, CTA de WhatsApp, transición compartida, reveal del cierre anterior, móvil, movimiento reducido y fallback sin JavaScript. Con el servidor activo, `node scripts/preview-services.mjs` genera las capturas `artifacts/services-*.png`. Experiencia, preguntas y respuestas y las siguientes secciones continúan pendientes de su propia entrega.
 
 ## Navbar y botones flotantes
 
@@ -248,3 +281,11 @@ Documentación: [internacionalización de Next.js](https://nextjs.org/docs/app/g
 - **Carrusel y regreso a Sobre mí:** los once proyectos comparten las tarjetas del diseño aprobado en un carrusel responsive, con controles, contador, teclado y desplazamiento táctil. Se retira el índice y se reserva para preguntas y respuestas. Se corrige la coordinación de las entradas de texto con el pin de Sobre mí, se elimina el recorte del contenido fijado y se restaura la nitidez al regresar. README y pruebas de regresión actualizados.
 
 - **Carrusel infinito y galería continua:** arrastre con mouse, avance cada tres segundos, pausas de interacción, once indicadores y flechas naranjas. Un único visor recorre las quince capturas con título y atribución del proyecto correspondiente. Entrada escalonada del carrusel y superposición de Sobre mí sobre el Hero también en móvil. Lint y build correctos; 47 pruebas de navegador aprobadas y dos casos de mouse omitidos en dispositivos táctiles. Se comprobó adicionalmente el gesto táctil en Chromium y la entrada animada. Continúa la revisión de Proyectos.
+
+- **2026-09-10 — Ajustes de tarjetas y visor:** enlaces próximos a la descripción de cada proyecto; avance automático sin pausa por hover, foco o galería y sin botón de pausa. Visor transparente con desenfoque, imágenes redondeadas, títulos debajo y transición animada, sin miniaturas ni barras de desplazamiento. Las flechas comparten el diseño naranja del carrusel. Los créditos profesionales especifican la colaboración frontend y la propiedad de CEDES Don Bosco en ES/EN. Se revisaron las quince imágenes también en pantallas de 320 × 480 y 1280 × 500. Continúa la revisión de Proyectos.
+
+- **Entrega 04 — Cómo trabajamos:** línea de tiempo bilingüe con siete etapas, introducción fija en desktop, recorrido vertical móvil y animaciones GSAP vinculadas al scroll. Selector de servicio con mensaje preparado para WhatsApp, navegación a Proceso y soporte sin JavaScript o con movimiento reducido. Proyectos queda aprobado; la nueva sección queda pendiente de revisión antes de continuar.
+
+- **Revisión cinematográfica de Entrega 04:** Proceso se reconstruye como una escena narrativa fijada con siete capítulos, grandes numerales, órbitas, parallax, máscaras tipográficas y una coreografía secuencial conducida por el scroll. Se elimina por completo el selector de servicios y queda una acción general de WhatsApp. Las tres fronteras existentes adoptan una transición de profundidad reutilizable para que cada nueva sección herede el mismo comportamiento de entrada y salida. Continúa la revisión de Proceso antes de avanzar.
+
+- **Entrega 05 — Servicios / Planes:** el cierre de Proceso gana una entrada secuencial de palabras, detalle y CTA mediante la utilidad común de reveals. La nueva sección compara Landing Page ($150), Sitio Web ($300) y Proyecto Personalizado en una composición editorial de líneas, numerales y espacio negativo, con coreografía 01 → 02 → 03, microinteracciones, adaptación vertical móvil y CTA de WhatsApp contextual. Proceso → Servicios reutiliza la transición cinematográfica global. Servicios queda pendiente de revisión antes de avanzar.

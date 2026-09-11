@@ -2,7 +2,8 @@
 
 import { createContext, useContext, useEffect, useId, useMemo, useRef, useState, type ReactNode } from "react";
 import { createPortal } from "react-dom";
-import { motion, useReducedMotion } from "framer-motion";
+import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
+import Image from "next/image";
 import type { ProjectMedia as Media } from "@/types/content";
 import type { Locale } from "@/i18n/config";
 import type { Dictionary } from "@/i18n/dictionaries";
@@ -28,12 +29,15 @@ export function ProjectGalleryProvider({ projects, locale, copy, children }: { p
 
 function GalleryDialog({ entries, initialIndex, trigger, locale, copy, onClose }: { entries: Entry[]; initialIndex: number; trigger: HTMLAnchorElement; locale: Locale; copy: Dictionary["work"]; onClose: () => void }) {
   const dialog = useRef<HTMLDialogElement>(null);
-  const thumbnails = useRef<HTMLDivElement>(null);
   const id = useId();
   const [index, setIndex] = useState(initialIndex);
+  const [direction, setDirection] = useState(1);
   const reduced = useReducedMotion();
   const entry = entries[index];
-  const changeImage = (step: number) => setIndex((current) => (current + step + entries.length) % entries.length);
+  const changeImage = (step: number) => {
+    setDirection(step);
+    setIndex((current) => (current + step + entries.length) % entries.length);
+  };
 
   useEffect(() => {
     const element = dialog.current;
@@ -44,6 +48,7 @@ function GalleryDialog({ entries, initialIndex, trigger, locale, copy, onClose }
     const keyboard = (event: KeyboardEvent) => {
       if (event.key === "ArrowRight" || event.key === "ArrowLeft") {
         event.preventDefault();
+        setDirection(event.key === "ArrowRight" ? 1 : -1);
         setIndex((current) => (current + (event.key === "ArrowRight" ? 1 : -1) + entries.length) % entries.length);
       }
       if (event.key === "Tab") {
@@ -62,28 +67,27 @@ function GalleryDialog({ entries, initialIndex, trigger, locale, copy, onClose }
     };
   }, [entries.length, trigger]);
 
-  useEffect(() => {
-    const rail = thumbnails.current;
-    const thumb = rail?.children[index] as HTMLElement | undefined;
-    if (!rail || !thumb) return;
-    const left = thumb.getBoundingClientRect().left - rail.getBoundingClientRect().left + rail.scrollLeft;
-    rail.scrollTo({ left: left - (rail.clientWidth - thumb.clientWidth) / 2, behavior: reduced ? "instant" : "smooth" });
-  }, [index, reduced]);
-
   return createPortal(<dialog ref={dialog} className="project-gallery-dialog" aria-labelledby={`${id}-title`} onCancel={(event) => { event.preventDefault(); onClose(); }}>
-    <div className="gallery-dialog-header"><div aria-live="polite"><h2 id={`${id}-title`}>{entry.project.title}</h2>{entry.project.owner && <p className="project-owner micro-label">{copy.collaboration} · {entry.project.owner}</p>}</div><button type="button" className="gallery-close" onClick={onClose} aria-label={copy.closeGallery}>×</button></div>
-    <motion.figure key={index} className="gallery-stage" initial={reduced ? false : { opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: reduced ? 0 : 0.2 }}>
-      <ProjectMedia media={entry.media} locale={locale} sizes="100vw" />
-    </motion.figure>
-    <div className="gallery-dialog-footer">
-      <p className="gallery-caption" aria-live="polite" aria-atomic="true"><span>{index + 1} {copy.imageOf} {entries.length} · {entry.number + 1}/{entry.project.media.length}</span>{entry.media.alt[locale]}</p>
-      <div className="gallery-controls"><button type="button" aria-label={copy.previousImage} onClick={() => changeImage(-1)}>←</button><button type="button" aria-label={copy.nextImage} onClick={() => changeImage(1)}>→</button></div>
+    <button type="button" className="gallery-close" onClick={onClose} aria-label={copy.closeGallery}>×</button>
+    <div className="gallery-viewer">
+      <button type="button" className="gallery-arrow gallery-previous" aria-label={copy.previousImage} onClick={() => changeImage(-1)}>←</button>
+      <div className="gallery-content">
+        <AnimatePresence mode="wait" initial={false} custom={direction}>
+          <motion.figure key={index} className="gallery-stage" custom={direction}
+            variants={{ enter: (step: number) => ({ opacity: 0, x: reduced ? 0 : step * 28, scale: reduced ? 1 : 0.98 }), visible: { opacity: 1, x: 0, scale: 1 }, exit: (step: number) => ({ opacity: 0, x: reduced ? 0 : step * -20, scale: reduced ? 1 : 0.99 }) }}
+            initial="enter" animate="visible" exit="exit" transition={{ duration: reduced ? 0 : 0.22, ease: "easeOut" }}>
+            <div className="gallery-image-frame">{entry.media.type === "video" ? <ProjectMedia media={entry.media} locale={locale} /> : <Image src={entry.media.src} alt={entry.media.alt[locale]} width={1920} height={1080} sizes="(max-width: 699px) 95vw, 80vw" quality={85} unoptimized={entry.media.type === "gif"} />}</div>
+            <figcaption className="gallery-caption" aria-live="polite" aria-atomic="true">
+              {entry.project.owner && <p className="project-owner micro-label">{copy.collaboration} · {entry.project.owner}</p>}
+              <h2 id={`${id}-title`}>{entry.project.title}</h2>
+              <p className="gallery-description">{entry.media.alt[locale]}</p>
+              <p className="gallery-counter">{index + 1} {copy.imageOf} {entries.length} · {entry.number + 1}/{entry.project.media.length}</p>
+            </figcaption>
+          </motion.figure>
+        </AnimatePresence>
+      </div>
+      <button type="button" className="gallery-arrow gallery-next" aria-label={copy.nextImage} onClick={() => changeImage(1)}>→</button>
     </div>
-    <div ref={thumbnails} className="gallery-thumbnails" role="group" aria-label={copy.allImages}>{entries.map((item, itemIndex) => <button type="button" key={`${item.project.id}-${item.media.src}`} onClick={() => setIndex(itemIndex)}
-      aria-label={`${item.project.title}: ${item.media.alt[locale]}`} aria-current={index === itemIndex ? "true" : undefined} title={item.project.title}>
-      {item.media.type === "video" ? <span>{item.number + 1}</span> : <ProjectMedia media={item.media} locale={locale} sizes="110px" />}
-      <span className="gallery-thumb-title">{item.project.title}</span>
-    </button>)}</div>
   </dialog>, document.body);
 }
 

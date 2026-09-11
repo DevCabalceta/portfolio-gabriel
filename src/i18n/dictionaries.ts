@@ -1,6 +1,65 @@
 import type { Locale } from "./config";
 
 const es = {
+  services: {
+    label: "Servicios", eyebrow: "Tres formas de trabajar juntos",
+    title: ["Una web para", "cada etapa."], titleLabel: "Una web para cada etapa.",
+    introduction: "Desde una presencia digital precisa hasta una plataforma creada alrededor de tu operación. Elegimos el punto de partida según lo que tu proyecto necesita hoy.",
+    statement: "Tres alcances. Una misma atención al detalle.",
+    includes: "El alcance incluye",
+    recommended: "El equilibrio más completo",
+    inquiry: "Hola Gabriel, me interesa el servicio: {plan}.",
+    footer: "Tu proyecto define el alcance. La claridad define el proceso.",
+    plans: [
+      {
+        number: "01", kind: "Presencia esencial", title: "Landing Page", price: "$150", priceNote: "USD", recommended: false,
+        summary: "Para profesionales, marcas y negocios que necesitan presentar una propuesta clara y convertir visitas en conversaciones.",
+        features: [
+          "Landing Page personalizada", "Responsive en desktop, tablet y móvil", "Dominio personalizado", "Despliegue a producción",
+          "Redes sociales y contacto por WhatsApp", "Optimización básica de rendimiento", "SEO técnico básico", "Favicon y metadata social",
+          "Certificado SSL / HTTPS", "Animaciones e interacciones", "Formulario o CTA principal", "Revisión final antes del lanzamiento",
+        ],
+        cta: "Solicitar Landing Page",
+      },
+      {
+        number: "02", kind: "Presencia completa", title: "Sitio Web", price: "$300", priceNote: "USD", recommended: true,
+        summary: "Para negocios que necesitan contar mejor su historia, organizar sus servicios y crecer sobre una base preparada para evolucionar.",
+        features: [
+          "Todo lo incluido en Landing Page", "Desarrollo con múltiples páginas", "Arquitectura y navegación entre páginas", "Inicio, servicios y contacto",
+          "Formulario de contacto funcional", "Secciones según el proyecto", "SEO básico por página", "Integraciones externas básicas",
+          "Estructura preparada para futuras ampliaciones",
+        ],
+        cta: "Crear mi sitio web",
+      },
+      {
+        number: "03", kind: "Alcance a medida", title: "Proyecto Personalizado", price: "Hablemos", priceNote: "", recommended: false,
+        summary: "Para ideas que necesitan una solución propia, decisiones técnicas específicas y un alcance que no cabe dentro de un formato predefinido.",
+        features: [
+          "Plataformas web", "Aplicaciones web", "Integraciones personalizadas", "Sistemas internos",
+          "Experiencias digitales especiales", "Funcionalidades específicas", "Arquitectura definida según el proyecto",
+        ],
+        cta: "Cuéntame tu proyecto",
+      },
+    ],
+  },
+  process: {
+    label: "Cómo trabajamos", eyebrow: "De la primera conversación al lanzamiento",
+    title: ["Tu idea.", "Paso a", "paso."], titleLabel: "Tu idea. Paso a paso.",
+    introduction: "Tú traes la idea. Yo te acompaño a convertirla en un proyecto real, con comunicación directa en cada etapa.",
+    note: "Un proceso claro. Un proyecto a tu medida.",
+    contact: "Iniciar una conversación",
+    fallbackContact: "Cuéntame tu idea por WhatsApp",
+    steps: [
+      { label: "El primer paso", title: "Elige y conversemos.", description: "Escoge el servicio que necesitas y escríbeme por WhatsApp. Si aún no tienes claro por dónde empezar, lo descubrimos juntos.", detail: "Tu idea empieza aquí" },
+      { label: "Descubrimiento", title: "Entendemos tu idea.", description: "Hablamos de tus objetivos, de quién usará el proyecto y de las funciones que necesitas. Te escucho y resolvemos las primeras dudas.", detail: "Objetivos · Requerimientos" },
+      { label: "Acuerdo", title: "Todo claro antes de empezar.", description: "Definimos el alcance, los entregables, los plazos, la inversión y la forma de pago. Con el acuerdo listo, comenzamos.", detail: "Alcance · Plazos · Inversión" },
+      { label: "Desarrollo", title: "La idea toma forma.", description: "Diseño y desarrollo tu proyecto, conectando la interfaz con lo que necesita funcionar detrás. Compartimos avances durante el proceso.", detail: "Diseño · Código · Pruebas" },
+      { label: "Revisión contigo", title: "Afinamos los detalles.", description: "Revisamos el resultado juntos. Recibo tus comentarios y realizo los ajustes acordados para dejar todo listo para publicar.", detail: "Tu feedback hace la diferencia" },
+      { label: "Lanzamiento", title: "Tu proyecto, en línea.", description: "Entrego el proyecto, lo subo a producción y configuro el dominio acordado. Comprobamos que todo funcione y te comparto los accesos.", detail: "Entrega · Producción · Dominio" },
+      { label: "Cierre", title: "Listo para dar el siguiente paso.", description: "Completamos el pago según lo acordado y cerramos la entrega con una guía para que puedas usar y administrar tu proyecto.", detail: "Pago · Guía de uso" },
+    ],
+    closing: "Todo empieza con una conversación.", closingDetail: "Cuéntame qué tienes en mente y vemos cómo hacerlo realidad.",
+  },
   work: {
     label: "Proyectos", eyebrow: "Del concepto a la pantalla",
     titleFirst: "Código en", titleSecond: "acción",
@@ -13,7 +72,7 @@ const es = {
     visit: "Visitar proyecto", repository: "Ver código", details: "Explorar el proyecto", gallery: "Más imágenes",
     description: "El proyecto", problem: "El reto", solution: "La solución", results: "Resultados",
     technologies: "Tecnologías", closing: "¿Construimos lo siguiente?", contact: "Hablemos de tu proyecto",
-    collaboration: "Colaboración", ownership: "Colaboré en este proyecto. Pertenece a", preview: "Ver capturas", closeGallery: "Cerrar galería", previousImage: "Imagen anterior", nextImage: "Imagen siguiente", imageOf: "de",
+    collaboration: "Colaboración frontend", ownership: "Colaboré en el desarrollo frontend de este proyecto. Pertenece a", preview: "Ver capturas", closeGallery: "Cerrar galería", previousImage: "Imagen anterior", nextImage: "Imagen siguiente", imageOf: "de",
   },
   about: {
     label: "Sobre mí", eyebrow: "La persona detrás de la pantalla",
@@ -37,7 +96,7 @@ const es = {
   },
   nav: {
     label: "Navegación principal", home: "Inicio", about: "Sobre mí", work: "Proyectos",
-    experience: "Experiencia", stack: "Tecnologías", contact: "Hablemos", resume: "Mi CV",
+    process: "Proceso", services: "Servicios", experience: "Experiencia", stack: "Tecnologías", contact: "Hablemos", resume: "Mi CV",
     open: "Abrir menú", close: "Cerrar menú", menu: "Explorar", language: "Seleccionar idioma",
   },
   hero: {
@@ -59,6 +118,65 @@ const es = {
 export type Dictionary = typeof es;
 
 const en: Dictionary = {
+  services: {
+    label: "Services", eyebrow: "Three ways to work together",
+    title: ["A website for", "every stage."], titleLabel: "A website for every stage.",
+    introduction: "From a focused digital presence to a platform built around your operation. We choose the right starting point for what your project needs today.",
+    statement: "Three scopes. The same attention to detail.",
+    includes: "The scope includes",
+    recommended: "The most complete balance",
+    inquiry: "Hi Gabriel, I'm interested in the service: {plan}.",
+    footer: "Your project defines the scope. Clarity defines the process.",
+    plans: [
+      {
+        number: "01", kind: "Essential presence", title: "Landing Page", price: "$150", priceNote: "USD", recommended: false,
+        summary: "For professionals, brands and businesses that need to present a clear offer and turn visits into conversations.",
+        features: [
+          "Custom Landing Page", "Responsive on desktop, tablet and mobile", "Custom domain", "Production deployment",
+          "Social links and WhatsApp contact", "Basic performance optimization", "Basic technical SEO", "Favicon and social metadata",
+          "SSL / HTTPS certificate", "Design-led animation and interaction", "Primary form or CTA", "Final review before launch",
+        ],
+        cta: "Request a Landing Page",
+      },
+      {
+        number: "02", kind: "Complete presence", title: "Website", price: "$300", priceNote: "USD", recommended: true,
+        summary: "For businesses that need to tell their story, organize their services and grow on a foundation built to evolve.",
+        features: [
+          "Everything in Landing Page", "Multi-page development", "Page architecture and navigation", "Home, services and contact pages",
+          "Functional contact form", "Sections based on project needs", "Basic SEO for each page", "Basic external integrations",
+          "Structure prepared for future expansion",
+        ],
+        cta: "Create my website",
+      },
+      {
+        number: "03", kind: "Tailored scope", title: "Custom Project", price: "Let's talk", priceNote: "", recommended: false,
+        summary: "For ideas that need a purpose-built solution, specific technical decisions and a scope beyond a predefined format.",
+        features: [
+          "Web platforms", "Web applications", "Custom integrations", "Internal systems",
+          "Special digital experiences", "Specific functionality", "Architecture defined for the project",
+        ],
+        cta: "Tell me about your project",
+      },
+    ],
+  },
+  process: {
+    label: "How we work", eyebrow: "From the first conversation to launch",
+    title: ["Your idea.", "Step by", "step."], titleLabel: "Your idea. Step by step.",
+    introduction: "You bring the idea. I help turn it into a real project, with direct communication at every stage.",
+    note: "A clear process. A project built around you.",
+    contact: "Start a conversation",
+    fallbackContact: "Tell me your idea on WhatsApp",
+    steps: [
+      { label: "The first step", title: "Choose and let's talk.", description: "Choose the service you need and reach out on WhatsApp. If you're not sure where to start, we'll figure it out together.", detail: "Your idea starts here" },
+      { label: "Discovery", title: "Understanding your idea.", description: "We discuss your goals, who will use the project and the features you need. I listen and help answer your first questions.", detail: "Goals · Requirements" },
+      { label: "Agreement", title: "Clarity before we start.", description: "We define scope, deliverables, timing, cost and payment terms. With the agreement in place, we're ready to begin.", detail: "Scope · Timeline · Investment" },
+      { label: "Development", title: "The idea takes shape.", description: "I design and build your project, connecting the interface to everything that needs to work behind it. We share progress along the way.", detail: "Design · Code · Testing" },
+      { label: "Review together", title: "Refining the details.", description: "We review the result together. I listen to your feedback and make the agreed adjustments to get everything ready for launch.", detail: "Your feedback makes a difference" },
+      { label: "Launch", title: "Your project goes live.", description: "I deliver the project, deploy it to production and configure the agreed domain. We check that everything works and I hand over access.", detail: "Handover · Production · Domain" },
+      { label: "Wrap-up", title: "Ready for your next step.", description: "We complete payment as agreed and finish the handover with guidance so you can use and manage your project.", detail: "Payment · User guidance" },
+    ],
+    closing: "It all starts with a conversation.", closingDetail: "Tell me what you have in mind and let's see how to make it happen.",
+  },
   work: {
     label: "Work", eyebrow: "From concept to screen",
     titleFirst: "Code in", titleSecond: "action",
@@ -71,7 +189,7 @@ const en: Dictionary = {
     visit: "Visit project", repository: "View code", details: "Explore the project", gallery: "More images",
     description: "The project", problem: "The challenge", solution: "The solution", results: "Results",
     technologies: "Technologies", closing: "What shall we build next?", contact: "Let's talk about your project",
-    collaboration: "Collaboration", ownership: "I collaborated on this project. It belongs to", preview: "View screenshots", closeGallery: "Close gallery", previousImage: "Previous image", nextImage: "Next image", imageOf: "of",
+    collaboration: "Frontend collaboration", ownership: "I contributed to the frontend development of this project. It belongs to", preview: "View screenshots", closeGallery: "Close gallery", previousImage: "Previous image", nextImage: "Next image", imageOf: "of",
   },
   about: {
     label: "About me", eyebrow: "The person behind the screen",
@@ -95,7 +213,7 @@ const en: Dictionary = {
   },
   nav: {
     label: "Main navigation", home: "Home", about: "About", work: "Work",
-    experience: "Experience", stack: "Stack", contact: "Let's talk", resume: "My CV",
+    process: "Process", services: "Services", experience: "Experience", stack: "Stack", contact: "Let's talk", resume: "My CV",
     open: "Open menu", close: "Close menu", menu: "Explore", language: "Select language",
   },
   hero: {

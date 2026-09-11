@@ -1,8 +1,9 @@
 .chapter-transition { position: relative; isolation: isolate; background: #080808; }
 .chapter-outgoing { position: relative; z-index: 0; }
 .chapter-frame { transform-origin: center 45%; }
-/* Avoid even zero-value filter/transform compositing while reading the Hero. */
-.chapter-transition[data-resting="true"] .chapter-frame { filter: none !important; transform: none !important; opacity: 1 !important; }
+/* Avoid even zero-value compositing while an outgoing chapter is at rest. */
+.cinematic-outgoing[data-transition-resting="true"],
+.chapter-transition[data-transition-resting="true"] .chapter-frame { filter: none !important; transform: none !important; opacity: 1 !important; }
 .chapter-transition[data-motion] .chapter-outgoing { position: sticky; top: 0; }
 .chapter-outgoing[inert] .gallery-track { animation-play-state: paused; }
 

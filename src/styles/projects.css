@@ -5,12 +5,6 @@
   transform-origin: center bottom;
 }
 
-.about-frame[data-resting="true"] {
-  opacity: 1 !important;
-  filter: none !important;
-  transform: none !important;
-}
-
 /* Preserve About's full content height while its child leaves normal flow. */
 .about>.pin-spacer {
   flex: 1 0 auto !important;
@@ -190,7 +184,8 @@
   min-width: 76px;
 }
 
-.carousel-navigation button {
+.carousel-navigation button,
+.gallery-arrow {
   width: 52px;
   height: 52px;
   border: 2px solid var(--accent);
@@ -201,7 +196,8 @@
   transition: background 180ms, transform 180ms;
 }
 
-.carousel-navigation button:hover {
+.carousel-navigation button:hover,
+.gallery-arrow:hover {
   color: #fdfdfd;
   background: var(--accent);
   transform: scale(1.02);
@@ -212,7 +208,8 @@
   cursor: default;
 }
 
-.carousel-navigation button:focus-visible {
+.carousel-navigation button:focus-visible,
+.gallery-arrow:focus-visible {
   outline: 2px solid var(--accent);
   outline-offset: 3px;
 }
@@ -267,21 +264,9 @@
   background: var(--foreground);
 }
 
-.carousel-dots button:focus-visible,
-.carousel-play:focus-visible {
+.carousel-dots button:focus-visible {
   outline: 2px solid var(--accent);
   outline-offset: 2px;
-}
-
-.carousel-play {
-  width: 44px;
-  height: 44px;
-  flex-shrink: 0;
-  color: var(--accent);
-  background: #20211d;
-  border: 1px solid #44463c;
-  border-radius: 50%;
-  cursor: pointer;
 }
 
 .featured-project {
@@ -313,7 +298,6 @@
 
 .project-caption {
   display: flex;
-  flex: 1;
   flex-direction: column;
 }
 
@@ -410,8 +394,7 @@
 }
 
 .project-caption>.project-links {
-  margin-top: auto;
-  padding-top: 20px;
+  margin-top: 16px;
 }
 
 .project-links a {
@@ -856,133 +839,174 @@
   padding: max(16px, env(safe-area-inset-top)) clamp(16px, 3vw, 48px) max(16px, env(safe-area-inset-bottom));
   border: 0;
   color: var(--foreground);
-  background: #0d0e0d;
+  background: transparent;
+  overflow: hidden;
 }
 
 .project-gallery-dialog[open] {
   display: flex;
-  flex-direction: column;
-  gap: 16px;
 }
 
 .project-gallery-dialog::backdrop {
-  background: rgb(0 0 0 / 90%);
+  background: rgb(5 7 6 / 82%);
+  -webkit-backdrop-filter: blur(18px);
+  backdrop-filter: blur(18px);
 }
 
-.gallery-dialog-header,
-.gallery-dialog-footer {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 20px;
+.gallery-viewer {
+  position: relative;
+  display: grid;
+  grid-template-columns: 52px minmax(0, 1fr) 52px;
+  gap: clamp(16px, 3vw, 48px);
+  width: 100%;
+  min-height: 0;
+  padding-top: 36px;
 }
 
-.gallery-dialog-header h2 {
-  margin: 0;
-  font-size: clamp(18px, 2vw, 28px);
-  font-weight: 500;
-  letter-spacing: -0.03em;
+.gallery-content {
+  width: 100%;
+  height: 100%;
+  max-width: 1180px;
+  min-width: 0;
+  min-height: 0;
+  margin-inline: auto;
 }
 
-.project-gallery-dialog button {
+.gallery-close {
+  position: absolute;
+  top: max(16px, env(safe-area-inset-top));
+  right: max(16px, env(safe-area-inset-right));
+  z-index: 3;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  font-size: 28px;
   cursor: pointer;
   color: var(--foreground);
   border: 1px solid #45463c;
-  background: #20211d;
+  background: rgb(32 33 29 / 85%);
 }
 
-.gallery-close,
-.gallery-controls button {
-  flex-shrink: 0;
-  width: 48px;
-  height: 48px;
-  font-size: 24px;
+.gallery-arrow {
+  align-self: center;
+  background: rgb(13 14 13 / 75%);
+  z-index: 2;
 }
 
-.project-gallery-dialog button:hover,
-.project-gallery-dialog button[aria-current="true"] {
+.gallery-close:hover {
   border-color: var(--accent);
   color: var(--accent);
 }
 
-.project-gallery-dialog button:focus-visible {
+.gallery-close:focus-visible {
   outline: 2px solid var(--accent);
   outline-offset: 3px;
 }
 
 .gallery-stage {
-  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 20px;
+  height: 100%;
   min-height: 0;
   width: 100%;
   margin: 0;
 }
 
-.gallery-stage .project-media {
-  height: 100%;
-  aspect-ratio: auto;
-  background: transparent;
+.gallery-image-frame {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 0;
+  flex: 0 1 auto;
 }
 
-.gallery-stage .project-media img {
+.gallery-image-frame>img {
+  display: block;
+  width: auto;
+  height: auto;
+  max-width: 100%;
+  max-height: 100%;
+  border-radius: 16px;
   object-fit: contain;
 }
 
+.gallery-image-frame .project-media {
+  width: 100%;
+  max-height: 100%;
+  background: transparent;
+  border-radius: 16px;
+}
+
 .gallery-caption {
+  flex-shrink: 0;
+  text-align: center;
   font-size: 12px;
   line-height: 1.6;
   color: #c2c1b4;
   margin: 0;
 }
 
-.gallery-caption>span {
-  display: block;
+.gallery-caption h2 {
+  margin: 0;
+  color: var(--foreground);
+  font-size: clamp(18px, 2vw, 24px);
+  font-weight: 500;
+  letter-spacing: -0.03em;
+  line-height: 1.3;
+}
+
+.gallery-caption .project-owner {
+  margin: 0 0 8px;
+}
+
+.gallery-description {
+  margin: 6px 0 0;
+  color: #b4b5ac;
+}
+
+.gallery-counter {
   color: var(--accent);
   font: 10px var(--font-geist-mono), monospace;
-  margin-bottom: 6px;
+  margin: 12px 0 0;
 }
 
-.gallery-controls {
-  display: flex;
-  flex-shrink: 0;
-  gap: 8px;
-}
+@media (max-width: 699px) {
+  .gallery-viewer {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0;
+    padding-block: 52px;
+  }
 
-.gallery-thumbnails {
-  display: flex;
-  gap: 12px;
-  overflow-x: auto;
-  padding: 4px;
-  flex-shrink: 0;
-}
+  .gallery-arrow {
+    position: absolute;
+    bottom: 0;
+    width: 44px;
+    height: 44px;
+  }
 
-.gallery-thumbnails button {
-  width: 110px;
-  min-height: 50px;
-  flex-shrink: 0;
-  padding: 3px;
-  overflow: hidden;
-}
+  .gallery-previous {
+    left: calc(50% - 54px);
+  }
 
-.gallery-thumb-title {
-  display: block;
-  padding: 5px 2px 2px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  font-size: 9px;
-}
+  .gallery-next {
+    right: calc(50% - 54px);
+  }
 
-.gallery-thumbnails .project-media {
-  margin: 0;
+  .gallery-stage {
+    gap: 16px;
+  }
+
+  .gallery-image-frame>img {
+    border-radius: 12px;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .carousel-play {
-    display: none;
-  }
-
   .project-row-plus,
   .carousel-navigation button,
+  .gallery-arrow,
   .carousel-dots button span,
   .project-links svg {
     transition: none;
