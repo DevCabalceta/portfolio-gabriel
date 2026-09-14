@@ -133,7 +133,7 @@ const en: Dictionary = {
     footer: "Your project defines the scope. Clarity defines the process.",
     plans: [
       {
-        number: "01", kind: "Essential presence", title: "Landing Page", amount: 150, customPrice: "", recommended: false,
+        number: "01", kind: "Essential presence", title: "Landing Page", amount: 300, customPrice: "", recommended: false,
         summary: "For professionals, brands and businesses that need to present a clear offer and turn visits into conversations.",
         features: [
           "Custom Landing Page", "Responsive on desktop, tablet and mobile", "Custom domain", "Production deployment",
@@ -143,7 +143,7 @@ const en: Dictionary = {
         cta: "Request a Landing Page",
       },
       {
-        number: "02", kind: "Complete presence", title: "Website", amount: 300, customPrice: "", recommended: true,
+        number: "02", kind: "Complete presence", title: "Website", amount: 500, customPrice: "", recommended: true,
         summary: "For businesses that need to tell their story, organize their services and grow on a foundation built to evolve.",
         features: [
           "Everything in Landing Page", "Multi-page development", "Page architecture and navigation", "Home, services and contact pages",
