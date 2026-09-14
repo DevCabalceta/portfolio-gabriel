@@ -8,11 +8,13 @@ const es = {
     statement: "Tres alcances. Una misma atención al detalle.",
     includes: "El alcance incluye",
     recommended: "El equilibrio más completo",
+    currencyLabel: "Mostrar precios en",
+    exchangeNote: "Conversión fija · $1 = ₡500",
     inquiry: "Hola Gabriel, me interesa el servicio: {plan}.",
     footer: "Tu proyecto define el alcance. La claridad define el proceso.",
     plans: [
       {
-        number: "01", kind: "Presencia esencial", title: "Landing Page", price: "$150", priceNote: "USD", recommended: false,
+        number: "01", kind: "Presencia esencial", title: "Landing Page", amount: 300, customPrice: "", recommended: false,
         summary: "Para profesionales, marcas y negocios que necesitan presentar una propuesta clara y convertir visitas en conversaciones.",
         features: [
           "Landing Page personalizada", "Responsive en desktop, tablet y móvil", "Dominio personalizado", "Despliegue a producción",
@@ -22,7 +24,7 @@ const es = {
         cta: "Solicitar Landing Page",
       },
       {
-        number: "02", kind: "Presencia completa", title: "Sitio Web", price: "$300", priceNote: "USD", recommended: true,
+        number: "02", kind: "Presencia completa", title: "Sitio Web", amount: 500, customPrice: "", recommended: true,
         summary: "Para negocios que necesitan contar mejor su historia, organizar sus servicios y crecer sobre una base preparada para evolucionar.",
         features: [
           "Todo lo incluido en Landing Page", "Desarrollo con múltiples páginas", "Arquitectura y navegación entre páginas", "Inicio, servicios y contacto",
@@ -32,7 +34,7 @@ const es = {
         cta: "Crear mi sitio web",
       },
       {
-        number: "03", kind: "Alcance a medida", title: "Proyecto Personalizado", price: "Hablemos", priceNote: "", recommended: false,
+        number: "03", kind: "Alcance a medida", title: "Proyecto Personalizado", amount: 0, customPrice: "Hablemos", recommended: false,
         summary: "Para ideas que necesitan una solución propia, decisiones técnicas específicas y un alcance que no cabe dentro de un formato predefinido.",
         features: [
           "Plataformas web", "Aplicaciones web", "Integraciones personalizadas", "Sistemas internos",
@@ -125,11 +127,13 @@ const en: Dictionary = {
     statement: "Three scopes. The same attention to detail.",
     includes: "The scope includes",
     recommended: "The most complete balance",
+    currencyLabel: "Show prices in",
+    exchangeNote: "Fixed conversion · $1 = ₡500",
     inquiry: "Hi Gabriel, I'm interested in the service: {plan}.",
     footer: "Your project defines the scope. Clarity defines the process.",
     plans: [
       {
-        number: "01", kind: "Essential presence", title: "Landing Page", price: "$150", priceNote: "USD", recommended: false,
+        number: "01", kind: "Essential presence", title: "Landing Page", amount: 150, customPrice: "", recommended: false,
         summary: "For professionals, brands and businesses that need to present a clear offer and turn visits into conversations.",
         features: [
           "Custom Landing Page", "Responsive on desktop, tablet and mobile", "Custom domain", "Production deployment",
@@ -139,7 +143,7 @@ const en: Dictionary = {
         cta: "Request a Landing Page",
       },
       {
-        number: "02", kind: "Complete presence", title: "Website", price: "$300", priceNote: "USD", recommended: true,
+        number: "02", kind: "Complete presence", title: "Website", amount: 300, customPrice: "", recommended: true,
         summary: "For businesses that need to tell their story, organize their services and grow on a foundation built to evolve.",
         features: [
           "Everything in Landing Page", "Multi-page development", "Page architecture and navigation", "Home, services and contact pages",
@@ -149,7 +153,7 @@ const en: Dictionary = {
         cta: "Create my website",
       },
       {
-        number: "03", kind: "Tailored scope", title: "Custom Project", price: "Let's talk", priceNote: "", recommended: false,
+        number: "03", kind: "Tailored scope", title: "Custom Project", amount: 0, customPrice: "Let's talk", recommended: false,
         summary: "For ideas that need a purpose-built solution, specific technical decisions and a scope beyond a predefined format.",
         features: [
           "Web platforms", "Web applications", "Custom integrations", "Internal systems",

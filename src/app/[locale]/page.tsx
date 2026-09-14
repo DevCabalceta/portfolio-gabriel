@@ -22,7 +22,7 @@ export default async function Home({ params }: { params: Promise<{ locale: strin
         <ChapterTransition id="home" previous={<Hero copy={copy.hero} />}><About copy={copy.about} /></ChapterTransition>
         <Projects locale={locale} copy={copy.work} />
         <Process copy={copy.process} />
-        <Services copy={copy.services} />
+        <Services copy={copy.services} locale={locale} />
       </main>
       <FloatingActions copy={copy} />
     </>

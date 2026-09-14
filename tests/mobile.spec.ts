@@ -80,6 +80,42 @@ test("touch menu opens, closes and reopens with visible interactive content", as
   expect(errors).toEqual([]);
 });
 
+test("mobile menu keeps every destination visible without internal scrolling", async ({ page }) => {
+  await page.goto("/es");
+  for (const [width, height] of [[320, 480], [375, 560], [390, 664], [430, 740]]) {
+    await page.setViewportSize({ width, height });
+    await page.getByRole("button", { name: "Abrir menú" }).tap();
+    const dialog = page.getByRole("dialog");
+    await expect(dialog).toBeVisible();
+    const layout = await dialog.evaluate((element) => {
+      const panel = element.querySelector<HTMLElement>(".mobile-menu-panel")!;
+      const visibleElements = [
+        element.querySelector<HTMLElement>(".mobile-menu-top")!,
+        ...element.querySelectorAll<HTMLElement>("nav a"),
+        element.querySelector<HTMLElement>(".mobile-menu-bottom")!,
+      ];
+      return {
+        dialogOverflow: element.scrollHeight - element.clientHeight,
+        panelOverflow: panel.scrollHeight - panel.clientHeight,
+        bounds: visibleElements.map((item) => {
+          const rect = item.getBoundingClientRect();
+          return { top: rect.top, bottom: rect.bottom, height: rect.height };
+        }),
+        viewportHeight: innerHeight,
+      };
+    });
+    expect(layout.dialogOverflow).toBeLessThanOrEqual(0);
+    expect(layout.panelOverflow).toBeLessThanOrEqual(0);
+    for (const bounds of layout.bounds) {
+      expect(bounds.top).toBeGreaterThanOrEqual(0);
+      expect(bounds.bottom).toBeLessThanOrEqual(layout.viewportHeight);
+    }
+    for (const link of layout.bounds.slice(1, -1)) expect(link.height).toBeGreaterThanOrEqual(44);
+    await dialog.getByRole("button", { name: "Cerrar menú" }).tap();
+    await expect(dialog).not.toBeVisible();
+  }
+});
+
 test("LAN preview loads interactive mobile navigation", async ({ page }) => {
   const address = Object.values(networkInterfaces()).flat().find((entry) => entry?.family === "IPv4" && !entry.internal)?.address;
   test.skip(!address, "No LAN interface available");

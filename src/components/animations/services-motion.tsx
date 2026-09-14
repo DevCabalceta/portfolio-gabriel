@@ -20,6 +20,7 @@ export function ServicesMotion({ children }: { children: ReactNode }) {
       const desktop = Boolean(context.conditions?.desktop);
       const processFooter = document.querySelector<HTMLElement>(".process-footer");
       const plans = gsap.utils.toArray<HTMLElement>(".service-plan", element);
+      const currencyControl = element.querySelector<HTMLElement>("[data-services-control]");
       const revealTimelines: gsap.core.Timeline[] = [];
 
       element.dataset.motion = "true";
@@ -58,11 +59,19 @@ export function ServicesMotion({ children }: { children: ReactNode }) {
       if (desktop) {
         const container = element.querySelector<HTMLElement>(".services-plans");
         if (container) revealTimelines.push(createCinematicReveal({
-          trigger: container,
+          trigger: element.querySelector(".services-pricing") ?? container,
           start: "top 82%",
-          steps: plans.flatMap((plan, index) => planSteps(plan, index * 0.24)),
+          steps: [
+            ...(currencyControl ? [{ targets: currencyControl, from: { opacity: 0, y: 18, filter: "blur(4px)" }, to: { duration: 0.54 }, at: 0 }] : []),
+            ...plans.flatMap((plan, index) => planSteps(plan, 0.12 + index * 0.24)),
+          ],
         }));
       } else {
+        if (currencyControl) revealTimelines.push(createCinematicReveal({
+          trigger: currencyControl,
+          start: "top 90%",
+          steps: [{ targets: currencyControl, from: { opacity: 0, y: 18, filter: "blur(4px)" }, to: { duration: 0.54 } }],
+        }));
         plans.forEach((plan) => revealTimelines.push(createCinematicReveal({
           trigger: plan,
           start: "top 84%",

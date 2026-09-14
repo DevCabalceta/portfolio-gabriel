@@ -19,11 +19,22 @@ test("Services presents three localized scopes with functional WhatsApp actions"
   await expect(page).toHaveURL(/#services$/);
   await expect(page.locator("#services-title")).toHaveAccessibleName("Una web para cada etapa.");
   await expect(page.locator(".service-plan")).toHaveCount(3);
-  await expect(page.locator(".service-plan").nth(0)).toContainText("$150");
-  await expect(page.locator(".service-plan").nth(1)).toContainText("$300");
+  const amounts = page.locator("[data-service-amount]");
+  await amounts.nth(0).scrollIntoViewIfNeeded();
+  await expect(amounts.nth(0)).toHaveText("$150");
+  await amounts.nth(1).scrollIntoViewIfNeeded();
+  await expect(amounts.nth(1)).toHaveText("$300");
   await expect(page.locator(".service-plan").nth(2)).toContainText("Hablemos");
   await expect(page.locator("[data-service-benefit]")).toHaveCount(28);
   await expect(page.locator(".service-plan-recommended")).toContainText("El equilibrio más completo");
+  await expect(page.getByRole("button", { name: "USD" })).toHaveAttribute("aria-pressed", "true");
+  await page.getByRole("button", { name: "CRC" }).click();
+  await expect(page.getByRole("button", { name: "CRC" })).toHaveAttribute("aria-pressed", "true");
+  await amounts.nth(0).scrollIntoViewIfNeeded();
+  await expect(amounts.nth(0)).toHaveText("₡75.000");
+  await amounts.nth(1).scrollIntoViewIfNeeded();
+  await expect(amounts.nth(1)).toHaveText("₡150.000");
+  await expect(page.locator(".service-plan").nth(2)).toContainText("Hablemos");
   for (const action of await page.locator(".service-cta").all()) {
     await expect(action).toHaveAttribute("href", /^https:\/\/wa\.me\/50683442305\?text=/);
   }
@@ -33,6 +44,58 @@ test("Services presents three localized scopes with functional WhatsApp actions"
   await page.goto("/en#services");
   await expect(page.locator("#services-title")).toHaveAccessibleName("A website for every stage.");
   await expect(page.locator(".service-plan").nth(1)).toContainText("Create my website");
+});
+
+test("desktop comparison keeps every benefit and action inside one viewport", async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await page.setViewportSize({ width: 1366, height: 768 });
+  await page.goto("/es#services");
+  await page.locator(".services-pricing").evaluate((el) => scrollTo({ top: el.getBoundingClientRect().top + scrollY - 72, behavior: "instant" }));
+  const layout = await page.evaluate(() => {
+    const headerBottom = document.querySelector(".site-header")!.getBoundingClientRect().bottom;
+    const plansBox = document.querySelector(".services-plans")!.getBoundingClientRect();
+    const plans = [...document.querySelectorAll(".service-plan")].map((plan) => {
+      const benefits = [...plan.querySelectorAll("[data-service-benefit]")];
+      return {
+        top: plan.getBoundingClientRect().top,
+        lastBenefitBottom: benefits.at(-1)!.getBoundingClientRect().bottom,
+        ctaBottom: plan.querySelector(".service-cta")!.getBoundingClientRect().bottom,
+      };
+    });
+    return {
+      headerBottom,
+      plans,
+      plansTop: plansBox.top,
+      plansBottom: plansBox.bottom,
+      viewportBottom: innerHeight,
+      overflow: document.documentElement.scrollWidth - innerWidth,
+    };
+  });
+  for (const plan of layout.plans) {
+    expect(plan.top).toBeGreaterThanOrEqual(layout.headerBottom);
+    expect(plan.lastBenefitBottom).toBeLessThan(layout.viewportBottom);
+    expect(plan.ctaBottom).toBeLessThanOrEqual(layout.viewportBottom);
+  }
+  expect(layout.plansTop - layout.headerBottom).toBeLessThan(100);
+  expect(Math.abs(layout.plansBottom - layout.viewportBottom)).toBeLessThanOrEqual(2);
+  expect(layout.overflow).toBeLessThanOrEqual(0);
+  const benefitSize = Number.parseFloat(await page.locator("[data-service-benefit]").first().evaluate((el) => getComputedStyle(el).fontSize));
+  expect(benefitSize).toBeGreaterThanOrEqual(11);
+  await expect(page.locator(".service-cta").first()).toHaveCSS("background-color", "rgb(242, 240, 233)");
+  await expect(page.locator(".service-cta").first()).toHaveCSS("justify-content", "center");
+  expect(Number.parseFloat(await page.locator(".service-cta").first().evaluate((el) => getComputedStyle(el).fontSize))).toBeGreaterThanOrEqual(16);
+  await expect(page.locator(".service-cta").first().locator("svg")).toHaveCSS("position", "absolute");
+});
+
+test("mobile plans keep their active state without hover", async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 744 });
+  await page.goto("/es#services");
+  const plan = page.locator(".service-plan").first();
+  await page.locator(".services-pricing").evaluate((el) => el.scrollIntoView({ block: "start", behavior: "instant" }));
+  await expect(plan.locator("h3")).toHaveCSS("color", "rgb(255, 120, 75)");
+  await expect(plan.locator(".service-cta")).toHaveCSS("background-color", "rgb(255, 120, 75)");
+  const accentWidth = await plan.evaluate((el) => Number.parseFloat(getComputedStyle(el, "::after").width));
+  expect(accentWidth).toBeGreaterThan(0);
 });
 
 test("Services uses the shared depth transition and a sequential reveal", async ({ page }) => {

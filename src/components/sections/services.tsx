@@ -1,13 +1,8 @@
 import type { Dictionary } from "@/i18n/dictionaries";
-import { profile } from "@/data/profile";
 import { ServicesMotion } from "@/components/animations/services-motion";
-import { ArrowIcon } from "@/components/ui/arrow-icon";
+import { ServicePricing } from "@/components/ui/service-pricing";
 
-function whatsappFor(message: string) {
-  return `${profile.whatsapp}?text=${encodeURIComponent(message)}`;
-}
-
-export function Services({ copy }: { copy: Dictionary["services"] }) {
+export function Services({ copy, locale }: { copy: Dictionary["services"]; locale: "es" | "en" }) {
   return <ServicesMotion>
     <section id="services" className="services" aria-labelledby="services-title" tabIndex={-1}>
       <div className="services-atmosphere" aria-hidden="true">
@@ -31,31 +26,7 @@ export function Services({ copy }: { copy: Dictionary["services"] }) {
         </div>
       </header>
 
-      <ol className="services-plans" aria-label={copy.label}>
-        {copy.plans.map((plan, index) => <li className={`service-plan${plan.recommended ? " service-plan-recommended" : ""}`} key={plan.title}>
-          <span className="service-plan-line" data-service-line aria-hidden="true" />
-          <div className="service-plan-topline micro-label">
-            <span data-service-part="number">{plan.number}</span>
-            <span data-service-part="kind">{plan.kind}</span>
-          </div>
-          <div className="service-plan-heading">
-            <div className="service-plan-title-mask"><h3 data-service-part="title">{plan.title}</h3></div>
-            <p className="service-price" data-service-part="price"><span>{plan.price}</span>{plan.priceNote && <small>{plan.priceNote}</small>}</p>
-          </div>
-          {plan.recommended && <p className="service-recommended micro-label" data-service-part="recommended"><span aria-hidden="true" />{copy.recommended}</p>}
-          <p className="service-summary" data-service-part="summary">{plan.summary}</p>
-          <div className="service-benefits">
-            <p className="micro-label" data-service-part="benefits-label">{copy.includes}</p>
-            <ul>
-              {plan.features.map((feature, featureIndex) => <li data-service-benefit key={feature}><span>{String(featureIndex + 1).padStart(2, "0")}</span>{feature}</li>)}
-            </ul>
-          </div>
-          <a className="service-cta" data-service-part="cta" href={whatsappFor(copy.inquiry.replace("{plan}", plan.title))} target="_blank" rel="noopener noreferrer">
-            <span>{plan.cta}</span><ArrowIcon />
-          </a>
-          <span className="service-plan-index" aria-hidden="true">0{index + 1}</span>
-        </li>)}
-      </ol>
+      <ServicePricing copy={copy} locale={locale} />
 
       <footer className="services-footer micro-label" data-services-outro>
         <span>{copy.footer}</span><span>San José, Costa Rica</span>

@@ -14,8 +14,12 @@ try {
     await page.locator('#process').evaluate(el => el.scrollIntoView({behavior:'instant'}));
     await expect(page.locator('[data-process-title]').last()).toHaveCSS('opacity','1');
     await page.screenshot({path:`artifacts/process-${name}.png`});
-    await page.locator('#process').evaluate(el => scrollTo({top:el.getBoundingClientRect().top+scrollY+innerHeight*3,behavior:'instant'}));
-    await expect.poll(() => page.locator('.process-step').nth(3).evaluate(el => Number(getComputedStyle(el).opacity))).toBeGreaterThan(.9);
+    if (viewport.width < 900) {
+      await page.locator('.process-step').nth(3).evaluate(el => el.scrollIntoView({block:'center',behavior:'instant'}));
+    } else {
+      await page.locator('#process').evaluate(el => scrollTo({top:el.getBoundingClientRect().top+scrollY+innerHeight*3,behavior:'instant'}));
+    }
+    await expect.poll(() => page.locator('.process-step').nth(3).locator('h3').evaluate(el => Number(getComputedStyle(el).opacity))).toBeGreaterThan(.9);
     await page.screenshot({path:`artifacts/process-timeline-${name}.png`});
     await page.locator('.process-footer').scrollIntoViewIfNeeded();
     await page.screenshot({path:`artifacts/process-footer-${name}.png`});

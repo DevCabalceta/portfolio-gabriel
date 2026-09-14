@@ -9,7 +9,7 @@ for (const viewport of [{ name: "desktop", width: 1440, height: 900 }, { name: "
   await page.locator("#services").evaluate((node) => scrollTo({ top: node.getBoundingClientRect().top + scrollY, behavior: "instant" }));
   await page.waitForTimeout(1500);
   await page.screenshot({ path: `artifacts/services-${viewport.name}.png`, fullPage: false });
-  await page.locator(".services-plans").evaluate((node) => scrollTo({ top: node.getBoundingClientRect().top + scrollY - 92, behavior: "instant" }));
+  await page.locator(".services-pricing").evaluate((node) => scrollTo({ top: node.getBoundingClientRect().top + scrollY - 72, behavior: "instant" }));
   await page.waitForTimeout(1800);
   await page.screenshot({ path: `artifacts/services-plans-${viewport.name}.png`, fullPage: false });
   await page.evaluate(() => {

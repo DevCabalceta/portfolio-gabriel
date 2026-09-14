@@ -23,17 +23,20 @@ export function Process({ copy }: { copy: Dictionary["process"] }) {
             <a className="process-contact" data-process-intro href={profile.whatsapp} target="_blank" rel="noopener noreferrer">{copy.contact}<ArrowIcon /></a>
             <p className="process-note micro-label" data-process-intro><span aria-hidden="true" />{copy.note}</p>
           </div>
-          <ol className="process-chapters" aria-label={copy.label}>
-            {copy.steps.map((step, index) => <li className="process-step" key={step.label}>
-              <span className="process-step-number" aria-hidden="true">{String(index + 1).padStart(2, "0")}</span>
-              <div className="process-step-content">
-                <p className="process-step-label micro-label"><span>{String(index + 1).padStart(2, "0")}</span> / {step.label}</p>
-                <div className="process-step-title-mask"><h3>{step.title}</h3></div>
-                <p className="process-step-description">{step.description}</p>
-                <p className="process-step-detail micro-label">{step.detail}</p>
-              </div>
-            </li>)}
-          </ol>
+          <div className="process-timeline">
+            <span className="process-timeline-track" aria-hidden="true"><span className="process-timeline-progress" /></span>
+            <ol className="process-chapters" aria-label={copy.label}>
+              {copy.steps.map((step, index) => <li className="process-step" key={step.label}>
+                <span className="process-step-number" aria-hidden="true">{String(index + 1).padStart(2, "0")}</span>
+                <div className="process-step-content">
+                  <p className="process-step-label micro-label"><span>{String(index + 1).padStart(2, "0")}</span> / {step.label}</p>
+                  <div className="process-step-title-mask"><h3>{step.title}</h3></div>
+                  <p className="process-step-description">{step.description}</p>
+                  <p className="process-step-detail micro-label">{step.detail}</p>
+                </div>
+              </li>)}
+            </ol>
+          </div>
           <div className="process-meter" aria-hidden="true">
             <span>01</span><span className="process-meter-track"><span className="process-progress" /></span><span>07</span>
           </div>
