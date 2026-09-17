@@ -427,7 +427,7 @@
     display: block;
     height: auto;
     min-height: 0;
-    padding: 98px 70px 96px var(--page-gutter);
+    padding: 98px var(--page-gutter) 96px;
   }
 
   .process-topline { display: flex; }
@@ -513,7 +513,7 @@
   .process-orbit-outer { width: 145vw; right: -76vw; }
   .process-orbit-inner { width: 86vw; right: -38vw; }
   .process-watermark { left: 8%; font-size: 180px; }
-  .process-footer { grid-template-columns: 1fr; align-items: start; min-height: 70svh; padding: 100px 70px 44px var(--page-gutter); }
+  .process-footer { grid-template-columns: 1fr; align-items: start; min-height: 70svh; padding: 100px var(--page-gutter) 44px; }
   .process-footer-index { margin-bottom: 30px; }
   .process-footer p { font-size: clamp(52px, 15vw, 76px); }
   .process-footer > a { justify-self: start; margin-top: 22px; }

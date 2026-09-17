@@ -1,33 +1,33 @@
 "use client";
 
-import { useLayoutEffect, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { gsap } from "gsap";
 import type { Dictionary } from "@/i18n/dictionaries";
 import { profile } from "@/data/profile";
 import { ArrowIcon } from "@/components/ui/arrow-icon";
 
 type Currency = "USD" | "CRC";
+type ExchangeRate = { rate: number; date: string };
 
 function whatsappFor(message: string) {
   return `${profile.whatsapp}?text=${encodeURIComponent(message)}`;
 }
 
 function formatAmount(amount: number, currency: Currency, locale: "es" | "en") {
-  const converted = currency === "CRC" ? amount * 500 : amount;
-  const grouped = converted.toLocaleString("en-US").replaceAll(",", locale === "es" ? "." : ",");
+  const grouped = Math.round(amount).toLocaleString("en-US").replaceAll(",", locale === "es" ? "." : ",");
   return `${currency === "CRC" ? "₡" : "$"}${grouped}`;
 }
 
-function AnimatedPrice({ amount, currency, locale }: { amount: number; currency: Currency; locale: "es" | "en" }) {
+function AnimatedPrice({ amount, currency, locale, rate }: { amount: number; currency: Currency; locale: "es" | "en"; rate: number }) {
   const value = useRef<HTMLSpanElement>(null);
-  const target = currency === "CRC" ? amount * 500 : amount;
+  const target = currency === "CRC" ? amount * rate : amount;
 
   useLayoutEffect(() => {
     const node = value.current;
     if (!node) return;
     const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     if (reduced) {
-      node.textContent = formatAmount(amount, currency, locale);
+      node.textContent = formatAmount(target, currency, locale);
       return;
     }
 
@@ -38,11 +38,8 @@ function AnimatedPrice({ amount, currency, locale }: { amount: number; currency:
       duration: 0.95,
       paused: true,
       ease: "power3.out",
-      onUpdate: () => {
-        const current = currency === "CRC" ? counter.amount / 500 : counter.amount;
-        node.textContent = formatAmount(Math.round(current), currency, locale);
-      },
-      onComplete: () => { node.textContent = formatAmount(amount, currency, locale); },
+      onUpdate: () => { node.textContent = formatAmount(counter.amount, currency, locale); },
+      onComplete: () => { node.textContent = formatAmount(target, currency, locale); },
     });
     const observer = new IntersectionObserver(([entry]) => {
       if (!entry.isIntersecting) return;
@@ -55,23 +52,49 @@ function AnimatedPrice({ amount, currency, locale }: { amount: number; currency:
       observer.disconnect();
       tween.kill();
     };
-  }, [amount, currency, locale, target]);
+  }, [currency, locale, target]);
 
-  return <span ref={value} data-service-amount data-currency={currency}>{formatAmount(amount, currency, locale)}</span>;
+  return <span ref={value} data-service-amount data-currency={currency}>{formatAmount(target, currency, locale)}</span>;
 }
 
 export function ServicePricing({ copy, locale }: { copy: Dictionary["services"]; locale: "es" | "en" }) {
   const [currency, setCurrency] = useState<Currency>("USD");
+  const [exchangeRate, setExchangeRate] = useState<ExchangeRate | null>(null);
+  const [rateFailed, setRateFailed] = useState(false);
+
+  useEffect(() => {
+    const controller = new AbortController();
+    const loadRate = async () => {
+      try {
+        const response = await fetch("/api/exchange-rate", { cache: "no-store", signal: controller.signal });
+        if (!response.ok) throw new Error("Exchange rate unavailable");
+        const data = await response.json() as ExchangeRate;
+        if (!Number.isFinite(data.rate) || data.rate <= 0 || !/^\d{4}-\d{2}-\d{2}$/.test(data.date)) {
+          throw new Error("Invalid exchange rate");
+        }
+        setExchangeRate(data);
+      } catch {
+        if (!controller.signal.aborted) setRateFailed(true);
+      }
+    };
+    void loadRate();
+    return () => controller.abort();
+  }, []);
+
+  const rateDate = exchangeRate?.date ? new Intl.DateTimeFormat(locale === "es" ? "es-CR" : "en-US", { day: "numeric", month: "short", year: "numeric", timeZone: "UTC" }).format(new Date(`${exchangeRate.date}T12:00:00Z`)) : "";
+  const note = exchangeRate
+    ? copy.exchangeNote.replace("{rate}", `₡${exchangeRate.rate.toLocaleString(locale === "es" ? "es-CR" : "en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`).replace("{date}", rateDate)
+    : rateFailed ? copy.exchangeUnavailable : copy.exchangeLoading;
 
   return <div className="services-pricing">
     <div className="services-currency" data-services-control>
       <div>
-        <p className="micro-label">{copy.currencyLabel}</p>
-        <span>{copy.exchangeNote}</span>
+        <p className="micro-label">{copy.currencyLabel} <strong>{copy.currencyHint} <span aria-hidden="true">↔</span></strong></p>
+        <span role="status">{note}</span>
       </div>
       <div className="currency-switch" data-currency={currency} role="group" aria-label={copy.currencyLabel}>
         <span className="currency-switch-indicator" aria-hidden="true" />
-        {(["USD", "CRC"] as const).map((option) => <button type="button" key={option} aria-pressed={currency === option} onClick={() => setCurrency(option)}>{option}</button>)}
+        {(["USD", "CRC"] as const).map((option) => <button type="button" key={option} disabled={option === "CRC" && !exchangeRate} aria-pressed={currency === option} aria-label={option} onClick={() => setCurrency(option)}><span aria-hidden="true">{option === "USD" ? "$" : "₡"}</span>{option}</button>)}
       </div>
     </div>
 
@@ -85,7 +108,7 @@ export function ServicePricing({ copy, locale }: { copy: Dictionary["services"];
         <div className="service-plan-heading">
           <div className="service-plan-title-mask"><h3 data-service-part="title">{plan.title}</h3></div>
           <p className="service-price" data-service-part="price">
-            {plan.amount > 0 ? <AnimatedPrice key={`${plan.title}-${currency}`} amount={plan.amount} currency={currency} locale={locale} /> : <span>{plan.customPrice}</span>}
+            {plan.amount > 0 ? <AnimatedPrice key={`${plan.title}-${currency}-${exchangeRate?.rate ?? 0}`} amount={plan.amount} currency={currency} locale={locale} rate={exchangeRate?.rate ?? 0} /> : <span>{plan.customPrice}</span>}
             {plan.amount > 0 && <small>{currency}</small>}
           </p>
         </div>

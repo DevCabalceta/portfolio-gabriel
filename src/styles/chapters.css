@@ -75,7 +75,7 @@
 .about-portrait figcaption { font-size: 9px; color: var(--foreground); line-height: 1.8; }
 .about-portrait figcaption span { display: block; margin-top: 6px; font-size: 8px; color: var(--accent); }
 @media (max-width: 899px) {
-  .about { padding-top: 100px; padding-right: 70px; }
+  .about { padding-top: 100px; padding-right: var(--page-gutter); }
   .about-title { font-size: clamp(48px, 14.8vw, 100px); }
   .profile-photo-frame { width: 120px; }
   .about-portrait { gap: 12px; }

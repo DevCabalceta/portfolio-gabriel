@@ -125,23 +125,25 @@
   display: flex;
   align-items: center;
   justify-content: flex-end;
-  gap: 22px;
+  gap: 18px;
   min-height: 58px;
   padding: 8px 0;
   border-top: 1px solid rgb(242 240 233 / 14%);
 }
 
 .services-currency > div:first-child { text-align: right; }
-.services-currency p { margin: 0 0 4px; color: #9c948d; font-size: 8px; }
+.services-currency p { margin: 0 0 4px; color: #c5bcb3; font-size: 9px; }
+.services-currency p strong { margin-left: 12px; color: var(--accent); font-weight: 500; white-space: nowrap; }
+.services-currency p strong span { display: inline-block; margin-left: 3px; font-size: 17px; line-height: 0; vertical-align: -2px; }
 .services-currency > div:first-child > span { color: #6f6963; font: 9px var(--font-geist-mono), monospace; }
 
 .currency-switch {
   position: relative;
   display: grid;
-  grid-template-columns: repeat(2, 56px);
-  height: 38px;
+  grid-template-columns: repeat(2, 67px);
+  height: 44px;
   padding: 3px;
-  border: 1px solid rgb(242 240 233 / 20%);
+  border: 1px solid rgb(255 120 75 / 70%);
   background: #151413;
 }
 
@@ -149,13 +151,13 @@
   position: absolute;
   top: 3px;
   left: 3px;
-  width: 56px;
-  height: 30px;
+  width: 67px;
+  height: 36px;
   background: var(--foreground);
   transition: transform 420ms cubic-bezier(.22, 1, .36, 1), background-color 240ms ease;
 }
 
-.currency-switch[data-currency="CRC"] .currency-switch-indicator { transform: translateX(56px); background: var(--accent); }
+.currency-switch[data-currency="CRC"] .currency-switch-indicator { transform: translateX(67px); background: var(--accent); }
 
 .currency-switch button {
   position: relative;
@@ -163,11 +165,17 @@
   border: 0;
   background: transparent;
   color: #8f8881;
-  font: 9px var(--font-geist-mono), monospace;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  font: 10px var(--font-geist-mono), monospace;
   transition: color 240ms ease;
 }
+.currency-switch button span { font-size: 15px; line-height: 1; }
 
 .currency-switch button[aria-pressed="true"] { color: #171514; }
+.currency-switch button:disabled { cursor: wait; color: #655f59; }
 
 .services-plans {
   display: grid;
@@ -383,7 +391,7 @@
 }
 
 @media (max-width: 899px) {
-  .services { padding: 100px 70px 40px var(--page-gutter); }
+  .services { padding: 100px var(--page-gutter) 40px; }
   .services-intro { margin-bottom: 76px; }
   .services-topline > span:last-child { display: none; }
   .services-heading { display: block; margin-top: 66px; }
@@ -391,8 +399,8 @@
   .services-introduction { margin-top: 36px; }
   .services-introduction p { margin-bottom: 20px; font-size: 14px; }
   .services-pricing { min-height: 0; padding-top: 0; }
-  .services-currency { justify-content: space-between; margin-bottom: 30px; }
-  .services-currency > div:first-child { text-align: left; }
+  .services-currency { justify-content: space-between; flex-wrap: wrap; margin-bottom: 30px; }
+  .services-currency > div:first-child { min-width: 0; text-align: left; }
   .services-plans { display: block; border-bottom: 0; }
   .service-plan,
   .service-plan:first-child,
@@ -406,7 +414,7 @@
   .service-plan h3 { min-height: 0; max-width: 300px; font-size: clamp(46px, 14vw, 70px); }
   .service-plan h3 { color: var(--accent); letter-spacing: -0.005em; }
   .service-price { min-height: 0; margin-top: 22px; }
-  .service-price > span { font-size: clamp(62px, 20vw, 92px); }
+  .service-price > span { font-size: clamp(44px, 14vw, 72px); }
   .service-plan:last-child .service-price > span { font-size: clamp(49px, 13vw, 70px); }
   .service-summary { min-height: 0; max-width: 520px; margin-top: 26px; font-size: 13px; }
   .service-benefits { margin-top: 30px; }
@@ -421,7 +429,6 @@
 }
 
 @media (max-width: 359px) {
-  .services { padding-right: 58px; }
   .services-heading h2 { font-size: 54px; }
   .service-plan h3 { font-size: 43px; }
   .service-plan-recommended { margin-left: -16px; padding-left: 40px; }

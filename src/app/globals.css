@@ -1,8 +1,10 @@
 @import "tailwindcss";
+@import "lenis/dist/lenis.css";
 @import "../styles/chapters.css";
 @import "../styles/projects.css";
 @import "../styles/process.css";
 @import "../styles/services.css";
+@import "../styles/faq.css";
 
 :root {
   --background: #111110;
@@ -129,6 +131,10 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--accent); outlin
   .hero-title { font-size: 12.8vw; }
   .hero-actions { gap: 20px; }
 }
+@media (min-width: 900px) and (max-width: 1100px) {
+  .site-header { gap: 24px; }
+  .desktop-nav { gap: clamp(14px, 2vw, 22px); font-size: 11px; white-space: nowrap; }
+}
 @media (min-width: 900px) {
   .site-header { height: clamp(56px, 8.5vh, 80px); }
   .hero {
@@ -223,6 +229,12 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--accent); outlin
   .hero-intro { margin-bottom: 8px; }
   .hero-title { margin-bottom: 10px; }
   .hero-actions { margin-top: 12px; }
+}
+@media (max-width: 899px) and (max-height: 550px) {
+  .mobile-menu-panel { padding-top: max(2px, env(safe-area-inset-top)); padding-bottom: env(safe-area-inset-bottom); }
+  .mobile-menu-label { margin-bottom: 0; }
+  .mobile-menu nav { padding-block: 0; }
+  .mobile-menu nav a { max-height: none; font-size: clamp(28px, min(9vw, 6dvh), 40px); }
 }
 @media (prefers-reduced-motion: reduce) {
   .gallery-track { animation: none !important; transform: translateY(-33.333333%); will-change: auto; }

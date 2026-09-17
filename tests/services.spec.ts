@@ -2,6 +2,7 @@ import { expect, test } from "@playwright/test";
 
 test.beforeEach(async ({ page }) => {
   await page.route("https://prod.spline.design/**/scene.splinecode", () => {});
+  await page.route("**/api/exchange-rate", (route) => route.fulfill({ json: { rate: 449.49, date: "2026-09-16" } }));
 });
 
 test("Services presents three localized scopes with functional WhatsApp actions", async ({ page }) => {
@@ -21,19 +22,21 @@ test("Services presents three localized scopes with functional WhatsApp actions"
   await expect(page.locator(".service-plan")).toHaveCount(3);
   const amounts = page.locator("[data-service-amount]");
   await amounts.nth(0).scrollIntoViewIfNeeded();
-  await expect(amounts.nth(0)).toHaveText("$150");
+  await expect(amounts.nth(0)).toHaveText("$350");
   await amounts.nth(1).scrollIntoViewIfNeeded();
-  await expect(amounts.nth(1)).toHaveText("$300");
+  await expect(amounts.nth(1)).toHaveText("$700");
   await expect(page.locator(".service-plan").nth(2)).toContainText("Hablemos");
   await expect(page.locator("[data-service-benefit]")).toHaveCount(28);
   await expect(page.locator(".service-plan-recommended")).toContainText("El equilibrio más completo");
   await expect(page.getByRole("button", { name: "USD" })).toHaveAttribute("aria-pressed", "true");
+  await expect(page.locator(".services-currency [role='status']")).toContainText("449,49");
+  await expect(page.getByRole("button", { name: "CRC" })).toBeEnabled();
   await page.getByRole("button", { name: "CRC" }).click();
   await expect(page.getByRole("button", { name: "CRC" })).toHaveAttribute("aria-pressed", "true");
   await amounts.nth(0).scrollIntoViewIfNeeded();
-  await expect(amounts.nth(0)).toHaveText("₡75.000");
+  await expect(amounts.nth(0)).toHaveText("₡157.322");
   await amounts.nth(1).scrollIntoViewIfNeeded();
-  await expect(amounts.nth(1)).toHaveText("₡150.000");
+  await expect(amounts.nth(1)).toHaveText("₡314.643");
   await expect(page.locator(".service-plan").nth(2)).toContainText("Hablemos");
   for (const action of await page.locator(".service-cta").all()) {
     await expect(action).toHaveAttribute("href", /^https:\/\/wa\.me\/50683442305\?text=/);
@@ -43,7 +46,36 @@ test("Services presents three localized scopes with functional WhatsApp actions"
 
   await page.goto("/en#services");
   await expect(page.locator("#services-title")).toHaveAccessibleName("A website for every stage.");
+  await expect(page.locator(".services-currency [role='status']")).toContainText("449.49");
   await expect(page.locator(".service-plan").nth(1)).toContainText("Create my website");
+});
+
+test("CRC is unavailable when Hacienda cannot provide a rate", async ({ page }) => {
+  await page.route("**/api/exchange-rate", (route) => route.fulfill({ status: 503, json: { error: "Unavailable" } }));
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await page.goto("/es#services");
+  await expect(page.getByRole("button", { name: "CRC" })).toBeDisabled();
+  await expect(page.locator(".services-currency [role='status']")).toContainText("Tipo de cambio no disponible");
+  await expect(page.locator("[data-service-amount]").first()).toHaveText("$350");
+});
+
+test("mobile sections use their available width and CRC prices remain inside the screen", async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await page.goto("/es#services");
+  await expect(page.getByRole("button", { name: "CRC" })).toBeEnabled();
+  await page.getByRole("button", { name: "CRC" }).click();
+  for (const width of [320, 390, 430]) {
+    await page.setViewportSize({ width, height: 740 });
+    const layout = await page.evaluate(() => {
+      const selectors = [".about", ".work", ".process-stage", ".process-footer", ".services"];
+      const paddings = selectors.map((selector) => Number.parseFloat(getComputedStyle(document.querySelector(selector)!).paddingRight));
+      const prices = [...document.querySelectorAll<HTMLElement>("[data-service-amount]")].map((item) => item.getBoundingClientRect().right);
+      return { paddings, prices, overflow: document.documentElement.scrollWidth - innerWidth };
+    });
+    for (const padding of layout.paddings) expect(padding).toBeLessThanOrEqual(30);
+    for (const right of layout.prices) expect(right).toBeLessThanOrEqual(width - 12);
+    expect(layout.overflow).toBeLessThanOrEqual(0);
+  }
 });
 
 test("desktop comparison keeps every benefit and action inside one viewport", async ({ page }) => {

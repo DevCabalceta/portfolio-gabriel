@@ -9,12 +9,15 @@ const es = {
     includes: "El alcance incluye",
     recommended: "El equilibrio más completo",
     currencyLabel: "Mostrar precios en",
-    exchangeNote: "Conversión fija · $1 = ₡500",
+    currencyHint: "Cambia de moneda",
+    exchangeNote: "Venta Hacienda · $1 = {rate} · {date}",
+    exchangeLoading: "Consultando tipo de cambio de Hacienda…",
+    exchangeUnavailable: "Tipo de cambio no disponible. Precios en USD.",
     inquiry: "Hola Gabriel, me interesa el servicio: {plan}.",
     footer: "Tu proyecto define el alcance. La claridad define el proceso.",
     plans: [
       {
-        number: "01", kind: "Presencia esencial", title: "Landing Page", amount: 300, customPrice: "", recommended: false,
+        number: "01", kind: "Presencia esencial", title: "Landing Page", amount: 350, customPrice: "", recommended: false,
         summary: "Para profesionales, marcas y negocios que necesitan presentar una propuesta clara y convertir visitas en conversaciones.",
         features: [
           "Landing Page personalizada", "Responsive en desktop, tablet y móvil", "Dominio personalizado", "Despliegue a producción",
@@ -24,7 +27,7 @@ const es = {
         cta: "Solicitar Landing Page",
       },
       {
-        number: "02", kind: "Presencia completa", title: "Sitio Web", amount: 500, customPrice: "", recommended: true,
+        number: "02", kind: "Presencia completa", title: "Sitio Web", amount: 700, customPrice: "", recommended: true,
         summary: "Para negocios que necesitan contar mejor su historia, organizar sus servicios y crecer sobre una base preparada para evolucionar.",
         features: [
           "Todo lo incluido en Landing Page", "Desarrollo con múltiples páginas", "Arquitectura y navegación entre páginas", "Inicio, servicios y contacto",
@@ -42,6 +45,23 @@ const es = {
         ],
         cta: "Cuéntame tu proyecto",
       },
+    ],
+  },
+  faq: {
+    label: "Preguntas frecuentes",
+    eyebrow: "Antes de empezar",
+    title: ["Hablemos", "claro."],
+    titleLabel: "Hablemos claro.",
+    introduction: "Las respuestas que necesitas para dar el primer paso con confianza. Si tu idea no cabe en una pregunta, conversemos.",
+    contact: "Pregúntame por WhatsApp",
+    more: "¿Te queda alguna duda?",
+    items: [
+      { question: "¿Por dónde empezamos?", answer: "Escríbeme por WhatsApp y cuéntame qué quieres construir. Hablamos de tus objetivos, el público y las funciones que necesitas; no hace falta que tengas todo definido." },
+      { question: "¿Cuánto cuesta un proyecto?", answer: "Landing Page y Sitio Web tienen precios de referencia en Servicios. Para una solución personalizada preparo una propuesta según el alcance, los entregables y los requisitos concretos." },
+      { question: "¿Cuánto tiempo tarda?", answer: "Depende del tamaño y la complejidad del proyecto. Antes de comenzar acordamos un calendario de trabajo y las fechas de revisión y entrega." },
+      { question: "¿El dominio y la publicación están incluidos?", answer: "Los servicios contemplan configurar el dominio acordado y publicar el proyecto. Cualquier costo de proveedores externos, como el registro del dominio o el alojamiento, se aclara en la propuesta antes de iniciar." },
+      { question: "¿Puedo solicitar cambios durante el proceso?", answer: "Sí. Revisamos el proyecto juntos y realizo los ajustes incluidos en el alcance acordado. Si surge una funcionalidad nueva, valoramos su impacto y la acordamos por separado." },
+      { question: "¿Cómo funcionan los pagos y la entrega?", answer: "Definimos la forma de pago antes de comenzar. Al terminar, verificamos el sitio publicado y te comparto los accesos y una guía para administrarlo." },
     ],
   },
   process: {
@@ -98,7 +118,7 @@ const es = {
   },
   nav: {
     label: "Navegación principal", home: "Inicio", about: "Sobre mí", work: "Proyectos",
-    process: "Proceso", services: "Servicios", experience: "Experiencia", stack: "Tecnologías", contact: "Hablemos", resume: "Mi CV",
+    process: "Proceso", services: "Servicios", faq: "Preguntas", experience: "Experiencia", stack: "Tecnologías", contact: "Hablemos", resume: "Mi CV",
     open: "Abrir menú", close: "Cerrar menú", menu: "Explorar", language: "Seleccionar idioma",
   },
   hero: {
@@ -128,12 +148,15 @@ const en: Dictionary = {
     includes: "The scope includes",
     recommended: "The most complete balance",
     currencyLabel: "Show prices in",
-    exchangeNote: "Fixed conversion · $1 = ₡500",
+    currencyHint: "Switch currency",
+    exchangeNote: "Hacienda selling rate · $1 = {rate} · {date}",
+    exchangeLoading: "Loading Hacienda exchange rate…",
+    exchangeUnavailable: "Exchange rate unavailable. Prices in USD.",
     inquiry: "Hi Gabriel, I'm interested in the service: {plan}.",
     footer: "Your project defines the scope. Clarity defines the process.",
     plans: [
       {
-        number: "01", kind: "Essential presence", title: "Landing Page", amount: 300, customPrice: "", recommended: false,
+        number: "01", kind: "Essential presence", title: "Landing Page", amount: 350, customPrice: "", recommended: false,
         summary: "For professionals, brands and businesses that need to present a clear offer and turn visits into conversations.",
         features: [
           "Custom Landing Page", "Responsive on desktop, tablet and mobile", "Custom domain", "Production deployment",
@@ -143,7 +166,7 @@ const en: Dictionary = {
         cta: "Request a Landing Page",
       },
       {
-        number: "02", kind: "Complete presence", title: "Website", amount: 500, customPrice: "", recommended: true,
+        number: "02", kind: "Complete presence", title: "Website", amount: 700, customPrice: "", recommended: true,
         summary: "For businesses that need to tell their story, organize their services and grow on a foundation built to evolve.",
         features: [
           "Everything in Landing Page", "Multi-page development", "Page architecture and navigation", "Home, services and contact pages",
@@ -161,6 +184,23 @@ const en: Dictionary = {
         ],
         cta: "Tell me about your project",
       },
+    ],
+  },
+  faq: {
+    label: "Frequently asked questions",
+    eyebrow: "Before we begin",
+    title: ["Let's talk", "clearly."],
+    titleLabel: "Let's talk clearly.",
+    introduction: "The answers you need to take the first step with confidence. If your idea needs a longer conversation, let's talk.",
+    contact: "Ask me on WhatsApp",
+    more: "Still have a question?",
+    items: [
+      { question: "Where do we start?", answer: "Message me on WhatsApp and tell me what you want to build. We will discuss your goals, audience and required features. You do not need to have everything defined yet." },
+      { question: "How much does a project cost?", answer: "Landing Page and Website have reference prices in Services. For a custom solution, I prepare a proposal based on its scope, deliverables and specific requirements." },
+      { question: "How long does it take?", answer: "It depends on the size and complexity of the project. Before starting, we agree on a schedule and the review and delivery dates." },
+      { question: "Are domain and launch included?", answer: "The services include configuring the agreed domain and publishing the project. Any third-party costs, such as domain registration or hosting, are made clear in the proposal before we begin." },
+      { question: "Can I request changes during the process?", answer: "Yes. We review the project together, and I make the adjustments included in the agreed scope. If a new feature comes up, we assess and agree on it separately." },
+      { question: "How do payment and handover work?", answer: "We agree on payment terms before starting. At the end, we verify the published site and I share access and guidance for managing it." },
     ],
   },
   process: {
@@ -217,7 +257,7 @@ const en: Dictionary = {
   },
   nav: {
     label: "Main navigation", home: "Home", about: "About", work: "Work",
-    process: "Process", services: "Services", experience: "Experience", stack: "Stack", contact: "Let's talk", resume: "My CV",
+    process: "Process", services: "Services", faq: "Questions", experience: "Experience", stack: "Stack", contact: "Let's talk", resume: "My CV",
     open: "Open menu", close: "Close menu", menu: "Explore", language: "Select language",
   },
   hero: {

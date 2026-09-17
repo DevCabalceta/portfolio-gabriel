@@ -639,7 +639,7 @@
 
 @media (max-width: 899px) {
   .work {
-    padding-right: 70px;
+    padding-right: var(--page-gutter);
   }
 
   .work-intro {

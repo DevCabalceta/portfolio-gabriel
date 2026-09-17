@@ -4,7 +4,7 @@ Portfolio profesional bilingüe desarrollado con Next.js, TypeScript y Tailwind 
 
 ## Estado de la entrega
 
-**Hero, Sobre mí y Proyectos aprobados. Sección 05: Servicios / Planes, lista para revisión visual.** El cierre de Cómo trabajamos ya tiene una entrada coreografiada. El desarrollo continúa sección por sección después de la revisión de Gabriel; Experiencia y las secciones posteriores permanecen pendientes.
+**Hero, Sobre mí y Proyectos aprobados. Sección 06: Preguntas frecuentes, lista para revisión visual.** Servicios y su selector USD/CRC ya están integrados. El desarrollo continúa sección por sección después de la revisión de Gabriel; Experiencia y las secciones posteriores permanecen pendientes.
 
 - [x] Revisar y limpiar la plantilla inicial de Next.js.
 - [x] Arquitectura de componentes, traducciones y datos tipados.
@@ -29,11 +29,13 @@ Portfolio profesional bilingüe desarrollado con Next.js, TypeScript y Tailwind 
 - [x] Sección 04: Cómo trabajamos, con narrativa GSAP fijada en desktop, línea de tiempo móvil, siete capítulos y contacto general por WhatsApp.
 - [x] Cierre de Cómo trabajamos con reveal de palabras, detalle y CTA en secuencia.
 - [x] Sección 05: Servicios / Planes con tres alcances editoriales y CTA de WhatsApp.
-- [ ] Revisión y aprobación visual de Servicios / Planes.
-- [ ] Sección 06: Experiencia.
+- [x] Revisión y aprobación visual de Servicios / Planes.
+- [x] Sección 06: Preguntas frecuentes con introducción fija, acordeón bilingüe y transición compartida.
+- [ ] Revisión y aprobación visual de Preguntas frecuentes.
+- [ ] Sección posterior: Experiencia.
 - [ ] Sección 07: Tecnologías e iconos interactivos.
 - [ ] Formación y certificaciones.
-- [ ] Preguntas y respuestas con el diseño de lista desplegable.
+- [x] Preguntas y respuestas con el diseño de lista desplegable.
 - [ ] Contacto y cierre.
 - [x] Botones flotantes monocromáticos de GitHub, LinkedIn, correo, WhatsApp y regreso arriba después del Hero.
 - [ ] Indicador de progreso global de lectura.
@@ -74,7 +76,7 @@ src/
   components/
     animations/              Ciclo de vida de GSAP y ScrollTrigger
     layout/                  Header fijo, menú móvil, idiomas y botones flotantes
-    sections/                Hero, Sobre mí, Proyectos, Proceso y Servicios
+    sections/                Hero, Sobre mí, Proyectos, Proceso, Servicios y FAQ
     ui/                      Enlaces animados, iconos, multimedia y detalles de proyectos
   data/                      Perfil, navegación, proyectos, experiencia y tecnologías
   i18n/                      Configuración y diccionarios tipados ES/EN
@@ -96,7 +98,7 @@ Las páginas, el Hero y los datos se renderizan en servidor. Los componentes cli
 - Tecnologías solicitadas: `src/data/technologies.ts`.
 - Secciones del menú: `src/data/navigation.ts`. Activar `ready` cuando se implemente la sección y exista su ancla.
 
-La navegación ofrece Inicio, Sobre mí, Proyectos, Proceso, Servicios, CV y correo. Los enlaces hacia Experiencia, Tecnologías y Contacto se incorporarán con sus respectivas secciones. Las anclas de las secciones permanecen en contenedores estables; se animan sus contenidos para evitar que la navegación apunte a posiciones transformadas.
+La navegación ofrece Inicio, Sobre mí, Proyectos, Proceso, Servicios, Preguntas, CV y correo. Los enlaces hacia Experiencia, Tecnologías y Contacto se incorporarán con sus respectivas secciones. Las anclas de las secciones permanecen en contenedores estables; se animan sus contenidos para evitar que la navegación apunte a posiciones transformadas.
 
 El CV es la fuente de experiencia y proyectos. El perfil de GitHub fue proporcionado directamente por Gabriel. No se han inventado años, métricas, repositorios ni tecnologías por proyecto. Los campos aún no confirmados permanecen vacíos u opcionales. Las tecnologías de los clones Astro sí están especificadas en el CV. Los estados de los proyectos reflejan el documento recibido, no una auditoría de los sitios externos.
 
@@ -111,7 +113,7 @@ El CV descargable es el original en inglés en ambos idiomas. No se muestra disp
 - Cada librería controla elementos diferentes. `gsap.matchMedia()` revierte animaciones y listeners al desmontar o cambiar las preferencias.
 - `prefers-reduced-motion` desactiva entradas GSAP, transiciones de scroll, desplazamiento suave y transformaciones interactivas.
 - El menú usa un `dialog` modal nativo, bloqueo de scroll, ciclo de foco, cierre con Escape y restauración del foco. Se cierra al pasar al layout de escritorio.
-- El ciclo de vida del diálogo está encapsulado en `mobile-menu.tsx`: se monta y abre antes de animar el panel interior, y permanece abierto hasta terminar la salida. Incluye áreas seguras de móvil y controles táctiles de al menos 44 px. Su distribución usa la altura dinámica del viewport para mantener encabezado, siete destinos, idiomas y pie visibles entre 320 × 480 y 430 × 740, sin scroll interno.
+- El ciclo de vida del diálogo está encapsulado en `mobile-menu.tsx`: se monta y abre antes de animar el panel interior, y permanece abierto hasta terminar la salida. Incluye áreas seguras de móvil y controles táctiles de al menos 44 px. Su distribución usa la altura dinámica del viewport para mantener encabezado, ocho destinos, idiomas y pie visibles entre 320 × 480 y 430 × 740, sin scroll interno.
 - En desktop (desde 900 px de ancho), el Hero ocupa exactamente `100vh`. Su grid reserva espacio para el pie y la tipografía se ajusta al ancho y a la altura disponibles. Los layouts de poca altura reducen espacios para mantener visibles las acciones sin ocultar el scroll global del documento.
 - La fotografía está en Sobre mí, junto al perfil, en un encuadre 4:5 de 150 px de ancho en desktop y 120 px en móvil. El Hero presenta el robot de Spline y conserva el protagonismo del nombre, perfil y acciones.
 - Los cuatro bordes del retrato se desvanecen mediante máscaras CSS con degradados; la fotografía original permanece intacta.
@@ -173,29 +175,35 @@ Disponible en `#process`, después de Proyectos, y desde «Proceso» en la naveg
 - Sin JavaScript o con movimiento reducido, los siete capítulos vuelven al flujo normal y permanecen legibles; la lista conserva su semántica ordenada y el contacto sigue disponible.
 - El cierre claro «Todo empieza con una conversación» ya no aparece directamente: la microetiqueta introduce la escena, el título se revela palabra por palabra mediante máscara y desplazamiento, y después entran el texto secundario y el CTA con blur progresivo. Esta secuencia usa la misma utilidad de reveals que Servicios.
 
-Todas las fronteras entre capítulos utilizan `src/components/animations/cinematic-section-transition.ts`. Esta utilidad fija el plano anterior cuando corresponde y aplica los mismos valores base de dirección, profundidad, escala, opacidad, desenfoque, easing y scrub. Hero → Sobre mí, Sobre mí → Proyectos, Proyectos → Proceso y Proceso → Servicios comparten este sistema. `src/components/animations/cinematic-reveal.ts` unifica el easing y el ritmo de los reveals secuenciales sin imponer una composición idéntica a cada capítulo.
+Todas las fronteras entre capítulos utilizan `src/components/animations/cinematic-section-transition.ts`. Esta utilidad fija el plano anterior cuando corresponde y aplica los mismos valores base de dirección, profundidad, escala, opacidad, desenfoque, easing y scrub. Hero → Sobre mí, Sobre mí → Proyectos, Proyectos → Proceso, Proceso → Servicios y Servicios → Preguntas comparten este sistema. `src/components/animations/cinematic-reveal.ts` unifica el easing y el ritmo de los reveals secuenciales sin imponer una composición idéntica a cada capítulo. Lenis suaviza la rueda del ratón en escritorio y sincroniza su avance con GSAP; en pantallas táctiles y con movimiento reducido se conserva el scroll nativo.
 
 `tests/process.spec.ts` comprueba navegación, contacto ES/EN, ausencia del selector, secuencia y reversión, transición compartida sobre Proyectos, regreso al Hero, tamaños pequeños, movimiento reducido y contenido sin JavaScript en Chromium y WebKit. Con el servidor activo, `node scripts/preview-process.mjs` guarda las capturas de revisión en `artifacts/process-*.png`.
 
 ## Sección 05: Servicios / Planes
 
-Disponible en `#services`, después de Cómo trabajamos y desde «Servicios» en la navegación. Presenta tres formas de trabajar con Gabriel: Landing Page por $150, Sitio Web por $300 y Proyecto Personalizado con alcance conversado. Un selector general alterna entre USD y CRC mediante la conversión comercial fija confirmada de `$1 = ₡500`, por lo que muestra ₡75.000 y ₡150.000. Cada acción abre WhatsApp con el servicio elegido dentro de un mensaje editable; nunca envía el mensaje automáticamente.
+Disponible en `#services`, después de Cómo trabajamos y desde «Servicios» en la navegación. Presenta tres formas de trabajar con Gabriel: Landing Page por $350, Sitio Web por $700 y Proyecto Personalizado con alcance conversado. Un selector general más visible, con símbolos $, ₡ e indicación de cambio, alterna entre USD y CRC usando el tipo de cambio de venta y la fecha publicados por la API de Hacienda de Costa Rica. La conversión redondea al colón más cercano y es informativa; si la fuente no responde, se mantiene USD y se desactiva CRC para evitar mostrar un valor ficticio. Cada acción abre WhatsApp con el servicio elegido dentro de un mensaje editable; nunca envía el mensaje automáticamente.
 
 - Composición: tres módulos editoriales paralelos en desktop, separados por líneas verticales finas y grandes números de fondo. El bloque completo de comparación —selector, precios, beneficios y los tres CTA— cabe en un viewport de escritorio, verificado desde 1024 × 768, sin recortar información. En anchos desde 1400 px los beneficios se distribuyen en dos columnas para mejorar el aprovechamiento del espacio. No se usan cards redondeadas, sombras, iconos repetidos, badges ni glow. El plan Sitio Web se destaca con una línea naranja, una frase editorial y un cambio mínimo de profundidad.
 - Contenido: Landing Page enumera dominio, despliegue, responsive, redes/WhatsApp, rendimiento, SEO técnico, metadata, favicon, SSL, animaciones y CTA o formulario. Sitio Web incluye ese alcance y añade múltiples páginas, arquitectura, navegación, formulario, SEO por página, integraciones básicas y preparación para ampliaciones. El plan personalizado cubre plataformas, aplicaciones, sistemas e integraciones a medida.
 - Movimiento: la microetiqueta precede al título enmascarado y al texto introductorio. En desktop, los planes se revelan 01 → 02 → 03 y cada uno encadena línea, número, nombre, precio, resumen, beneficios y CTA. Los importes cuentan desde cero al entrar en pantalla y vuelven a animarse al cambiar de moneda; con movimiento reducido muestran el valor final inmediatamente. En móvil, la misma microsecuencia se activa de manera independiente al alcanzar cada plan. Los números y la geometría ambiental responden suavemente al avance del scroll.
 - Ajuste de viewport: al entrar directamente en la comparación de desktop, el selector comienza cerca del navbar y los tres planes se estiran hasta el borde inferior del viewport. El espacio vertical restante se distribuye dentro de los planes y mantiene todos los beneficios y CTA visibles, sin crear una segunda pantalla para completar la comparación.
-- Interacción: en desktop, el plan bajo el cursor gana presencia tipográfica, extiende una línea naranja y reduce con suavidad la presencia de los otros. En móvil todos los planes mantienen ese estado activo: título y línea naranjas, fondo sutil y CTA destacado. Las acciones son botones rectangulares sólidos con texto condensado, grueso y centrado; la flecha permanece anclada a la derecha para no desplazar la etiqueta. Conservan contraste claro, foco visible y áreas táctiles de al menos 58 px. Los numerales 01, 02 y 03 suben detrás del contenido para reforzar su presencia decorativa.
+- Interacción: en desktop, el plan bajo el cursor gana presencia tipográfica, extiende una línea naranja y reduce con suavidad la presencia de los otros. En móvil todos los planes mantienen ese estado activo: título y línea naranjas, fondo sutil y CTA destacado. El espacio lateral antes reservado a los iconos flotantes se libera en Sobre mí, Proyectos, Proceso y Servicios; los precios en CRC escalan para no recortarse en pantallas estrechas. Las acciones son botones rectangulares sólidos con texto condensado, grueso y centrado; la flecha permanece anclada a la derecha para no desplazar la etiqueta. Conservan contraste claro, foco visible y áreas táctiles de al menos 58 px. Los numerales 01, 02 y 03 suben detrás del contenido para reforzar su presencia decorativa.
 - Transición: Servicios asciende por encima del cierre claro de Proceso mientras ese plano reduce escala, pierde opacidad y se desenfoca. Se usa la transición común y el navbar permanece fuera de los planos animados.
 - Accesibilidad y rendimiento: la lista de planes y las listas de beneficios conservan semántica nativa. Sin JavaScript o con movimiento reducido, todo queda visible en flujo normal; se eliminan transiciones decorativas y no se fijan secciones. Las animaciones principales usan transform y opacidad, y el blur se reserva para entradas breves.
 
-La implementación está dividida entre `src/components/sections/services.tsx`, `src/components/ui/service-pricing.tsx`, `src/components/animations/services-motion.tsx`, `src/styles/services.css` y el bloque `services` de `src/i18n/dictionaries.ts`. `tests/services.spec.ts` comprueba contenido ES/EN, conversión USD/CRC, ajuste completo a 1366 × 768, legibilidad, estado activo móvil, CTA de WhatsApp, transición compartida, reveal del cierre anterior, movimiento reducido y fallback sin JavaScript. Con el servidor activo, `node scripts/preview-services.mjs` genera las capturas `artifacts/services-*.png`. Experiencia, preguntas y respuestas y las siguientes secciones continúan pendientes de su propia entrega.
+La implementación está dividida entre `src/components/sections/services.tsx`, `src/components/ui/service-pricing.tsx`, `src/app/api/exchange-rate/route.ts`, `src/components/animations/services-motion.tsx`, `src/styles/services.css` y el bloque `services` de `src/i18n/dictionaries.ts`. El endpoint interno valida la respuesta de Hacienda y guarda la consulta de origen durante una hora. `tests/services.spec.ts` comprueba contenido ES/EN, conversión USD/CRC con una cotización simulada, indisponibilidad de la fuente, ancho útil móvil, ajuste completo a 1366 × 768, legibilidad, estado activo móvil, CTA de WhatsApp, transición compartida, reveal del cierre anterior, movimiento reducido y fallback sin JavaScript. Con el servidor activo, `node scripts/preview-services.mjs` genera las capturas `artifacts/services-*.png`.
+
+## Sección 06: Preguntas frecuentes
+
+Disponible en `#faq` y desde «Preguntas» en la navegación. La sección utiliza una superficie marfil cálida, texto oscuro y un naranja más profundo para conservar el contraste en su versión clara. La introducción editorial queda fija a la izquierda en escritorio mientras seis preguntas avanzan a la derecha con el scroll del documento. En móvil la lectura pasa a una sola columna. El acordeón abre una respuesta a la vez, comienza con la primera visible, ofrece controles de teclado y conserva el contenido en el DOM para lectores de pantalla. Las respuestas cubren inicio, precios, tiempos, dominio y publicación, cambios, pagos y entrega sin prometer condiciones que dependan del alcance acordado.
+
+La transición Servicios → Preguntas reutiliza `createCinematicSectionTransition`; el contenido de Servicios retrocede, se reduce y se desenfoca mientras la FAQ asciende por encima. La microetiqueta, el título, el texto y el CTA entran en secuencia; cada pregunta se revela al entrar al viewport. `SmoothScroll` integra Lenis con GSAP en escritorio para un desplazamiento de rueda fluido y ágil. Móvil, dispositivos táctiles y usuarios con movimiento reducido conservan el desplazamiento nativo. `tests/faq.spec.ts` cubre idiomas, acordeón, ancho y posición fija en escritorio.
 
 ## Navbar y botones flotantes
 
 El navbar permanece fijo por encima de las secciones y fuera del contenedor que se reduce y desenfoca. Su fondo oscuro tiene 30 % de opacidad en el Hero y 60 % al desplazar, con `backdrop-filter: blur(18px)` y compatibilidad WebKit. La altura es de 56–80 px en desktop (54 px en pantallas bajas) y 64 px en móvil (58 px en pantallas bajas). Los anclajes reservan espacio para la navegación.
 
-`src/components/layout/floating-actions.tsx` muestra una columna de botones circulares monocromáticos al terminar el Hero, incluyendo cuando se llega mediante el menú. Usa exclusivamente los destinos confirmados: GitHub, LinkedIn, correo y WhatsApp. El enlace de WhatsApp es `https://wa.me/50683442305`, correspondiente al número de Costa Rica +506 8344 2305 proporcionado por Gabriel; abrirlo no envía mensajes automáticamente. El último botón regresa arriba y devuelve el foco al inicio. Antes de ese punto los controles están ocultos y son `inert`, por lo que no reciben foco. En móvil, Sobre mí reserva espacio lateral para que los botones no cubran el texto.
+`src/components/layout/floating-actions.tsx` muestra una columna de botones circulares monocromáticos al terminar el Hero, incluyendo cuando se llega mediante el menú. Usa exclusivamente los destinos confirmados: GitHub, LinkedIn, correo y WhatsApp. El enlace de WhatsApp es `https://wa.me/50683442305`, correspondiente al número de Costa Rica +506 8344 2305 proporcionado por Gabriel; abrirlo no envía mensajes automáticamente. El último botón regresa arriba y devuelve el foco al inicio. Antes de ese punto los controles están ocultos y son `inert`, por lo que no reciben foco. En móvil, los iconos pueden superponerse al contenido para aprovechar todo el ancho disponible.
 
 ## Robot del Hero
 
@@ -291,5 +299,6 @@ Documentación: [internacionalización de Next.js](https://nextjs.org/docs/app/g
 
 - **Entrega 05 — Servicios / Planes:** el cierre de Proceso gana una entrada secuencial de palabras, detalle y CTA mediante la utilidad común de reveals. La nueva sección compara Landing Page ($150), Sitio Web ($300) y Proyecto Personalizado en una composición editorial de líneas, numerales y espacio negativo, con coreografía 01 → 02 → 03, microinteracciones, adaptación vertical móvil y CTA de WhatsApp contextual. Proceso → Servicios reutiliza la transición cinematográfica global. Servicios queda pendiente de revisión antes de avanzar.
 
-- **Ajustes de Servicios:** la comparación completa cabe en un viewport de escritorio mediante una estructura más compacta y beneficios legibles en dos columnas cuando existe espacio. Los CTA pasan a botones sólidos; móvil mantiene el estado activo de cada plan. Los precios cuentan desde cero y el selector USD/CRC los recalcula con una conversión fija de ₡500 por dólar y una nueva animación.
+- **Ajustes de Servicios:** la comparación completa cabe en un viewport de escritorio mediante una estructura más compacta y beneficios legibles en dos columnas cuando existe espacio. Los CTA pasan a botones sólidos; móvil mantiene el estado activo de cada plan. Los precios cuentan desde cero y el selector USD/CRC los recalcula con una animación.
+- **Ancho móvil y cambio vigente:** Sobre mí, Proyectos, Proceso y Servicios aprovechan el ancho antes reservado a los iconos flotantes. Los importes en colones se ajustan al viewport. La conversión usa el tipo de cambio de venta de Hacienda con fecha visible, caché de una hora y estado de error explícito sin tasa inventada.
 - **Ajuste de Proceso y viewport de Servicios:** la comparación de Servicios ocupa ahora toda la altura útil bajo el navbar sin dejar el gran vacío superior y conserva beneficios y acciones dentro de la misma pantalla. En Proceso desktop, «Tu idea. Paso a paso.» permanece inmóvil y con presencia constante mientras cambian únicamente las etapas de la derecha. En móvil se sustituye la escena fijada por una línea de tiempo vertical continua: cada etapa permanece en el flujo, se revela en secuencia al llegar al viewport y una línea naranja muestra el avance. Los modos con movimiento reducido y sin JavaScript conservan la misma lectura vertical.

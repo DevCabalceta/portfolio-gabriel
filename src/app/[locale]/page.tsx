@@ -8,6 +8,8 @@ import { About } from "@/components/sections/about";
 import { Projects } from "@/components/sections/projects";
 import { Process } from "@/components/sections/process";
 import { Services } from "@/components/sections/services";
+import { Faq } from "@/components/sections/faq";
+import { SmoothScroll } from "@/components/animations/smooth-scroll";
 import { ChapterTransition } from "@/components/animations/chapter-transition";
 
 export default async function Home({ params }: { params: Promise<{ locale: string }> }) {
@@ -17,12 +19,14 @@ export default async function Home({ params }: { params: Promise<{ locale: strin
   return (
     <>
       <a href="#main" className="skip-link">{copy.hero.skip}</a>
+      <SmoothScroll />
       <SiteHeader locale={locale} copy={copy.nav} />
       <main id="main" tabIndex={-1}>
         <ChapterTransition id="home" previous={<Hero copy={copy.hero} />}><About copy={copy.about} /></ChapterTransition>
         <Projects locale={locale} copy={copy.work} />
         <Process copy={copy.process} />
         <Services copy={copy.services} locale={locale} />
+        <Faq copy={copy.faq} />
       </main>
       <FloatingActions copy={copy} />
     </>

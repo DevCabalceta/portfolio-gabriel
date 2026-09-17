@@ -1,0 +1,82 @@
+.faq-motion {
+  --faq-paper: #f3f0e8;
+  --faq-ink: #1d1b18;
+  --faq-muted: #5f5a53;
+  --faq-accent: #b54320;
+  position: relative;
+  z-index: 6;
+  background: var(--faq-paper);
+}
+
+.faq {
+  position: relative;
+  min-height: 100svh;
+  overflow: clip;
+  padding: clamp(115px, 14vh, 165px) var(--page-gutter) 30px;
+  background: var(--faq-paper);
+  color: var(--faq-ink);
+  isolation: isolate;
+}
+
+.faq:focus { outline: none; }
+.faq-atmosphere { position: absolute; inset: 0; overflow: hidden; z-index: -1; pointer-events: none; }
+.faq-atmosphere > span { position: absolute; top: 4%; left: -0.08em; color: rgb(181 67 32 / 5%); font: 400 min(52vw, 760px)/1 var(--font-display), Impact, sans-serif; }
+.faq-atmosphere > i { position: absolute; top: 14%; right: -18%; width: 72vw; aspect-ratio: 1; border: 1px solid rgb(181 67 32 / 13%); border-radius: 50%; }
+.faq-layout { display: grid; grid-template-columns: minmax(0, 0.92fr) minmax(0, 1.08fr); gap: clamp(70px, 10vw, 190px); max-width: 1920px; margin: 0 auto; align-items: start; }
+.faq-intro { position: sticky; top: clamp(104px, 14vh, 150px); align-self: start; padding-bottom: 40px; }
+.faq-eyebrow { margin: 0 0 clamp(72px, 10vh, 124px); color: var(--faq-muted); }
+.faq-eyebrow span { color: var(--faq-accent); margin-right: 12px; }
+.faq-intro h2 { margin: 0 0 38px; font: 400 clamp(74px, 8.4vw, 150px)/0.86 var(--font-display), Impact, sans-serif; letter-spacing: -0.035em; text-transform: uppercase; }
+.faq-title-mask { display: block; overflow: hidden; padding-block: 0.06em; }
+.faq-title-mask > span { display: block; transform-origin: bottom left; }
+.faq-title-mask:last-child { color: var(--faq-accent); }
+.faq-introduction { max-width: 430px; margin: 0; color: var(--faq-muted); font-size: clamp(15px, 1.18vw, 18px); line-height: 1.7; text-wrap: pretty; }
+.faq-contact { display: inline-flex; align-items: center; justify-content: space-between; gap: 50px; min-height: 48px; margin-top: 38px; border-bottom: 1px solid var(--faq-accent); color: var(--faq-ink); font-size: 12px; transition: color 200ms ease, gap 360ms cubic-bezier(.22,1,.36,1); }
+.faq-contact:hover { color: var(--faq-accent); gap: 66px; }
+.faq-contact:focus-visible, .faq-question:focus-visible { outline-color: var(--faq-accent); }
+.faq-contact svg { width: 16px; color: var(--faq-accent); }
+.faq-intro-index { display: block; margin-top: 38px; color: #726c64; font-size: 8px; }
+.faq-questions { border-top: 1px solid rgb(29 27 24 / 32%); }
+.faq-item { border-bottom: 1px solid rgb(29 27 24 / 19%); }
+.faq-question { display: grid; grid-template-columns: 46px minmax(0, 1fr) 46px; align-items: start; gap: 22px; width: 100%; min-height: 174px; padding: 31px 0; border: 0; background: none; text-align: left; }
+.faq-question-number { padding-top: 9px; color: var(--faq-accent); font-size: 9px; }
+.faq-question-text { max-width: 620px; font-size: clamp(24px, 2.25vw, 38px); font-weight: 450; line-height: 1.18; letter-spacing: -0.055em; text-wrap: balance; transition: color 220ms ease, transform 360ms cubic-bezier(.22,1,.36,1); }
+.faq-question:hover .faq-question-text, .faq-question:focus-visible .faq-question-text, .faq-item[data-open="true"] .faq-question-text { color: var(--faq-accent); }
+.faq-question:hover .faq-question-text { transform: translateX(5px); }
+.faq-question-toggle { position: relative; display: block; width: 42px; height: 42px; border: 1px solid rgb(29 27 24 / 38%); border-radius: 50%; transition: background-color 280ms ease, border-color 280ms ease, transform 360ms cubic-bezier(.22,1,.36,1); }
+.faq-question-toggle i { position: absolute; top: 20px; left: 12px; width: 16px; height: 1px; background: var(--faq-ink); transition: transform 300ms ease, background-color 300ms ease; }
+.faq-question-toggle i:last-child { transform: rotate(90deg); }
+.faq-item[data-open="true"] .faq-question-toggle { background: var(--faq-accent); border-color: var(--faq-accent); transform: rotate(90deg); }
+.faq-item[data-open="true"] .faq-question-toggle i { background: var(--faq-paper); }
+.faq-item[data-open="true"] .faq-question-toggle i:last-child { transform: rotate(0deg); }
+.faq-answer-shell { display: grid; grid-template-rows: 0fr; opacity: 0; transition: grid-template-rows 430ms cubic-bezier(.22,1,.36,1), opacity 300ms ease; }
+.faq-item[data-open="true"] .faq-answer-shell { grid-template-rows: 1fr; opacity: 1; }
+.faq-answer-inner { overflow: hidden; min-height: 0; padding-left: 68px; }
+.faq-answer-inner p { max-width: 550px; margin: 0; padding: 0 40px 34px 0; color: var(--faq-muted); font-size: clamp(14px, 1.05vw, 16px); line-height: 1.7; text-wrap: pretty; }
+.faq-footer { display: flex; justify-content: space-between; gap: 20px; max-width: 1920px; margin: clamp(90px, 12vh, 150px) auto 0; padding-top: 18px; border-top: 1px solid rgb(29 27 24 / 19%); color: #726c64; font-size: 9px; }
+
+@media (max-width: 899px) {
+  .faq { padding: 104px var(--page-gutter) 30px; }
+  .faq-layout { display: block; }
+  .faq-intro { position: relative; top: auto; padding-bottom: 60px; }
+  .faq-eyebrow { margin-bottom: 46px; }
+  .faq-intro h2 { margin-bottom: 28px; font-size: clamp(68px, 17vw, 108px); }
+  .faq-introduction { font-size: 14px; }
+  .faq-contact { margin-top: 28px; }
+  .faq-intro-index { display: none; }
+  .faq-question { grid-template-columns: 30px minmax(0, 1fr) 36px; gap: 12px; min-height: 106px; padding: 25px 0; }
+  .faq-question-number { padding-top: 6px; }
+  .faq-question-text { font-size: clamp(22px, 6.7vw, 31px); }
+  .faq-question-toggle { width: 36px; height: 36px; }
+  .faq-question-toggle i { top: 17px; left: 10px; width: 14px; }
+  .faq-answer-inner { padding-left: 42px; }
+  .faq-answer-inner p { padding-right: 6px; font-size: 13px; }
+  .faq-atmosphere > span { top: 0; font-size: 100vw; }
+  .faq-atmosphere > i { top: 3%; right: -55%; width: 150vw; }
+  .faq-footer { margin-top: 85px; }
+}
+
+@media (max-width: 359px) { .faq-intro h2 { font-size: 61px; } }
+@media (prefers-reduced-motion: reduce) {
+  .faq-answer-shell, .faq-question-text, .faq-question-toggle, .faq-question-toggle i, .faq-contact { transition: none; }
+}

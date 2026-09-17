@@ -73,7 +73,7 @@ export function MobileMenu({ locale, copy, links, onClose, trigger }: {
     <dialog ref={dialog} id="mobile-menu" className="mobile-menu" aria-label={copy.label}
       onCancel={(event) => { event.preventDefault(); onClose(); }}>
       <motion.div className="mobile-menu-panel"
-        initial={{ opacity: 0, y: reducedMotion ? 0 : 24 }}
+        initial={{ opacity: 0, y: 0 }}
         animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: reducedMotion ? 0 : -16 }}
         transition={{ duration: reducedMotion ? 0 : 0.3, ease: [0.22, 1, 0.36, 1] }}>
         <div className="mobile-menu-top">
@@ -91,7 +91,7 @@ export function MobileMenu({ locale, copy, links, onClose, trigger }: {
               }
               onClose();
             }}
-              initial={reducedMotion ? false : { y: 24, opacity: 0 }} animate={{ y: 0, opacity: 1 }}
+              initial={reducedMotion ? false : { y: 0, opacity: 0 }} animate={{ y: 0, opacity: 1 }}
               transition={{ duration: 0.4, delay: reducedMotion ? 0 : 0.08 + index * 0.06, ease: [0.22, 1, 0.36, 1] }}>
               <span className="micro-label">0{index + 1}</span>{link.label}<ArrowIcon />
             </motion.a>
