@@ -72,19 +72,21 @@ function GalleryDialog({ entries, initialIndex, trigger, locale, copy, onClose }
     <div className="gallery-viewer">
       <button type="button" className="gallery-arrow gallery-previous" aria-label={copy.previousImage} onClick={() => changeImage(-1)}>←</button>
       <div className="gallery-content">
-        <AnimatePresence mode="wait" initial={false} custom={direction}>
-          <motion.figure key={index} className="gallery-stage" custom={direction}
-            variants={{ enter: (step: number) => ({ opacity: 0, x: reduced ? 0 : step * 28, scale: reduced ? 1 : 0.98 }), visible: { opacity: 1, x: 0, scale: 1 }, exit: (step: number) => ({ opacity: 0, x: reduced ? 0 : step * -20, scale: reduced ? 1 : 0.99 }) }}
-            initial="enter" animate="visible" exit="exit" transition={{ duration: reduced ? 0 : 0.22, ease: "easeOut" }}>
-            <div className="gallery-image-frame">{entry.media.type === "video" ? <ProjectMedia media={entry.media} locale={locale} /> : <Image src={entry.media.src} alt={entry.media.alt[locale]} width={1920} height={1080} sizes="(max-width: 699px) 95vw, 80vw" quality={85} unoptimized={entry.media.type === "gif"} />}</div>
-            <figcaption className="gallery-caption" aria-live="polite" aria-atomic="true">
-              {entry.project.owner && <p className="project-owner micro-label">{copy.collaboration} · {entry.project.owner}</p>}
-              <h2 id={`${id}-title`}>{entry.project.title}</h2>
-              <p className="gallery-description">{entry.media.alt[locale]}</p>
-              <p className="gallery-counter">{index + 1} {copy.imageOf} {entries.length} · {entry.number + 1}/{entry.project.media.length}</p>
-            </figcaption>
-          </motion.figure>
-        </AnimatePresence>
+        <figure className="gallery-stage">
+          <AnimatePresence mode="wait" initial={false} custom={direction}>
+            <motion.div key={index} className="gallery-image-frame" custom={direction}
+              variants={{ enter: (step: number) => ({ opacity: 0, x: reduced ? 0 : step * 28, scale: reduced ? 1 : 0.98 }), visible: { opacity: 1, x: 0, scale: 1 }, exit: (step: number) => ({ opacity: 0, x: reduced ? 0 : step * -20, scale: reduced ? 1 : 0.99 }) }}
+              initial="enter" animate="visible" exit="exit" transition={{ duration: reduced ? 0 : 0.22, ease: "easeOut" }}>
+              {entry.media.type === "video" ? <ProjectMedia media={entry.media} locale={locale} /> : <Image src={entry.media.src} alt={entry.media.alt[locale]} width={1920} height={1080} sizes="(max-width: 699px) 95vw, 80vw" quality={85} unoptimized={entry.media.type === "gif"} />}
+            </motion.div>
+          </AnimatePresence>
+          <figcaption className="gallery-caption" aria-live="polite" aria-atomic="true">
+            {entry.project.owner && <p className="project-owner micro-label">{copy.collaboration} · {entry.project.owner}</p>}
+            <h2 id={`${id}-title`}>{entry.project.title}</h2>
+            <p className="gallery-description">{entry.media.alt[locale]}</p>
+            <p className="gallery-counter">{index + 1} {copy.imageOf} {entries.length} · {entry.number + 1}/{entry.project.media.length}</p>
+          </figcaption>
+        </figure>
       </div>
       <button type="button" className="gallery-arrow gallery-next" aria-label={copy.nextImage} onClick={() => changeImage(1)}>→</button>
     </div>

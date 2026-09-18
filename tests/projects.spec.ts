@@ -190,6 +190,26 @@ test("shared gallery crosses project boundaries and wraps to the first project",
   await expect(dialog).toHaveAccessibleName("Tesla Landing Page Clone");
 });
 
+test("gallery keeps its caption mounted while only the screenshot changes", async ({ page }) => {
+  await page.goto("/es#selected-projects");
+  await page.locator(".carousel-dots button").first().evaluate((button: HTMLButtonElement) => button.click());
+  await page.locator('[data-project="upgrade"] .project-gallery-trigger').evaluate((link: HTMLAnchorElement) => link.click());
+  const dialog = page.getByRole("dialog");
+  const caption = await dialog.locator(".gallery-caption").elementHandle();
+  expect(caption).not.toBeNull();
+  await expect(dialog.locator(".gallery-counter")).toContainText("1/3");
+  await dialog.getByRole("button", { name: "Imagen siguiente" }).click();
+  await expect(dialog.locator(".gallery-counter")).toContainText("2/3");
+  expect(await caption!.evaluate((element) => element.isConnected)).toBe(true);
+  await expect(dialog.locator(".gallery-caption")).toHaveCSS("opacity", "1");
+  await expect(dialog.locator("h2")).toHaveText("Upgrade! Comunicación y Entretenimiento");
+  await page.keyboard.press("ArrowRight");
+  await page.keyboard.press("ArrowRight");
+  await expect(dialog.locator("h2")).toHaveText("Fan de Maíz");
+  expect(await caption!.evaluate((element) => element.isConnected)).toBe(true);
+  await expect(dialog.locator(".gallery-counter")).toContainText("4 de 15");
+});
+
 test("autoplay continues every three seconds through hover, controls and galleries", async ({ page }) => {
   await page.goto("/es#selected-projects");
   const carousel = page.locator(".project-carousel");

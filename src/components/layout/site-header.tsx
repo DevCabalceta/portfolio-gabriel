@@ -22,9 +22,9 @@ export function SiteHeader({ locale, copy }: { locale: Locale; copy: Dictionary[
   }, []);
   const closeMenu = useCallback(() => setOpen(false), []);
   const links = [
-    ...sections.filter((section) => section.ready).map((section) => ({ href: `#${section.id}`, label: copy[section.label] })),
+    ...sections.filter((section) => section.ready && section.id !== "contact").map((section) => ({ href: `#${section.id}`, label: copy[section.label] })),
     { href: profile.resume, label: copy.resume },
-    { href: `mailto:${profile.email}`, label: copy.contact },
+    { href: "#contact", label: copy.contact },
   ];
 
   return (

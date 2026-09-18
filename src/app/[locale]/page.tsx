@@ -9,6 +9,8 @@ import { Projects } from "@/components/sections/projects";
 import { Process } from "@/components/sections/process";
 import { Services } from "@/components/sections/services";
 import { Faq } from "@/components/sections/faq";
+import { Contact } from "@/components/sections/contact";
+import { SiteFooter } from "@/components/sections/site-footer";
 import { SmoothScroll } from "@/components/animations/smooth-scroll";
 import { ChapterTransition } from "@/components/animations/chapter-transition";
 
@@ -27,7 +29,9 @@ export default async function Home({ params }: { params: Promise<{ locale: strin
         <Process copy={copy.process} />
         <Services copy={copy.services} locale={locale} />
         <Faq copy={copy.faq} />
+        <Contact copy={copy.contactSection} />
       </main>
+      <SiteFooter copy={copy.siteFooter} />
       <FloatingActions copy={copy} />
     </>
   );

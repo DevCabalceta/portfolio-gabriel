@@ -3,6 +3,8 @@ import { Anton, Geist, Geist_Mono } from "next/font/google";
 import { notFound } from "next/navigation";
 import { isLocale, locales } from "@/i18n/config";
 import { getDictionary } from "@/i18n/dictionaries";
+import { Toaster } from "sileo";
+import "sileo/styles.css";
 import "../globals.css";
 
 const sans = Geist({ variable: "--font-geist", subsets: ["latin"], display: "swap" });
@@ -34,7 +36,7 @@ export default async function LocaleLayout({ children, params }: { children: Rea
   if (!isLocale(locale)) notFound();
   return (
     <html lang={locale} data-scroll-behavior="smooth" className={`${sans.variable} ${mono.variable} ${display.variable}`}>
-      <body>{children}</body>
+      <body><Toaster position="top-center" offset={{ top: 84 }} options={{ fill: "#211e1b", roundness: 12 }} />{children}</body>
     </html>
   );
 }

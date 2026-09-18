@@ -5,6 +5,8 @@
 @import "../styles/process.css";
 @import "../styles/services.css";
 @import "../styles/faq.css";
+@import "../styles/contact.css";
+@import "../styles/site-footer.css";
 
 :root {
   --background: #111110;
@@ -131,6 +133,10 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--accent); outlin
   .hero-title { font-size: 12.8vw; }
   .hero-actions { gap: 20px; }
 }
+
+[data-sileo-viewport] { z-index: 110; --sileo-width: min(350px, calc(100vw - 24px)); --sileo-state-error: var(--accent); font-family: var(--font-geist), sans-serif; }
+[data-sileo-viewport] [data-sileo-title] { color: #ff8a60; font-weight: 700; text-transform: none; }
+[data-sileo-viewport] [data-sileo-description] { color: #f2e8dc; }
 @media (min-width: 900px) and (max-width: 1100px) {
   .site-header { gap: 24px; }
   .desktop-nav { gap: clamp(14px, 2vw, 22px); font-size: 11px; white-space: nowrap; }
