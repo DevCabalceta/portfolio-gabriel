@@ -104,6 +104,106 @@ const es = {
       },
     ],
   },
+  termsPage: {
+    metaTitle: "Términos y condiciones — Gabriel Cabalceta",
+    metaDescription: "Conoce las condiciones de uso del portfolio de Gabriel Cabalceta y cómo se formalizan las consultas, propuestas y servicios digitales.",
+    eyebrow: "Condiciones de uso · Servicios digitales",
+    title: ["Acuerdos.", "Sin sorpresas."], titleLabel: "Acuerdos. Sin sorpresas.",
+    introduction: "Estas condiciones explican cómo puedes utilizar este portfolio y qué ocurre cuando decides consultar o contratar un servicio.",
+    updatedLabel: "Última actualización", updated: "20 de septiembre de 2026",
+    responsibleLabel: "Titular del sitio", responsible: "Gabriel Cabalceta · San José, Costa Rica",
+    back: "Volver", home: "Ir al inicio", contents: "En esta página",
+    contactEyebrow: "Claridad antes de comenzar", contactTitle: "¿Necesitas aclarar una condición?",
+    contactDescription: "Escríbeme antes de contratar. Podemos revisar el alcance, los entregables y cualquier condición específica de tu proyecto.",
+    contactAction: "Consultar por correo", privacyAction: "Consultar aviso de privacidad",
+    consumerLawAction: "Consultar Ley N.° 7472", copyrightLawAction: "Consultar Ley N.° 6683",
+    footer: "Condiciones claras. Proyectos bien construidos.",
+    sections: [
+      {
+        id: "acceptance", number: "01", title: "Aceptación y alcance",
+        paragraphs: [
+          "Estas condiciones regulan el acceso y uso de este portfolio. Al navegar por el sitio reconoces haberlas leído; si no estás de acuerdo, debes dejar de utilizarlo.",
+          "El sitio está dirigido a personas que desean conocer mi trabajo, explorar servicios profesionales o iniciar una conversación sobre un proyecto digital.",
+        ], items: [],
+      },
+      {
+        id: "purpose", number: "02", title: "Finalidad del sitio",
+        paragraphs: [
+          "El portfolio presenta mi perfil, experiencia, proyectos y servicios de desarrollo web. Su contenido es informativo y puede actualizarse a medida que cambien mis servicios o trabajos.",
+          "La información publicada no sustituye una recomendación legal, financiera o técnica preparada para tu caso particular.",
+        ], items: [],
+      },
+      {
+        id: "prices", number: "03", title: "Servicios, precios y moneda",
+        paragraphs: ["Los precios mostrados son puntos de partida para orientar una conversación. No constituyen una cotización final ni una oferta automática de contratación."],
+        items: [
+          "El precio final depende del alcance, las funciones, los entregables, los plazos y las integraciones acordadas.",
+          "La conversión a colones utiliza como referencia informativa el tipo de cambio de venta publicado por el Ministerio de Hacienda; la propuesta indicará la moneda y el tipo de cambio aplicables.",
+          "Este sitio no procesa compras, cobros ni pagos directamente.",
+        ],
+      },
+      {
+        id: "proposal", number: "04", title: "Propuesta y contratación",
+        paragraphs: [
+          "Enviar un formulario, abrir WhatsApp o solicitar información inicia una conversación. Por sí solo no crea un contrato, no reserva disponibilidad y no obliga a ninguna de las partes.",
+          "Antes de comenzar se define por escrito el alcance, los entregables, el calendario, el precio, la forma de pago, las revisiones, el soporte y las condiciones de propiedad o licencia. Si una propuesta o contrato específico contradice estas condiciones, prevalece el acuerdo específico para ese proyecto.",
+        ], items: [],
+      },
+      {
+        id: "communications", number: "05", title: "Consultas y comunicaciones",
+        paragraphs: ["Al contactarme te comprometes a proporcionar información veraz, lícita y suficiente para comprender la consulta."],
+        items: [
+          "El formulario prepara un mensaje en tu dispositivo; tú puedes revisarlo antes de enviarlo por WhatsApp.",
+          "Una respuesta o conversación preliminar no equivale a aceptar un proyecto salvo confirmación expresa por escrito.",
+          "No debes enviar credenciales, datos financieros ni información sensible que no sea necesaria para evaluar el proyecto.",
+        ],
+      },
+      {
+        id: "intellectual-property", number: "06", title: "Propiedad intelectual",
+        paragraphs: [
+          "El diseño, código, textos, fotografías, animaciones y demás contenido original de este portfolio pertenecen a Gabriel Cabalceta o se utilizan con autorización, licencia o atribución correspondiente.",
+          "Puedes navegar y compartir enlaces al sitio. No puedes copiar, publicar, modificar, distribuir ni explotar comercialmente su contenido sin autorización previa, salvo que una licencia indicada en un repositorio disponga otra cosa.",
+        ], items: [],
+      },
+      {
+        id: "portfolio-work", number: "07", title: "Proyectos y material de terceros",
+        paragraphs: [
+          "Los proyectos profesionales se identifican como colaboraciones cuando corresponde. Las marcas, logotipos, interfaces y materiales de clientes o terceros conservan la titularidad de sus respectivos propietarios.",
+          "Su aparición tiene una finalidad descriptiva y de portfolio; no implica que me atribuya la propiedad total del proyecto ni una relación comercial vigente.",
+        ], items: [],
+      },
+      {
+        id: "acceptable-use", number: "08", title: "Uso permitido",
+        paragraphs: ["Debes utilizar el sitio de forma lícita y sin afectar su funcionamiento, seguridad o disponibilidad."],
+        items: [
+          "No intentes acceder sin autorización a sistemas, rutas, cuentas o infraestructura.",
+          "No introduzcas código malicioso, ataques automatizados ni tráfico destinado a degradar el servicio.",
+          "No suplantes identidades, extraigas contenido de forma masiva ni utilices el sitio para infringir derechos de terceros.",
+        ],
+      },
+      {
+        id: "external-services", number: "09", title: "Enlaces y servicios externos",
+        paragraphs: [
+          "El sitio enlaza o integra servicios como WhatsApp, GitHub, LinkedIn, Spline, proveedores de alojamiento y otras plataformas externas. Cada servicio funciona bajo sus propias condiciones y políticas.",
+          "No controlo la disponibilidad, el contenido ni las prácticas de esos servicios. Debes revisar sus condiciones antes de utilizarlos.",
+        ], items: [],
+      },
+      {
+        id: "availability", number: "10", title: "Disponibilidad y responsabilidad",
+        paragraphs: [
+          "Procuro mantener la información correcta y el sitio disponible, pero no garantizo que permanezca libre de errores, interrupciones o cambios. Los resultados de un proyecto digital también dependen de contenido, decisiones, proveedores y condiciones externas.",
+          "Cualquier limitación de responsabilidad se aplicará únicamente en la medida permitida por la ley. Estas condiciones no reducen derechos irrenunciables que correspondan a una persona consumidora.",
+        ], items: [],
+      },
+      {
+        id: "privacy-law", number: "11", title: "Privacidad, cambios y ley aplicable",
+        paragraphs: [
+          "El tratamiento de datos personales se explica en el Aviso de privacidad. Estas condiciones pueden actualizarse para reflejar cambios del sitio o de los servicios; la fecha al inicio identifica la versión vigente.",
+          "Las condiciones se interpretan conforme a las leyes de Costa Rica. Ante una diferencia, buscaremos primero una solución directa, sin limitar el acceso a las autoridades o vías que la legislación aplicable reconozca.",
+        ], items: [],
+      },
+    ],
+  },
   contactSection: {
     label: "Contacto", eyebrow: "Atención directa · Costa Rica",
     title: ["Hablemos", "por", "WhatsApp."], titleLabel: "Hablemos por WhatsApp.",
@@ -365,6 +465,106 @@ const en: Dictionary = {
         id: "changes", number: "08", title: "Changes to this notice",
         paragraphs: ["This notice may be updated when site features or processing practices change. The date shown at the beginning identifies the current version."],
         items: [],
+      },
+    ],
+  },
+  termsPage: {
+    metaTitle: "Terms and conditions — Gabriel Cabalceta",
+    metaDescription: "Read the terms for using Gabriel Cabalceta's portfolio and learn how inquiries, proposals and digital services are formalized.",
+    eyebrow: "Terms of use · Digital services",
+    title: ["Clear terms.", "No surprises."], titleLabel: "Clear terms. No surprises.",
+    introduction: "These terms explain how you may use this portfolio and what happens when you choose to inquire about or hire a service.",
+    updatedLabel: "Last updated", updated: "September 20, 2026",
+    responsibleLabel: "Site owner", responsible: "Gabriel Cabalceta · San José, Costa Rica",
+    back: "Go back", home: "Go home", contents: "On this page",
+    contactEyebrow: "Clarity before we begin", contactTitle: "Need to clarify a term?",
+    contactDescription: "Email me before hiring. We can review the scope, deliverables and any condition specific to your project.",
+    contactAction: "Ask by email", privacyAction: "Read the privacy notice",
+    consumerLawAction: "Read Law No. 7472", copyrightLawAction: "Read Law No. 6683",
+    footer: "Clear terms. Well-built projects.",
+    sections: [
+      {
+        id: "acceptance", number: "01", title: "Acceptance and scope",
+        paragraphs: [
+          "These terms govern access to and use of this portfolio. By browsing the site, you acknowledge that you have read them; if you disagree, you should stop using it.",
+          "The site is intended for people who want to learn about my work, explore professional services or start a conversation about a digital project.",
+        ], items: [],
+      },
+      {
+        id: "purpose", number: "02", title: "Purpose of the site",
+        paragraphs: [
+          "The portfolio presents my profile, experience, projects and web development services. Its content is informational and may be updated as my services or work change.",
+          "Published information does not replace legal, financial or technical advice prepared for your specific circumstances.",
+        ], items: [],
+      },
+      {
+        id: "prices", number: "03", title: "Services, prices and currency",
+        paragraphs: ["Displayed prices are starting points for a conversation. They are not a final quote or an automatic offer to contract."],
+        items: [
+          "The final price depends on the agreed scope, features, deliverables, timing and integrations.",
+          "CRC conversion uses the selling exchange rate published by Costa Rica's Ministry of Finance as an informational reference; the proposal will state the applicable currency and exchange rate.",
+          "This site does not directly process purchases, charges or payments.",
+        ],
+      },
+      {
+        id: "proposal", number: "04", title: "Proposal and engagement",
+        paragraphs: [
+          "Submitting a form, opening WhatsApp or requesting information starts a conversation. By itself, it does not create a contract, reserve availability or bind either party.",
+          "Before work begins, we define the scope, deliverables, schedule, price, payment method, revisions, support and ownership or licensing terms in writing. If a specific proposal or contract conflicts with these terms, the project-specific agreement controls.",
+        ], items: [],
+      },
+      {
+        id: "communications", number: "05", title: "Inquiries and communications",
+        paragraphs: ["When contacting me, you agree to provide truthful, lawful and sufficient information to understand the inquiry."],
+        items: [
+          "The form prepares a message on your device; you can review it before sending it through WhatsApp.",
+          "A reply or preliminary conversation does not amount to accepting a project unless expressly confirmed in writing.",
+          "Do not send credentials, financial data or sensitive information that is unnecessary to evaluate the project.",
+        ],
+      },
+      {
+        id: "intellectual-property", number: "06", title: "Intellectual property",
+        paragraphs: [
+          "The design, code, text, photographs, animation and other original content in this portfolio belong to Gabriel Cabalceta or are used under the corresponding permission, license or attribution.",
+          "You may browse and share links to the site. You may not copy, publish, modify, distribute or commercially exploit its content without prior permission, unless a license identified in a repository states otherwise.",
+        ], items: [],
+      },
+      {
+        id: "portfolio-work", number: "07", title: "Projects and third-party material",
+        paragraphs: [
+          "Professional projects are identified as collaborations where applicable. Client and third-party brands, logos, interfaces and materials remain the property of their respective owners.",
+          "Their appearance is descriptive and for portfolio purposes; it does not claim full ownership of a project or imply a current business relationship.",
+        ], items: [],
+      },
+      {
+        id: "acceptable-use", number: "08", title: "Permitted use",
+        paragraphs: ["You must use the site lawfully and without affecting its operation, security or availability."],
+        items: [
+          "Do not attempt unauthorized access to systems, routes, accounts or infrastructure.",
+          "Do not introduce malicious code, automated attacks or traffic intended to degrade the service.",
+          "Do not impersonate others, extract content at scale or use the site to infringe third-party rights.",
+        ],
+      },
+      {
+        id: "external-services", number: "09", title: "Links and external services",
+        paragraphs: [
+          "The site links to or integrates services such as WhatsApp, GitHub, LinkedIn, Spline, hosting providers and other external platforms. Each service operates under its own terms and policies.",
+          "I do not control the availability, content or practices of those services. Review their terms before using them.",
+        ], items: [],
+      },
+      {
+        id: "availability", number: "10", title: "Availability and liability",
+        paragraphs: [
+          "I aim to keep the information accurate and the site available, but do not guarantee it will remain free of errors, interruptions or changes. Digital project outcomes also depend on content, decisions, providers and external conditions.",
+          "Any limitation of liability applies only to the extent permitted by law. These terms do not reduce any mandatory rights available to a consumer.",
+        ], items: [],
+      },
+      {
+        id: "privacy-law", number: "11", title: "Privacy, changes and governing law",
+        paragraphs: [
+          "Personal data processing is explained in the Privacy notice. These terms may be updated to reflect changes to the site or services; the date at the beginning identifies the current version.",
+          "These terms are interpreted under the laws of Costa Rica. If a difference arises, we will first seek a direct solution without limiting access to any authority or remedy recognized by applicable law.",
+        ], items: [],
       },
     ],
   },

@@ -4,7 +4,7 @@ Portfolio profesional bilingüe desarrollado con Next.js, TypeScript y Tailwind 
 
 ## Estado de la entrega
 
-**Hero, Sobre mí, Proyectos, Servicios, Preguntas frecuentes y Contacto aprobados. Sección 08: Footer, lista para revisión visual.** El desarrollo continúa sección por sección después de la revisión de Gabriel; Experiencia y las secciones posteriores permanecen pendientes.
+**Hero, Sobre mí, Proyectos, Servicios, Preguntas frecuentes, Contacto y Footer aprobados. Páginas legales bilingües implementadas.** El desarrollo continúa sección por sección después de la revisión de Gabriel; Experiencia y las secciones posteriores permanecen pendientes.
 
 - [x] Revisar y limpiar la plantilla inicial de Next.js.
 - [x] Arquitectura de componentes, traducciones y datos tipados.
@@ -35,8 +35,9 @@ Portfolio profesional bilingüe desarrollado con Next.js, TypeScript y Tailwind 
 - [x] Sección 07: Contacto con formulario bilingüe que prepara un mensaje de WhatsApp.
 - [x] Revisión y aprobación visual de Contacto.
 - [x] Sección 08: footer editorial bilingüe organizado en columnas, con servicios, navegación, contacto, enlaces externos y cierre legal.
-- [ ] Revisión y aprobación visual del footer.
+- [x] Revisión y aprobación visual del footer.
 - [x] Página bilingüe de Aviso de privacidad con navegación de regreso y metadata propia.
+- [x] Página bilingüe de Términos y condiciones con navegación SPA, referencias legales y metadata propia.
 - [ ] Sección posterior: Experiencia.
 - [x] Tecnologías e iconos interactivos integrados en Sobre mí.
 - [ ] Formación y certificaciones.
@@ -214,7 +215,7 @@ Preguntas → Contacto usa la transición cinematográfica común. La introducci
 
 Disponible al final de la página, después de Contacto. Funciona como epílogo editorial: «Gabriel Cabalceta» ocupa el título principal en dos líneas contiguas, acompañado por un mensaje breve. La firma duplicada y separada se eliminó para mantener el nombre unido. Debajo, un directorio de cuatro columnas separa contacto, los tres servicios vigentes, navegación interna y enlaces confirmados a LinkedIn, GitHub, WhatsApp y descarga del CV. En tablet y móvil el directorio pasa a dos columnas; en teléfonos de hasta 359 px adopta una sola columna para conservar la lectura del correo y de cada título.
 
-Un cierre legal independiente muestra el año actual, «Todos los derechos reservados», Aviso de privacidad y Términos y condiciones. El regreso al inicio se mantiene únicamente en el grupo de botones flotantes para evitar duplicarlo. Aviso de privacidad abre la ruta localizada `/{locale}/privacy`; Términos y condiciones conserva la ruta preparada `/{locale}/terms` para su siguiente desarrollo. Contacto → Footer conserva `createCinematicSectionTransition`: Contacto retrocede, se difumina y pierde presencia mientras el footer asciende por encima. La secuencia GSAP revela la etiqueta, el nombre, la invitación, las columnas, sus enlaces y el cierre legal en ese orden. Con movimiento reducido, todo permanece visible y en el flujo natural.
+Un cierre legal independiente muestra el año actual, «Todos los derechos reservados», Aviso de privacidad y Términos y condiciones. El regreso al inicio se mantiene únicamente en el grupo de botones flotantes para evitar duplicarlo. Las dos rutas legales están localizadas como `/{locale}/privacy` y `/{locale}/terms`, y se abren mediante navegación cliente del App Router. Contacto → Footer conserva `createCinematicSectionTransition`: Contacto retrocede, se difumina y pierde presencia mientras el footer asciende por encima. La secuencia GSAP revela la etiqueta, el nombre, la invitación, las columnas, sus enlaces y el cierre legal en ese orden. Con movimiento reducido, todo permanece visible y en el flujo natural.
 
 La implementación vive en `src/components/sections/site-footer.tsx`, `src/components/animations/footer-motion.tsx`, `src/styles/site-footer.css` y `siteFooter` de los diccionarios ES/EN. Los nombres de servicios se toman directamente de `services.plans`, evitando que el footer se desactualice respecto a la sección 05. `tests/footer.spec.ts` cubre contenido bilingüe, columnas, servicios, destinos, rutas legales, responsive y la transición. Con el servidor activo, `node scripts/preview-footer.mjs` genera capturas de revisión en `artifacts/`.
 
@@ -222,7 +223,13 @@ La implementación vive en `src/components/sections/site-footer.tsx`, `src/compo
 
 Disponible en `/es/privacy` y `/en/privacy`. Mantiene la identidad editorial del portfolio mediante fondo oscuro, luz cálida, título de gran escala, índice fijo en escritorio y capítulos numerados. Explica el uso real de la cookie de idioma, el formulario que prepara mensajes localmente, WhatsApp, Spline, enlaces externos, registros técnicos del alojamiento, conservación, seguridad y derechos. Incluye correo directo y enlaces oficiales a la Ley N.° 8968 y PRODHAB.
 
-La acción «Volver» usa el historial cuando la visita proviene del mismo sitio; si la página se abre directamente, su enlace de respaldo vuelve al footer del portfolio en el idioma vigente. El enlace legal del footer, el selector ES/EN, el logotipo y el regreso usan transiciones cliente del App Router mediante `next/link` y `router`, evitando recargas completas del documento; los `href` reales permanecen como fallback sin JavaScript. El selector conserva la ruta legal. La página cuenta con metadata localizada. La implementación vive en `src/app/[locale]/privacy/page.tsx`, `src/components/ui/back-link.tsx`, `src/components/ui/spa-link.tsx`, `src/styles/legal.css` y `privacyPage` en los diccionarios. `tests/privacy.spec.ts` verifica traducciones, metadata, ocho capítulos, fuentes oficiales, regreso al portfolio, persistencia del documento durante la navegación SPA, correo, cambio de idioma y ausencia de desbordamiento móvil.
+La acción «Volver» usa el historial cuando la visita proviene del mismo sitio; si la página se abre directamente, su enlace de respaldo vuelve al footer del portfolio en el idioma vigente. El enlace legal del footer, el selector ES/EN, el logotipo y el regreso usan transiciones cliente del App Router mediante `next/link` y `router`, evitando recargas completas del documento; los `href` reales permanecen como fallback sin JavaScript. El selector conserva la ruta legal. La página cuenta con metadata localizada. La implementación vive en `src/app/[locale]/privacy/page.tsx`, el componente común `src/components/sections/legal-document.tsx`, `src/components/ui/back-link.tsx`, `src/components/ui/spa-link.tsx`, `src/styles/legal.css` y `privacyPage` en los diccionarios. `tests/privacy.spec.ts` verifica traducciones, metadata, ocho capítulos, fuentes oficiales, regreso al portfolio, persistencia del documento durante la navegación SPA, correo, cambio de idioma y ausencia de desbordamiento móvil.
+
+## Página 10: Términos y condiciones
+
+Disponible en `/es/terms` y `/en/terms`. Reutiliza el lenguaje editorial y la estructura accesible del Aviso de privacidad: encabezado fijo, título animado, índice de capítulos, navegación de regreso, selector de idioma y cierre legal. Sus once capítulos explican el uso del portfolio, el carácter orientativo de los precios, la conversión informativa a colones, la diferencia entre una consulta y una contratación, la formalización de cada proyecto, comunicaciones, propiedad intelectual, trabajos de terceros, uso permitido, servicios externos, disponibilidad, privacidad y legislación aplicable.
+
+El formulario y WhatsApp se describen como vías para iniciar una conversación; alcance, entregables, calendario, precio, pagos, revisiones, soporte y derechos se concretan por escrito antes de empezar. La página enlaza al Aviso de privacidad y a las fuentes oficiales de la Ley N.° 7472 y la Ley N.° 6683. Footer → Términos, ES/EN, logotipo, Aviso de privacidad y «Volver» conservan navegación SPA sin recargar el documento. La implementación vive en `src/app/[locale]/terms/page.tsx`, `src/components/sections/legal-document.tsx`, `src/styles/legal.css` y `termsPage` en los diccionarios. `tests/terms.spec.ts` verifica idiomas, metadata, once capítulos, referencias, regreso, navegación SPA y ancho móvil.
 
 ## Navbar y botones flotantes
 
