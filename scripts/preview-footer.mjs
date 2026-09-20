@@ -18,6 +18,7 @@ for (const [name, viewport] of [
   await page.mouse.wheel(0, 600);
   await page.waitForTimeout(500);
   await page.screenshot({ path: `artifacts/footer-${name}.png` });
+  await page.locator("#site-footer").screenshot({ path: `artifacts/footer-${name}-full.png` });
   console.log(name, await page.evaluate(() => ({
     scrollWidth: document.documentElement.scrollWidth,
     width: innerWidth,

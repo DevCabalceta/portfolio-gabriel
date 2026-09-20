@@ -137,6 +137,15 @@ test("mobile About navigation and return preserve readable content", async ({ pa
   await expect(page).toHaveURL(/#about$/);
   await expect(page.locator("[data-about-char]").last()).toHaveCSS("opacity", "1");
   await expect(page.locator("#about-title")).toBeInViewport({ ratio: 1 });
+  await expect(page.locator("#about .technology-item")).toHaveCount(23);
+  const technologyRestingState = await page.locator("#about .technology-item").first().evaluate((item) => {
+    const matrix = new DOMMatrixReadOnly(getComputedStyle(item).transform);
+    return { scale: matrix.a, skewX: matrix.b, skewY: matrix.c, width: item.getBoundingClientRect().width };
+  });
+  expect(technologyRestingState.scale).toBeCloseTo(1, 3);
+  expect(technologyRestingState.skewX).toBeCloseTo(0, 3);
+  expect(technologyRestingState.skewY).toBeCloseTo(0, 3);
+  expect(technologyRestingState.width).toBeGreaterThan(48);
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
   await page.getByRole("button", { name: "Volver al inicio" }).tap();
   await expect.poll(() => page.evaluate(() => window.scrollY)).toBe(0);

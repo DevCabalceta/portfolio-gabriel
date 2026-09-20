@@ -128,6 +128,33 @@ test("mobile plans keep their active state without hover", async ({ page }) => {
   await expect(plan.locator(".service-cta")).toHaveCSS("background-color", "rgb(255, 120, 75)");
   const accentWidth = await plan.evaluate((el) => Number.parseFloat(getComputedStyle(el, "::after").width));
   expect(accentWidth).toBeGreaterThan(0);
+  await plan.locator("h3").click();
+  for (const item of await page.locator(".service-plan").all()) {
+    await expect(item).toHaveCSS("opacity", "1");
+  }
+});
+
+test("ultra-wide screens distribute plan content instead of leaving a large empty gap", async ({ page }, testInfo) => {
+  test.skip(testInfo.project.name !== "desktop", "Ultra-wide layout runs once in desktop Chromium");
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await page.setViewportSize({ width: 2560, height: 1200 });
+  await page.goto("/es#services");
+  await page.locator(".services-pricing").evaluate((element) => scrollTo({ top: element.getBoundingClientRect().top + scrollY - 72, behavior: "instant" }));
+
+  expect(Number.parseFloat(await page.locator(".service-plan h3").first().evaluate((element) => getComputedStyle(element).fontSize))).toBeGreaterThanOrEqual(58);
+  expect(Number.parseFloat(await page.locator("[data-service-benefit]").first().evaluate((element) => getComputedStyle(element).fontSize))).toBeGreaterThanOrEqual(14);
+
+  for (const plan of await page.locator(".service-plan").all()) {
+    const layout = await plan.evaluate((element) => {
+      const benefits = [...element.querySelectorAll<HTMLElement>("[data-service-benefit]")];
+      const lastBenefit = benefits.at(-1)!.getBoundingClientRect();
+      const action = element.querySelector<HTMLElement>(".service-cta")!.getBoundingClientRect();
+      return { gap: action.top - lastBenefit.bottom, actionHeight: action.height };
+    });
+    expect(layout.gap).toBeLessThan(150);
+    expect(layout.actionHeight).toBeGreaterThanOrEqual(60);
+  }
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
 });
 
 test("Services uses the shared depth transition and a sequential reveal", async ({ page }) => {

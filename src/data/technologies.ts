@@ -1,7 +1,27 @@
-// Requested stack, centralized for the future interactive technology section.
+// The stack shown in Gabriel's public GitHub profile. Brand colors are kept
+// here so the presentation can change without duplicating content or styles.
 export const technologies = [
-  { category: "frontend", items: ["HTML", "CSS", "JavaScript", "TypeScript", "React", "Next.js", "Astro", "Svelte", "Bootstrap", "Tailwind CSS"] },
-  { category: "backend", items: ["Node.js", "Java", "Spring Boot", "PHP", "Laravel", "Python", ".NET"] },
-  { category: "database", items: ["MySQL", "SQL Server", "Firebase"] },
-  { category: "tools", items: ["Git", "GitHub", "Postman", "Figma", "Docker"] },
+  { id: "javascript", name: "JavaScript", color: "#f7df1e", foreground: "#171512" },
+  { id: "typescript", name: "TypeScript", color: "#3178c6", foreground: "#ffffff" },
+  { id: "html", name: "HTML5", color: "#e34f26", foreground: "#ffffff" },
+  { id: "css", name: "CSS3", color: "#1572b6", foreground: "#ffffff" },
+  { id: "tailwind", name: "Tailwind CSS", color: "#263548", foreground: "#38bdf8" },
+  { id: "bootstrap", name: "Bootstrap", color: "#7952b3", foreground: "#ffffff" },
+  { id: "react", name: "React", color: "#1e293b", foreground: "#61dafb" },
+  { id: "nextjs", name: "Next.js", color: "#f1f1f1", foreground: "#111111" },
+  { id: "astro", name: "Astro", color: "#f4b7c0", foreground: "#301a44" },
+  { id: "svelte", name: "Svelte", color: "#ff3e00", foreground: "#ffffff" },
+  { id: "nodejs", name: "Node.js", color: "#24351f", foreground: "#68a063" },
+  { id: "python", name: "Python", color: "#35495e", foreground: "#ffd343" },
+  { id: "java", name: "Java", color: "#272c3a", foreground: "#f89820" },
+  { id: "php", name: "PHP", color: "#202433", foreground: "#8993be" },
+  { id: "dotnet", name: ".NET", color: "#512bd4", foreground: "#ffffff" },
+  { id: "mongodb", name: "MongoDB", color: "#16352a", foreground: "#47a248" },
+  { id: "mysql", name: "MySQL", color: "#252a38", foreground: "#f29111" },
+  { id: "firebase", name: "Firebase", color: "#273044", foreground: "#ffca28" },
+  { id: "figma", name: "Figma", color: "#2c3140", foreground: "#f24e1e" },
+  { id: "postman", name: "Postman", color: "#ff6c37", foreground: "#ffffff" },
+  { id: "git", name: "Git", color: "#f05032", foreground: "#ffffff" },
+  { id: "github", name: "GitHub", color: "#2c3140", foreground: "#ffffff" },
+  { id: "visualstudio", name: "Visual Studio", color: "#282c3a", foreground: "#9b4f96" },
 ] as const;

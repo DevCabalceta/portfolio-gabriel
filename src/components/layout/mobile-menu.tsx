@@ -10,7 +10,7 @@ import { ArrowIcon } from "@/components/ui/arrow-icon";
 export function MobileMenu({ locale, copy, links, onClose, trigger }: {
   locale: Locale;
   copy: Dictionary["nav"];
-  links: { href: string; label: string }[];
+  links: { href: string; label: string; target?: "_blank" }[];
   onClose: () => void;
   trigger: RefObject<HTMLButtonElement | null>;
 }) {
@@ -83,7 +83,7 @@ export function MobileMenu({ locale, copy, links, onClose, trigger }: {
         <nav aria-label={copy.label}>
           <p className="micro-label mobile-menu-label">{copy.menu}</p>
           {links.map((link, index) => (
-            <motion.a key={link.href} href={link.href} onClick={(event) => {
+            <motion.a key={link.href} href={link.href} target={link.target} rel={link.target ? "noopener noreferrer" : undefined} onClick={(event) => {
               if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey || event.button !== 0) return;
               if (link.href.startsWith("#")) {
                 event.preventDefault();

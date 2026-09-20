@@ -7,6 +7,7 @@
 @import "../styles/faq.css";
 @import "../styles/contact.css";
 @import "../styles/site-footer.css";
+@import "../styles/legal.css";
 
 :root {
   --background: #111110;
@@ -94,7 +95,7 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--accent); outlin
 .hero-description p { font-size: 14px; line-height: 1.75; color: #b9b7b1; margin: 0; text-wrap: pretty; }
 .hero-description .hero-introduction { color: var(--foreground); font-size: 19px; font-weight: 450; margin-bottom: 8px; letter-spacing: -0.035em; }
 .hero-actions { display: flex; align-items: center; gap: 26px; margin-top: 30px; }
-.action-link { display: inline-flex; gap: 18px; align-items: center; justify-content: space-between; min-height: 48px; font-size: 11px; }
+.action-link { display: inline-flex; gap: 18px; align-items: center; justify-content: space-between; min-height: 54px; font: 400 clamp(15px, 1.05vw, 18px)/1 var(--font-display), Impact, sans-serif; letter-spacing: 0.015em; text-transform: uppercase; }
 .action-primary { background: var(--accent); color: #17130f; padding: 0 20px; }
 .action-secondary { border-bottom: 1px solid #69665e; }
 .action-secondary:hover { color: var(--accent); }

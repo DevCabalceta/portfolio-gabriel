@@ -31,10 +31,9 @@ export function FooterMotion({ children }: { children: ReactNode }) {
           { targets: element.querySelector("[data-footer-reveal='pretitle']")!, from: { opacity: 0, x: -22, filter: "blur(4px)" }, to: { duration: 0.55 }, at: 0.15 },
           { targets: element.querySelectorAll("[data-footer-reveal='title']"), from: { opacity: 0, yPercent: 110, rotate: 2 }, to: { duration: 0.9, stagger: 0.14 }, at: 0.22 },
           { targets: element.querySelector("[data-footer-reveal='description']")!, from: { opacity: 0, y: 24, filter: "blur(6px)" }, to: { duration: 0.7 }, at: 0.65 },
-          { targets: element.querySelector("[data-footer-reveal='email']")!, from: { opacity: 0, x: 28, clipPath: "inset(0% 100% 0% 0%)" }, to: { duration: 0.7 }, at: 0.82 },
-          { targets: element.querySelectorAll("[data-footer-reveal='signature']"), from: { opacity: 0, yPercent: 105, scale: 0.96 }, to: { duration: 0.95, stagger: 0.13 }, at: 0.96 },
-          { targets: element.querySelectorAll("[data-footer-reveal='link']"), from: { opacity: 0, y: 18, filter: "blur(3px)" }, to: { duration: 0.52, stagger: 0.075 }, at: 1.24 },
-          { targets: element.querySelector("[data-footer-reveal='bottom']")!, from: { opacity: 0, y: 13 }, to: { duration: 0.48 }, at: 1.55 },
+          { targets: element.querySelectorAll("[data-footer-reveal='column']"), from: { opacity: 0, y: 28, clipPath: "inset(0% 0% 100% 0%)" }, to: { duration: 0.68, stagger: 0.09 }, at: 0.9 },
+          { targets: element.querySelectorAll("[data-footer-reveal='link']"), from: { opacity: 0, x: -12, filter: "blur(3px)" }, to: { duration: 0.42, stagger: 0.035 }, at: 1.12 },
+          { targets: element.querySelector("[data-footer-reveal='bottom']")!, from: { opacity: 0, y: 13 }, to: { duration: 0.48 }, at: 1.5 },
         ],
       });
       element.dataset.motion = "true";

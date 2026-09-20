@@ -40,7 +40,6 @@ export function ChapterTransition({ id, previous, children }: { id: string; prev
           scrollTrigger: { trigger: item, pinnedContainer: ".about-pin", start: "top 90%", once: true },
         });
       });
-
       return () => {
         cleanupTransition();
         delete element.dataset.motion;

@@ -31,7 +31,7 @@ export default async function Home({ params }: { params: Promise<{ locale: strin
         <Faq copy={copy.faq} />
         <Contact copy={copy.contactSection} />
       </main>
-      <SiteFooter copy={copy.siteFooter} />
+      <SiteFooter copy={copy.siteFooter} services={copy.services} navigation={copy.nav} locale={locale} />
       <FloatingActions copy={copy} />
     </>
   );

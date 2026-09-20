@@ -12,16 +12,20 @@ test("localized routes, persistence and real contact/download destinations", asy
   await expect(page).toHaveURL(/\/es$/);
   await expect(page.locator("html")).toHaveAttribute("lang", "es");
   await expect(page.getByRole("heading", { level: 1 })).toHaveAccessibleName("Gabriel Cabalceta");
+  await page.evaluate(() => ((window as Window & { __spaDocument?: string }).__spaDocument = "preserved"));
   await page.getByRole("link", { name: "English", exact: true }).click();
-  await expect(page).toHaveURL(/\/en$/);
+  await expect(page).toHaveURL(/\/en$/, { timeout: 15_000 });
   await expect(page.locator("html")).toHaveAttribute("lang", "en");
+  expect(await page.evaluate(() => (window as Window & { __spaDocument?: string }).__spaDocument)).toBe("preserved");
   await expect(page.getByText("From logic to experience.")).toBeVisible();
   await page.goto("/");
   await expect(page).toHaveURL(/\/en$/);
-  await expect(page.getByRole("link", { name: "Let's talk about your next project" })).toHaveAttribute("href", "mailto:cabalceta.gabriel.2001@gmail.com");
+  await expect(page.getByRole("link", { name: "Let's talk about your next project" })).toHaveAttribute("href", "#services");
+  await expect(page.locator(".desktop-nav").getByRole("link", { name: "My CV", exact: true })).toHaveAttribute("target", "_blank");
+  await expect(page.locator(".desktop-nav").getByRole("link", { name: "My CV", exact: true })).toHaveAttribute("rel", "noopener noreferrer");
   await expect(page.getByRole("link", { name: "Visit my GitHub profile" })).toHaveAttribute("href", "https://github.com/DevCabalceta");
   const download = page.waitForEvent("download");
-  await page.getByRole("link", { name: "Download CV" }).click();
+  await page.locator(".hero-actions").getByRole("link", { name: "Download CV", exact: true }).click();
   expect((await download).suggestedFilename()).toBe("CV-GabrielCabalceta.pdf");
   const pdf = await request.get("/documents/CV-GabrielCabalceta.pdf");
   expect(pdf.status()).toBe(200);
@@ -38,6 +42,8 @@ test("mobile menu keeps keyboard focus inside, closes with Escape and restores f
   const dialog = page.getByRole("dialog");
   await expect(dialog).toBeVisible();
   await expect(trigger).toHaveAttribute("aria-expanded", "true");
+  await expect(dialog.getByRole("link", { name: /Mi CV/ })).toHaveAttribute("target", "_blank");
+  await expect(dialog.getByRole("link", { name: /Mi CV/ })).toHaveAttribute("rel", "noopener noreferrer");
   for (let index = 0; index < 9; index++) {
     await page.keyboard.press("Tab");
     expect(await dialog.evaluate((element) => element.contains(document.activeElement))).toBe(true);
@@ -172,7 +178,35 @@ test("About navigation works with reduced motion and reveals real profile conten
   await page.getByRole("navigation", { name: "Main navigation" }).getByRole("link", { name: "About", exact: true }).click();
   await expect(page).toHaveURL(/\/en#about$/);
   await expect(page.locator("#about-title")).toBeInViewport({ ratio: 1 });
-  await expect(page.locator("#about")).toContainText("Cedes Don Bosco");
+  await expect(page.locator("#about")).toContainText("Web platforms · internal systems · digital products");
+  await expect(page.locator("#about")).not.toContainText("Cedes Don Bosco");
+  await expect(page.locator(".technology-item")).toHaveCount(23);
   await expect(page.locator(".chapter-transition")).not.toHaveAttribute("data-motion");
   await expect(page.locator(".chapter-frame")).toHaveCSS("transform", "none");
+});
+
+test("About keeps a compact editorial composition on ultra-wide screens", async ({ page }) => {
+  await page.setViewportSize({ width: 2560, height: 1200 });
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await page.goto("/es#about");
+  await expect(page.locator("#about-title")).toBeVisible();
+  const layout = await page.locator("#about").evaluate((section) => {
+    const frame = section.querySelector<HTMLElement>(".about-frame")!;
+    const narrative = section.querySelector<HTMLElement>(".about-narrative")!;
+    const facts = section.querySelector<HTMLElement>(".about-facts")!;
+    const technologyGrid = section.querySelector<HTMLElement>(".technology-grid")!;
+    return {
+      frameWidth: frame.getBoundingClientRect().width,
+      narrativeWidth: narrative.getBoundingClientRect().width,
+      factsWidth: facts.getBoundingClientRect().width,
+      gridColumns: getComputedStyle(technologyGrid).gridTemplateColumns.split(" ").length,
+      documentWidth: document.documentElement.scrollWidth,
+      viewportWidth: innerWidth,
+    };
+  });
+  expect(layout.frameWidth).toBeLessThanOrEqual(2200);
+  expect(layout.narrativeWidth).toBeGreaterThanOrEqual(800);
+  expect(layout.factsWidth).toBeLessThanOrEqual(1900);
+  expect(layout.gridColumns).toBe(12);
+  expect(layout.documentWidth).toBe(layout.viewportWidth);
 });

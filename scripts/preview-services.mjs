@@ -1,7 +1,7 @@
 import { chromium } from "playwright";
 
 const browser = await chromium.launch({ headless: true });
-for (const viewport of [{ name: "desktop", width: 1440, height: 900 }, { name: "mobile", width: 390, height: 744 }]) {
+for (const viewport of [{ name: "desktop", width: 1440, height: 900 }, { name: "ultra-wide", width: 2560, height: 1200 }, { name: "mobile", width: 390, height: 744 }]) {
   const context = await browser.newContext({ viewport, reducedMotion: "no-preference" });
   const page = await context.newPage();
   await page.route("https://prod.spline.design/**/scene.splinecode", (route) => route.abort());

@@ -21,9 +21,9 @@ export function SiteHeader({ locale, copy }: { locale: Locale; copy: Dictionary[
     return () => window.removeEventListener("scroll", update);
   }, []);
   const closeMenu = useCallback(() => setOpen(false), []);
-  const links = [
+  const links: { href: string; label: string; target?: "_blank" }[] = [
     ...sections.filter((section) => section.ready && section.id !== "contact").map((section) => ({ href: `#${section.id}`, label: copy[section.label] })),
-    { href: profile.resume, label: copy.resume },
+    { href: profile.resume, label: copy.resume, target: "_blank" as const },
     { href: "#contact", label: copy.contact },
   ];
 
@@ -32,7 +32,7 @@ export function SiteHeader({ locale, copy }: { locale: Locale; copy: Dictionary[
       <header ref={header} className="site-header">
         <a className="wordmark" href={`/${locale}#home`} aria-label={`${profile.name} — ${copy.home}`}>gc<span>✳</span></a>
         <nav className="desktop-nav" aria-label={copy.label}>
-          {links.map((link, index) => <a key={link.href} href={link.href} className={index === links.length - 1 ? "nav-contact" : ""}>{link.label}{index === links.length - 1 && <ArrowIcon />}</a>)}
+          {links.map((link, index) => <a key={link.href} href={link.href} target={link.target} rel={link.target ? "noopener noreferrer" : undefined} className={index === links.length - 1 ? "nav-contact" : ""}>{link.label}{index === links.length - 1 && <ArrowIcon />}</a>)}
         </nav>
         <div className="header-controls">
           <LanguageSwitch locale={locale} label={copy.language} />

@@ -1,6 +1,7 @@
 import type { Dictionary } from "@/i18n/dictionaries";
 import Image from "next/image";
 import { profile } from "@/data/profile";
+import { TechnologyStack } from "@/components/ui/technology-stack";
 
 function AnimatedLetters({ text }: { text: string }) {
   return <span data-about-line aria-hidden="true">{Array.from(text).map((letter, index) => <span className="about-character" data-about-char key={index}>{letter === " " ? "\u00a0" : letter}</span>)}</span>;
@@ -27,21 +28,20 @@ export function About({ copy }: { copy: Dictionary["about"] }) {
         </div>
 
         <div className="about-narrative">
-          <figure className="about-portrait" data-about-reveal>
-            <div className="profile-photo-frame"><Image src={profile.portrait} alt={copy.portraitAlt} fill sizes="(max-width: 899px) 120px, 150px" quality={85} /></div>
-            <figcaption className="micro-label">Gabriel Cabalceta<span>Full Stack Developer</span></figcaption>
-          </figure>
-          <p className="about-lead" data-about-reveal>{copy.introduction}</p>
-          <p className="about-description" data-about-reveal>{copy.description}</p>
-          <div className="about-signature" data-about-reveal>
-            <span className="about-signature-line" aria-hidden="true" />
-            <span>{copy.signature}</span>
+          <div className="about-profile" data-about-reveal>
+            <figure className="about-portrait">
+              <div className="profile-photo-frame"><Image src={profile.portrait} alt={copy.portraitAlt} fill sizes="(max-width: 899px) 108px, 126px" quality={85} /></div>
+              <figcaption className="micro-label">Gabriel Cabalceta<span>Full Stack Developer</span></figcaption>
+            </figure>
+            <p className="about-lead">{copy.introduction}</p>
           </div>
+          <p className="about-description" data-about-reveal>{copy.description}</p>
+          <TechnologyStack label={copy.technologyLabel} hint={copy.technologyHint} />
         </div>
       </div>
 
       <dl className="about-facts" data-about-reveal>
-        <div><dt className="micro-label">{copy.currentLabel}</dt><dd>{copy.currentRole}<span>Cedes Don Bosco · 2025 — {copy.present}</span></dd></div>
+        <div><dt className="micro-label">{copy.currentLabel}</dt><dd>{copy.currentRole}<span>{copy.currentDetail}</span></dd></div>
         <div><dt className="micro-label">{copy.foundationLabel}</dt><dd>{copy.foundation}<span>{copy.foundationDetail}</span></dd></div>
         <div><dt className="micro-label">{copy.approachLabel}</dt><dd>{copy.approach}<span>{copy.approachDetail}</span></dd></div>
       </dl>

@@ -29,7 +29,7 @@ export function Hero({ copy }: { copy: Dictionary["hero"] }) {
             <p>{copy.description}</p>
           </div>
           <div className="hero-actions" data-hero-reveal>
-            <ActionLink href={`mailto:${profile.email}`} primary>{copy.contact}</ActionLink>
+            <ActionLink href="#services" primary>{copy.contact}</ActionLink>
             <ActionLink href={profile.resume} download>{copy.resume}</ActionLink>
           </div>
         </div>
