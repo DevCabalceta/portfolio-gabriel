@@ -3,8 +3,10 @@
 import { useEffect, useRef } from "react";
 import { profile } from "@/data/profile";
 import type { Dictionary } from "@/i18n/dictionaries";
+import type { Locale } from "@/i18n/config";
+import { getWhatsAppUrl } from "@/lib/whatsapp";
 
-export function FloatingActions({ copy }: { copy: Dictionary }) {
+export function FloatingActions({ copy, locale }: { copy: Dictionary; locale: Locale }) {
   const root = useRef<HTMLDivElement>(null);
   useEffect(() => {
     const heroBoundary = document.querySelector(".floating-actions-sentinel");
@@ -42,7 +44,7 @@ export function FloatingActions({ copy }: { copy: Dictionary }) {
       <a href={`mailto:${profile.email}`} aria-label={copy.nav.contact} title={copy.nav.contact}>
         <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" strokeWidth="1.5"><rect x="3" y="5" width="18" height="14" rx="2" /><path d="m3 6 9 7 9-7" /></svg>
       </a>
-      <a href={profile.whatsapp} target="_blank" rel="noopener noreferrer" aria-label="WhatsApp" title="WhatsApp">
+      <a href={getWhatsAppUrl(locale)} target="_blank" rel="noopener noreferrer" aria-label="WhatsApp" title="WhatsApp">
         <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M20.5 11.7a8.5 8.5 0 0 1-12.6 7.5L3 20.5l1.3-4.8a8.5 8.5 0 1 1 16.2-4Z" /><path d="m8 7 1.4-.2 1.1 2.5-1.1 1.1a7.5 7.5 0 0 0 3.7 3.7l1.1-1.1 2.5 1.1-.2 1.4c-.1.8-.9 1.3-1.7 1.2-4.5-.7-7.8-4-8.5-8.5C6.2 7.9 7 7.1 8 7Z" /></svg>
       </a>
       <span className="floating-divider" aria-hidden="true" />

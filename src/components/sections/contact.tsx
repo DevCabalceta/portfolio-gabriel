@@ -1,5 +1,6 @@
 import type { Dictionary } from "@/i18n/dictionaries";
 import { profile } from "@/data/profile";
+import { getWhatsAppUrl } from "@/lib/whatsapp";
 import { ArrowIcon } from "@/components/ui/arrow-icon";
 import { ContactForm } from "@/components/ui/contact-form";
 import { ContactMotion } from "@/components/animations/contact-motion";
@@ -19,7 +20,7 @@ export function Contact({ copy, locale }: { copy: Dictionary["contactSection"]; 
               {copy.title.map((line) => <span className="contact-title-mask" aria-hidden="true" key={line}><span data-contact-intro="title">{line}</span></span>)}
             </h2>
             <p className="contact-introduction" data-contact-intro="description">{copy.introduction}</p>
-            <a className="contact-direct" data-contact-intro="direct" href={profile.whatsapp} target="_blank" rel="noopener noreferrer">
+            <a className="contact-direct" data-contact-intro="direct" href={getWhatsAppUrl(locale)} target="_blank" rel="noopener noreferrer">
               <span className="contact-direct-icon" aria-hidden="true">↗</span>
               <span><strong>{copy.directNumber}</strong><small>{copy.directLabel}</small></span>
               <ArrowIcon />

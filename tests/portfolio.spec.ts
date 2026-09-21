@@ -162,7 +162,7 @@ test("scroll transition blurs, shrinks and fades the Hero, reveals About and rev
   await page.evaluate(() => window.scrollTo({ top: document.getElementById("about")!.offsetTop, behavior: "instant" }));
   await expect(page.locator(".chapter-outgoing")).toHaveAttribute("inert", "");
   await expect(page.locator(".floating-actions")).toBeVisible();
-  await expect(page.locator(".floating-actions").getByRole("link", { name: "WhatsApp" })).toHaveAttribute("href", "https://wa.me/50683442305");
+  await expect(page.locator(".floating-actions").getByRole("link", { name: "WhatsApp" })).toHaveAttribute("href", /^https:\/\/wa\.me\/50683442305\?text=/);
   await expect(page.locator(".floating-actions a").first()).toHaveAttribute("href", "https://github.com/DevCabalceta");
   await expect(page.locator("[data-about-char]").last()).toHaveCSS("opacity", "1");
   await expect(page.locator("#about-title")).toBeInViewport({ ratio: 1 });
@@ -183,6 +183,20 @@ test("About navigation works with reduced motion and reveals real profile conten
   await expect(page.locator(".technology-item")).toHaveCount(23);
   await expect(page.locator(".chapter-transition")).not.toHaveAttribute("data-motion");
   await expect(page.locator(".chapter-frame")).toHaveCSS("transform", "none");
+});
+
+test("every WhatsApp action shares the localized portfolio preview", async ({ page }) => {
+  const portfolioOrigin = (process.env.NEXT_PUBLIC_SITE_URL ?? "https://portfolio-gabriel-lemon.vercel.app").replace(/\/$/, "");
+  for (const locale of ["es", "en"] as const) {
+    await page.goto(`/${locale}`);
+    const actions = page.locator('a[href^="https://wa.me/50683442305"]');
+    await expect(actions).toHaveCount(9);
+    const hrefs = await actions.evaluateAll((links) => links.map((link) => (link as HTMLAnchorElement).href));
+    for (const href of hrefs) {
+      const url = new URL(href);
+      expect(url.searchParams.get("text")).toContain(`${portfolioOrigin}/${locale}`);
+    }
+  }
 });
 
 test("About keeps a compact editorial composition on ultra-wide screens", async ({ page }) => {

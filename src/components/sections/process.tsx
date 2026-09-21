@@ -1,9 +1,10 @@
 import type { Dictionary } from "@/i18n/dictionaries";
-import { profile } from "@/data/profile";
+import type { Locale } from "@/i18n/config";
+import { getWhatsAppUrl } from "@/lib/whatsapp";
 import { ProcessMotion } from "@/components/animations/process-motion";
 import { ArrowIcon } from "@/components/ui/arrow-icon";
 
-export function Process({ copy }: { copy: Dictionary["process"] }) {
+export function Process({ copy, locale }: { copy: Dictionary["process"]; locale: Locale }) {
   return <ProcessMotion>
     <section id="process" className="process" aria-labelledby="process-title" tabIndex={-1}>
       <div className="process-story">
@@ -20,7 +21,7 @@ export function Process({ copy }: { copy: Dictionary["process"] }) {
               {copy.title.map((line) => <span className="title-mask" aria-hidden="true" key={line}><span data-process-title>{line}</span></span>)}
             </h2>
             <p className="process-introduction" data-process-intro>{copy.introduction}</p>
-            <a className="process-contact" data-process-intro href={profile.whatsapp} target="_blank" rel="noopener noreferrer">{copy.contact}<ArrowIcon /></a>
+            <a className="process-contact" data-process-intro href={getWhatsAppUrl(locale)} target="_blank" rel="noopener noreferrer">{copy.contact}<ArrowIcon /></a>
             <p className="process-note micro-label" data-process-intro><span aria-hidden="true" />{copy.note}</p>
           </div>
           <div className="process-timeline">
@@ -50,7 +51,7 @@ export function Process({ copy }: { copy: Dictionary["process"] }) {
           </p>
           <span data-process-closing="detail">{copy.closingDetail}</span>
         </div>
-        <a data-process-closing="cta" href={profile.whatsapp} target="_blank" rel="noopener noreferrer">{copy.fallbackContact}<ArrowIcon /></a>
+        <a data-process-closing="cta" href={getWhatsAppUrl(locale)} target="_blank" rel="noopener noreferrer">{copy.fallbackContact}<ArrowIcon /></a>
       </footer>
     </section>
   </ProcessMotion>;

@@ -3,15 +3,11 @@
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { gsap } from "@/components/animations/gsap-runtime";
 import type { Dictionary } from "@/i18n/dictionaries";
-import { profile } from "@/data/profile";
+import { getWhatsAppUrl } from "@/lib/whatsapp";
 import { ArrowIcon } from "@/components/ui/arrow-icon";
 
 type Currency = "USD" | "CRC";
 type ExchangeRate = { rate: number; date: string };
-
-function whatsappFor(message: string) {
-  return `${profile.whatsapp}?text=${encodeURIComponent(message)}`;
-}
 
 function formatAmount(amount: number, currency: Currency, locale: "es" | "en") {
   const grouped = Math.round(amount).toLocaleString("en-US").replaceAll(",", locale === "es" ? "." : ",");
@@ -128,7 +124,7 @@ export function ServicePricing({ copy, locale }: { copy: Dictionary["services"];
             {plan.features.map((feature, featureIndex) => <li data-service-benefit key={feature}><span>{String(featureIndex + 1).padStart(2, "0")}</span>{feature}</li>)}
           </ul>
         </div>
-        <a className="service-cta" data-service-part="cta" href={whatsappFor(copy.inquiry.replace("{plan}", plan.title))} target="_blank" rel="noopener noreferrer">
+        <a className="service-cta" data-service-part="cta" href={getWhatsAppUrl(locale, copy.inquiry.replace("{plan}", plan.title))} target="_blank" rel="noopener noreferrer">
           <span>{plan.cta}</span><ArrowIcon />
         </a>
         <span className="service-plan-index" aria-hidden="true">0{index + 1}</span>

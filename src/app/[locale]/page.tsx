@@ -28,13 +28,13 @@ export default async function Home({ params }: { params: Promise<{ locale: strin
       <main id="main" tabIndex={-1}>
         <ChapterTransition id="home" previous={<Hero copy={copy.hero} />}><About copy={copy.about} /></ChapterTransition>
         <Projects locale={locale} copy={copy.work} />
-        <Process copy={copy.process} />
+        <Process copy={copy.process} locale={locale} />
         <Services copy={copy.services} locale={locale} />
-        <Faq copy={copy.faq} />
+        <Faq copy={copy.faq} locale={locale} />
         <Contact copy={copy.contactSection} locale={locale} />
       </main>
       <SiteFooter copy={copy.siteFooter} services={copy.services} navigation={copy.nav} locale={locale} />
-      <FloatingActions copy={copy} />
+      <FloatingActions copy={copy} locale={locale} />
     </>
   );
 }

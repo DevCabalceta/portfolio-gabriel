@@ -10,7 +10,7 @@ test("Contact is reachable after FAQ, translated, and fits the viewport width", 
     const section = page.locator("#contact");
     await expect(section).toBeVisible();
     await expect(section.locator("h2")).toHaveAccessibleName(title);
-    await expect(section.locator(".contact-direct")).toHaveAttribute("href", "https://wa.me/50683442305");
+    await expect(section.locator(".contact-direct")).toHaveAttribute("href", /^https:\/\/wa\.me\/50683442305\?text=/);
     await expect(section.locator("form")).toBeVisible();
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
     expect(await page.locator("#faq").evaluate((element) => element.compareDocumentPosition(document.querySelector("#contact")!) & Node.DOCUMENT_POSITION_FOLLOWING)).toBeTruthy();

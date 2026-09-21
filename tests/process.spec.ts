@@ -21,8 +21,8 @@ test("Process navigation reveals seven chapters with a localized contact", async
   await expect(page.locator("[data-process-title]").last()).toHaveCSS("opacity", "1");
   await expect(page.locator(".process-step")).toHaveCount(7);
   await expect(page.locator(".site-header")).toBeInViewport({ ratio: 1 });
-  await expect(page.locator(".service-options, select")).toHaveCount(0);
-  await expect(page.locator(".process-contact")).toHaveAttribute("href", "https://wa.me/50683442305");
+  await expect(page.locator("#process .service-options, #process select")).toHaveCount(0);
+  await expect(page.locator(".process-contact")).toHaveAttribute("href", /^https:\/\/wa\.me\/50683442305\?text=/);
   await expect(page.locator(".process-contact")).toHaveText(/Iniciar una conversación/);
   await page.goto("/en#process");
   await expect(page.locator("#process-title")).toHaveAccessibleName("Your idea. Step by step.");
@@ -117,9 +117,9 @@ test("Process remains readable at small sizes with reduced motion and without Ja
     const fallback = await context.newPage();
     await fallback.goto("http://localhost:3000/es#process");
     await expect(fallback.locator(".process-step")).toHaveCount(7);
-    await expect(fallback.locator(".service-options, select")).toHaveCount(0);
+    await expect(fallback.locator("#process .service-options, #process select")).toHaveCount(0);
     await expect(fallback.locator(".process-contact")).toBeVisible();
-    await expect(fallback.locator(".process-contact")).toHaveAttribute("href", "https://wa.me/50683442305");
+    await expect(fallback.locator(".process-contact")).toHaveAttribute("href", /^https:\/\/wa\.me\/50683442305\?text=/);
     await expect(fallback.locator("[data-process-title]").last()).toHaveCSS("opacity", "1");
   } finally { await context.close(); }
 });

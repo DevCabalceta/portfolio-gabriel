@@ -16,7 +16,7 @@ test("Footer closes Contact in both languages with confirmed destinations", asyn
     await expect(footer.locator("[aria-labelledby='footer-services-title'] a")).toHaveCount(3);
     await expect(footer.locator("[aria-labelledby='footer-social-title'] a").nth(0)).toHaveAttribute("href", "https://www.linkedin.com/in/devcabalceta/");
     await expect(footer.locator("[aria-labelledby='footer-social-title'] a").nth(1)).toHaveAttribute("href", "https://github.com/DevCabalceta");
-    await expect(footer.locator("[aria-labelledby='footer-social-title'] a").nth(2)).toHaveAttribute("href", "https://wa.me/50683442305");
+    await expect(footer.locator("[aria-labelledby='footer-social-title'] a").nth(2)).toHaveAttribute("href", /^https:\/\/wa\.me\/50683442305\?text=/);
     await expect(footer.locator("[aria-labelledby='footer-social-title'] a").nth(3)).toHaveAttribute("href", "/documents/CV-GabrielCabalceta.pdf");
     await expect(footer.locator(".site-footer-back")).toHaveCount(0);
     await expect(footer.locator(".site-footer-legal p")).toContainText(locale === "es" ? "Todos los derechos reservados." : "All rights reserved.");

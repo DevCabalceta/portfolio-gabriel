@@ -1,6 +1,7 @@
 import type { Dictionary } from "@/i18n/dictionaries";
 import type { Locale } from "@/i18n/config";
 import { profile } from "@/data/profile";
+import { getWhatsAppUrl } from "@/lib/whatsapp";
 import { ArrowIcon } from "@/components/ui/arrow-icon";
 import { FooterMotion } from "@/components/animations/footer-motion";
 import { SpaLink } from "@/components/ui/spa-link";
@@ -66,7 +67,7 @@ export function SiteFooter({ copy, services, navigation, locale }: SiteFooterPro
             <h3 id="footer-social-title" className="micro-label">{copy.socialLabel}</h3>
             <a data-footer-reveal="link" href={profile.linkedin} target="_blank" rel="noopener noreferrer"><span>LinkedIn</span><ArrowIcon /></a>
             <a data-footer-reveal="link" href={profile.github} target="_blank" rel="noopener noreferrer"><span>GitHub</span><ArrowIcon /></a>
-            <a data-footer-reveal="link" href={profile.whatsapp} target="_blank" rel="noopener noreferrer"><span>WhatsApp</span><ArrowIcon /></a>
+            <a data-footer-reveal="link" href={getWhatsAppUrl(locale)} target="_blank" rel="noopener noreferrer"><span>WhatsApp</span><ArrowIcon /></a>
             <a data-footer-reveal="link" href={profile.resume} download><span>{copy.resume}</span><ArrowIcon /></a>
           </nav>
         </div>

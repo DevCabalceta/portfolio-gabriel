@@ -2,7 +2,7 @@
 
 import { useRef, useState, type FormEvent } from "react";
 import type { Dictionary } from "@/i18n/dictionaries";
-import { profile } from "@/data/profile";
+import { getWhatsAppUrl } from "@/lib/whatsapp";
 import { ArrowIcon } from "@/components/ui/arrow-icon";
 
 export function ContactForm({ copy, locale }: { copy: Dictionary["contactSection"]; locale: "es" | "en" }) {
@@ -42,15 +42,13 @@ export function ContactForm({ copy, locale }: { copy: Dictionary["contactSection
     }
     toastId.current = null;
 
-    const portfolioUrl = new URL(`/${locale}`, profile.portfolio).toString();
     const projectDetails = [
       copy.messageGreeting.replace("{name}", name),
       copy.messageType.replace("{type}", type),
       goal ? copy.messageGoal.replace("{goal}", goal) : null,
       copy.messageDetails.replace("{details}", details),
     ].filter(Boolean).join("\n");
-    const message = `${projectDetails}\n\n${copy.messagePortfolio.replace("{url}", portfolioUrl)}`;
-    window.open(`${profile.whatsapp}?text=${encodeURIComponent(message)}`, "_blank", "noopener,noreferrer");
+    window.open(getWhatsAppUrl(locale, projectDetails), "_blank", "noopener,noreferrer");
   };
 
   return <form className="contact-form" noValidate onSubmit={submit} onChange={(event) => {
