@@ -13,6 +13,7 @@ import { Contact } from "@/components/sections/contact";
 import { SiteFooter } from "@/components/sections/site-footer";
 import { SmoothScroll } from "@/components/animations/smooth-scroll";
 import { ChapterTransition } from "@/components/animations/chapter-transition";
+import { DeferredToaster } from "@/components/ui/deferred-toaster";
 
 export default async function Home({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
@@ -21,6 +22,7 @@ export default async function Home({ params }: { params: Promise<{ locale: strin
   return (
     <>
       <a href="#main" className="skip-link">{copy.hero.skip}</a>
+      <DeferredToaster />
       <SmoothScroll />
       <SiteHeader locale={locale} copy={copy.nav} />
       <main id="main" tabIndex={-1}>
@@ -29,7 +31,7 @@ export default async function Home({ params }: { params: Promise<{ locale: strin
         <Process copy={copy.process} />
         <Services copy={copy.services} locale={locale} />
         <Faq copy={copy.faq} />
-        <Contact copy={copy.contactSection} />
+        <Contact copy={copy.contactSection} locale={locale} />
       </main>
       <SiteFooter copy={copy.siteFooter} services={copy.services} navigation={copy.nav} locale={locale} />
       <FloatingActions copy={copy} />

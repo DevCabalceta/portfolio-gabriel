@@ -83,6 +83,22 @@ test("About fades and blurs only during the transition into Work", async ({ page
   await expect(page.locator(".chapter-frame")).toHaveCSS("filter", "none");
 });
 
+test("Work title remains visible after scrolling past the section and returning", async ({ page }) => {
+  await page.goto("/es#work");
+  const titleCharacters = page.locator("[data-work-char]");
+  await expect(titleCharacters.last()).toHaveCSS("opacity", "1");
+  const workScroll = await page.evaluate(() => scrollY);
+  await page.evaluate(() => {
+    const process = document.querySelector("#process")!;
+    window.scrollTo({ top: process.getBoundingClientRect().top + scrollY + Math.min(innerHeight, 500), behavior: "instant" });
+  });
+  await expect.poll(() => page.evaluate(() => scrollY)).toBeGreaterThan(workScroll + 400);
+  await page.locator("#work-title").evaluate((element) => element.scrollIntoView({ behavior: "instant", block: "center" }));
+  await expect(page.locator("#work-title")).toBeInViewport({ ratio: 1 });
+  await expect(titleCharacters.first()).toHaveCSS("opacity", "1");
+  await expect(titleCharacters.last()).toHaveCSS("opacity", "1");
+});
+
 test("carousel stays in one row and screenshot galleries support keyboard and touch", async ({ page }) => {
   await page.emulateMedia({ reducedMotion: "reduce" });
   await page.goto("/es#selected-projects");

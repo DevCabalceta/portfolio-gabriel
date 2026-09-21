@@ -224,6 +224,7 @@ const es = {
     emailLabel: "También puedes escribirme", footer: "De la primera idea al siguiente proyecto.",
     messageGreeting: "Hola Gabriel, soy {name}.", messageType: "Me interesa: {type}.",
     messageGoal: "Mi objetivo: {goal}.", messageDetails: "Detalles del proyecto: {details}",
+    messagePortfolio: "Ver el portfolio: {url}",
   },
   services: {
     label: "Servicios", eyebrow: "Tres formas de trabajar juntos",
@@ -588,6 +589,7 @@ const en: Dictionary = {
     emailLabel: "You can also email me", footer: "From the first idea to the next project.",
     messageGreeting: "Hi Gabriel, I'm {name}.", messageType: "I'm interested in: {type}.",
     messageGoal: "My goal: {goal}.", messageDetails: "Project details: {details}",
+    messagePortfolio: "View the portfolio: {url}",
   },
   services: {
     label: "Services", eyebrow: "Three ways to work together",

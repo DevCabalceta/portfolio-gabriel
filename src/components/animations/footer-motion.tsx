@@ -1,19 +1,20 @@
 "use client";
 
-import { useLayoutEffect, useRef, type ReactNode } from "react";
-import { gsap } from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { useEffect, useRef, type ReactNode } from "react";
+import { gsap, setupGsap, scheduleScrollRefresh } from "./gsap-runtime";
 import { createCinematicSectionTransition } from "./cinematic-section-transition";
+import { mountMotionWhenNear } from "./deferred-motion";
 import { createCinematicReveal, killCinematicReveal } from "./cinematic-reveal";
 
 export function FooterMotion({ children }: { children: ReactNode }) {
   const root = useRef<HTMLDivElement>(null);
 
-  useLayoutEffect(() => {
+  useEffect(() => {
     const element = root.current;
     if (!element) return;
-    gsap.registerPlugin(ScrollTrigger);
-    const media = gsap.matchMedia();
+    return mountMotionWhenNear(element, () => {
+      setupGsap();
+      const media = gsap.matchMedia();
     media.add({ desktop: "(min-width: 900px)", mobile: "(max-width: 899px)", reduced: "(prefers-reduced-motion: reduce)" }, (context) => {
       if (context.conditions?.reduced) return;
       const contact = document.querySelector<HTMLElement>(".contact");
@@ -37,14 +38,15 @@ export function FooterMotion({ children }: { children: ReactNode }) {
         ],
       });
       element.dataset.motion = "true";
-      ScrollTrigger.refresh();
+      scheduleScrollRefresh();
       return () => {
         cleanupTransition?.();
         killCinematicReveal(timeline);
         delete element.dataset.motion;
       };
     }, element);
-    return () => media.revert();
+      return () => media.revert();
+    });
   }, []);
 
   return <div ref={root} className="site-footer-motion">{children}</div>;

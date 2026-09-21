@@ -6,6 +6,7 @@
 .chapter-transition[data-transition-resting="true"] .chapter-frame { filter: none !important; transform: none !important; opacity: 1 !important; }
 .chapter-transition[data-motion] .chapter-outgoing { position: sticky; top: 0; }
 .chapter-outgoing[inert] .gallery-track { animation-play-state: paused; }
+.floating-actions-sentinel { display: block; width: 1px; height: 1px; margin-top: -1px; pointer-events: none; }
 
 .about {
   position: relative; z-index: 2; isolation: isolate;

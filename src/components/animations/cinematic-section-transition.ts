@@ -1,5 +1,4 @@
-import { gsap } from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { gsap, ScrollTrigger, setupGsap } from "./gsap-runtime";
 
 type CinematicSectionTransitionOptions = {
   incoming: HTMLElement;
@@ -26,6 +25,7 @@ export function createCinematicSectionTransition({
   restingTarget = outgoing,
   inertTarget = outgoing,
 }: CinematicSectionTransitionOptions) {
+  setupGsap();
   incoming.dataset.sectionTransition = "cinematic";
   outgoing.classList.add("cinematic-outgoing");
   let pinTrigger: ScrollTrigger | undefined;
@@ -46,10 +46,19 @@ export function createCinematicSectionTransition({
   const start = safeViewportStart
     ? () => Math.max(0, incoming.getBoundingClientRect().top + window.scrollY - window.innerHeight)
     : "top bottom";
+  let previousResting: boolean | undefined;
+  let previousInert: boolean | undefined;
   const sync = (self: ScrollTrigger) => {
     const resting = self.progress <= 0.001;
-    restingTarget.dataset.transitionResting = String(resting);
-    inertTarget.inert = self.progress >= 0.98;
+    const inert = self.progress >= 0.98;
+    if (resting !== previousResting) {
+      restingTarget.dataset.transitionResting = String(resting);
+      previousResting = resting;
+    }
+    if (inert !== previousInert) {
+      inertTarget.inert = inert;
+      previousInert = inert;
+    }
   };
 
   const animation = gsap.fromTo(outgoing,
@@ -57,8 +66,8 @@ export function createCinematicSectionTransition({
     {
       scale: desktop ? 0.9 : 0.965,
       opacity: 0.1,
-      filter: `blur(${desktop ? 8 : 4}px)`,
-      force3D: false,
+      filter: `blur(${desktop ? 5 : 2.5}px)`,
+      force3D: true,
       ease: "none",
       scrollTrigger: {
         trigger: incoming,
@@ -68,6 +77,10 @@ export function createCinematicSectionTransition({
         invalidateOnRefresh: true,
         onUpdate: sync,
         onRefresh: sync,
+        onEnter: () => { outgoing.style.willChange = "transform, opacity, filter"; },
+        onEnterBack: () => { outgoing.style.willChange = "transform, opacity, filter"; },
+        onLeave: () => { outgoing.style.willChange = "auto"; },
+        onLeaveBack: () => { outgoing.style.willChange = "auto"; },
       },
     });
 
@@ -79,6 +92,6 @@ export function createCinematicSectionTransition({
     delete incoming.dataset.sectionTransition;
     outgoing.classList.remove("cinematic-outgoing");
     delete restingTarget.dataset.transitionResting;
-    gsap.set(outgoing, { clearProps: "transform,opacity,filter" });
+    gsap.set(outgoing, { clearProps: "transform,opacity,filter,willChange" });
   };
 }

@@ -10,8 +10,8 @@ export function HeroGallery({ copy }: { copy: Dictionary["hero"] }) {
         {Array.from({ length: 5 }, (_, column) => (
           <div className="gallery-column" key={column}>
             <div className="gallery-track">
-              {/* Three identical groups keep the diagonal loop covered at every viewport ratio. */}
-              {[0, 1, 2].map((repeat) => (
+              {/* Two identical groups keep the loop seamless with fewer animated nodes. */}
+              {[0, 1].map((repeat) => (
                 <div className="gallery-group" key={repeat}>
                   {heroGallery.map((_, index) => {
                     const item = heroGallery[(index + column * 2) % heroGallery.length];

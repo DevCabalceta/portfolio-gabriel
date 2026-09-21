@@ -1,7 +1,6 @@
 "use client";
 
-import { useEffect, useRef, type RefObject } from "react";
-import { motion, useReducedMotion } from "framer-motion";
+import { useEffect, useRef, type CSSProperties, type RefObject } from "react";
 import type { Locale } from "@/i18n/config";
 import type { Dictionary } from "@/i18n/dictionaries";
 import { LanguageSwitch } from "./language-switch";
@@ -16,7 +15,6 @@ export function MobileMenu({ locale, copy, links, onClose, trigger }: {
 }) {
   const dialog = useRef<HTMLDialogElement>(null);
   const pendingAnchor = useRef<string | null>(null);
-  const reducedMotion = useReducedMotion();
 
   // Mount the native modal before animating its contents. Its lifecycle must
   // follow this component, including AnimatePresence's exit, not the parent.
@@ -72,10 +70,7 @@ export function MobileMenu({ locale, copy, links, onClose, trigger }: {
   return (
     <dialog ref={dialog} id="mobile-menu" className="mobile-menu" aria-label={copy.label}
       onCancel={(event) => { event.preventDefault(); onClose(); }}>
-      <motion.div className="mobile-menu-panel"
-        initial={{ opacity: 0, y: 0 }}
-        animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: reducedMotion ? 0 : -16 }}
-        transition={{ duration: reducedMotion ? 0 : 0.3, ease: [0.22, 1, 0.36, 1] }}>
+      <div className="mobile-menu-panel">
         <div className="mobile-menu-top">
           <span className="wordmark" aria-hidden="true">gc<span>✳</span></span>
           <button type="button" className="menu-close" onClick={onClose} aria-label={copy.close}><span /><span /></button>
@@ -83,25 +78,23 @@ export function MobileMenu({ locale, copy, links, onClose, trigger }: {
         <nav aria-label={copy.label}>
           <p className="micro-label mobile-menu-label">{copy.menu}</p>
           {links.map((link, index) => (
-            <motion.a key={link.href} href={link.href} target={link.target} rel={link.target ? "noopener noreferrer" : undefined} onClick={(event) => {
+            <a key={link.href} href={link.href} target={link.target} rel={link.target ? "noopener noreferrer" : undefined} style={{ "--menu-index": index } as CSSProperties} onClick={(event) => {
               if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey || event.button !== 0) return;
               if (link.href.startsWith("#")) {
                 event.preventDefault();
                 pendingAnchor.current = link.href;
               }
               onClose();
-            }}
-              initial={reducedMotion ? false : { y: 0, opacity: 0 }} animate={{ y: 0, opacity: 1 }}
-              transition={{ duration: 0.4, delay: reducedMotion ? 0 : 0.08 + index * 0.06, ease: [0.22, 1, 0.36, 1] }}>
+            }}>
               <span className="micro-label">0{index + 1}</span>{link.label}<ArrowIcon />
-            </motion.a>
+            </a>
           ))}
         </nav>
         <div className="mobile-menu-bottom">
           <LanguageSwitch locale={locale} label={copy.language} />
           <span className="micro-label">Gabriel Cabalceta © 2026</span>
         </div>
-      </motion.div>
+      </div>
     </dialog>
   );
 }

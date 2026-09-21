@@ -1,8 +1,7 @@
 "use client";
 
 import { useEffect, useRef, type ReactNode } from "react";
-import { gsap } from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { gsap, setupGsap } from "./gsap-runtime";
 import { createCinematicSectionTransition } from "./cinematic-section-transition";
 
 export function ChapterTransition({ id, previous, children }: { id: string; previous: ReactNode; children: ReactNode }) {
@@ -16,7 +15,7 @@ export function ChapterTransition({ id, previous, children }: { id: string; prev
     const incoming = element.querySelector<HTMLElement>("[data-chapter-incoming]");
     if (!outgoing || !frame || !incoming) return;
 
-    gsap.registerPlugin(ScrollTrigger);
+    setupGsap();
     const media = gsap.matchMedia();
     media.add({ desktop: "(min-width: 900px)", mobile: "(max-width: 899px)", reduced: "(prefers-reduced-motion: reduce)" }, (context) => {
       if (context.conditions?.reduced) return;
@@ -52,6 +51,7 @@ export function ChapterTransition({ id, previous, children }: { id: string; prev
   return (
     <div ref={root} id={id} className="chapter-transition" tabIndex={-1}>
       <div className="chapter-outgoing"><div className="chapter-frame">{previous}</div></div>
+      <span className="floating-actions-sentinel" aria-hidden="true" />
       {children}
     </div>
   );

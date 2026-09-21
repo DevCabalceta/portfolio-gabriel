@@ -7,23 +7,22 @@ import type { Dictionary } from "@/i18n/dictionaries";
 export function FloatingActions({ copy }: { copy: Dictionary }) {
   const root = useRef<HTMLDivElement>(null);
   useEffect(() => {
-    const hero = document.querySelector<HTMLElement>(".chapter-outgoing");
-    const about = document.getElementById("about");
+    const heroBoundary = document.querySelector(".floating-actions-sentinel");
     const header = document.querySelector(".site-header");
-    if (!hero || !about) return;
-    const update = () => {
-      const anchorOffset = parseFloat(getComputedStyle(document.documentElement).scrollPaddingTop) || 0;
-      const visible = about.getBoundingClientRect().top <= Math.max(header?.getBoundingClientRect().height ?? 0, anchorOffset) + 2;
+    if (!heroBoundary) return;
+    const setVisible = (visible: boolean) => {
       if (root.current) {
         root.current.dataset.visible = String(visible);
         root.current.inert = !visible;
       }
     };
-    const observer = new ResizeObserver(update);
-    observer.observe(hero);
-    window.addEventListener("scroll", update, { passive: true });
-    update();
-    return () => { observer.disconnect(); window.removeEventListener("scroll", update); };
+    const headerHeight = header?.getBoundingClientRect().height ?? 72;
+    const activationLine = headerHeight + 16;
+    const observer = new IntersectionObserver(([entry]) => {
+      setVisible(!entry.isIntersecting && entry.boundingClientRect.top < activationLine);
+    }, { rootMargin: `-${activationLine}px 0px 0px 0px`, threshold: 0 });
+    observer.observe(heroBoundary);
+    return () => observer.disconnect();
   }, []);
 
   const backToTop = () => {

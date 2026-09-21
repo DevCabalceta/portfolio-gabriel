@@ -2,8 +2,9 @@
 
 import { useEffect } from "react";
 import Lenis from "lenis";
-import { gsap } from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { gsap, ScrollTrigger, setupGsap } from "./gsap-runtime";
+
+let activeLenis: Lenis | null = null;
 
 export function SmoothScroll() {
   useEffect(() => {
@@ -52,17 +53,31 @@ export function SmoothScroll() {
       cleanup?.();
       cleanup = undefined;
       if (!media.matches) return;
-      gsap.registerPlugin(ScrollTrigger);
+      setupGsap();
+      activeLenis?.destroy();
       const lenis = new Lenis({ smoothWheel: true, wheelMultiplier: 1.18, lerp: 0.17, anchors: true, autoRaf: false });
+      activeLenis = lenis;
       const onScroll = () => ScrollTrigger.update();
       const tick = (time: number) => lenis.raf(time * 1000);
+      const onVisibility = () => {
+        if (document.hidden) lenis.stop();
+        else {
+          lenis.start();
+          ScrollTrigger.update();
+        }
+      };
       lenis.on("scroll", onScroll);
       gsap.ticker.add(tick);
       gsap.ticker.lagSmoothing(0);
+      document.documentElement.dataset.lenisActive = "true";
+      document.addEventListener("visibilitychange", onVisibility);
       cleanup = () => {
+        document.removeEventListener("visibilitychange", onVisibility);
         gsap.ticker.remove(tick);
         lenis.off("scroll", onScroll);
         lenis.destroy();
+        if (activeLenis === lenis) activeLenis = null;
+        delete document.documentElement.dataset.lenisActive;
       };
     };
     sync();

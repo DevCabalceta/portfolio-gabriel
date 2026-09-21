@@ -2,7 +2,6 @@
 
 import { createContext, useContext, useEffect, useId, useMemo, useRef, useState, type ReactNode } from "react";
 import { createPortal } from "react-dom";
-import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import Image from "next/image";
 import type { ProjectMedia as Media } from "@/types/content";
 import type { Locale } from "@/i18n/config";
@@ -32,7 +31,6 @@ function GalleryDialog({ entries, initialIndex, trigger, locale, copy, onClose }
   const id = useId();
   const [index, setIndex] = useState(initialIndex);
   const [direction, setDirection] = useState(1);
-  const reduced = useReducedMotion();
   const entry = entries[index];
   const changeImage = (step: number) => {
     setDirection(step);
@@ -73,13 +71,9 @@ function GalleryDialog({ entries, initialIndex, trigger, locale, copy, onClose }
       <button type="button" className="gallery-arrow gallery-previous" aria-label={copy.previousImage} onClick={() => changeImage(-1)}>←</button>
       <div className="gallery-content">
         <figure className="gallery-stage">
-          <AnimatePresence mode="wait" initial={false} custom={direction}>
-            <motion.div key={index} className="gallery-image-frame" custom={direction}
-              variants={{ enter: (step: number) => ({ opacity: 0, x: reduced ? 0 : step * 28, scale: reduced ? 1 : 0.98 }), visible: { opacity: 1, x: 0, scale: 1 }, exit: (step: number) => ({ opacity: 0, x: reduced ? 0 : step * -20, scale: reduced ? 1 : 0.99 }) }}
-              initial="enter" animate="visible" exit="exit" transition={{ duration: reduced ? 0 : 0.22, ease: "easeOut" }}>
+          <div key={index} className="gallery-image-frame" data-direction={direction > 0 ? "next" : "previous"}>
               {entry.media.type === "video" ? <ProjectMedia media={entry.media} locale={locale} /> : <Image src={entry.media.src} alt={entry.media.alt[locale]} width={1920} height={1080} sizes="(max-width: 699px) 95vw, 80vw" quality={85} unoptimized={entry.media.type === "gif"} />}
-            </motion.div>
-          </AnimatePresence>
+          </div>
           <figcaption className="gallery-caption" aria-live="polite" aria-atomic="true">
             {entry.project.owner && <p className="project-owner micro-label">{copy.collaboration} · {entry.project.owner}</p>}
             <h2 id={`${id}-title`}>{entry.project.title}</h2>

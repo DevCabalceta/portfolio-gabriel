@@ -1,12 +1,14 @@
 import assert from 'node:assert/strict';
 import { chromium, expect } from '@playwright/test';
+const baseURL = process.env.ROBOT_BASE_URL ?? 'http://localhost:3000';
 const browser = await chromium.launch({ args: ['--use-angle=swiftshader', '--enable-unsafe-swiftshader'] });
 try {
   const page = await browser.newPage({ viewport: { width: 1366, height: 768 } });
   const errors = [];
   page.on('pageerror', error => errors.push(error.message));
-  await page.goto('http://localhost:3000/es');
+  await page.goto(`${baseURL}/es`);
   const robot = page.locator('.hero-robot');
+  await robot.hover();
   await expect(robot).toHaveAttribute('data-ready', 'true', { timeout: 90000 });
   await expect(robot.locator('canvas')).toBeVisible();
   await page.getByRole('button', { name: 'Pausar galería de fondo' }).click();
@@ -28,6 +30,7 @@ try {
   await page.setViewportSize({ width: 1366, height: 768 });
   await page.emulateMedia({ reducedMotion: 'reduce' });
   await page.reload();
+  await robot.hover();
   await expect(robot).toHaveAttribute('data-ready', 'true', { timeout: 90000 });
   await expect(robot).toHaveAttribute('data-playback', 'paused');
   await expect(robot.locator('canvas')).toBeVisible();
@@ -35,11 +38,12 @@ try {
   assert.deepEqual(errors, []);
   let requests = 0;
   await page.route('https://prod.spline.design/**/scene.splinecode', route => { requests++; return route.abort(); });
-  await page.goto('http://localhost:3000/en');
+  await page.goto(`${baseURL}/en`);
+  await robot.hover();
   await expect(page.getByText('The robot could not load')).toBeVisible({ timeout: 30000 });
   const before = requests;
   await page.getByRole('button', { name: 'Retry', exact: true }).click();
   await expect.poll(() => requests).toBeGreaterThan(before);
-  await expect(page.getByRole('link', { name: 'Download CV' })).toBeInViewport({ ratio: 1 });
+  await expect(page.getByRole('link', { name: 'Download CV', exact: true })).toBeInViewport({ ratio: 1 });
   console.log('Spline: desktop scene without pause button, automatic playback, no mobile robot, reduced motion and error/retry verified.');
 } finally { await browser.close(); }

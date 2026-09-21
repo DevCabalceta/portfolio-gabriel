@@ -1,19 +1,20 @@
 "use client";
 
-import { useLayoutEffect, useRef, type ReactNode } from "react";
-import { gsap } from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { useEffect, useRef, type ReactNode } from "react";
+import { gsap, setupGsap, scheduleScrollRefresh } from "./gsap-runtime";
 import { createCinematicSectionTransition } from "./cinematic-section-transition";
+import { mountMotionWhenNear } from "./deferred-motion";
 import { createCinematicReveal, killCinematicReveal } from "./cinematic-reveal";
 
 export function ServicesMotion({ children }: { children: ReactNode }) {
   const root = useRef<HTMLDivElement>(null);
 
-  useLayoutEffect(() => {
+  useEffect(() => {
     const element = root.current;
     if (!element) return;
-    gsap.registerPlugin(ScrollTrigger);
-    const media = gsap.matchMedia();
+    return mountMotionWhenNear(element, () => {
+      setupGsap();
+      const media = gsap.matchMedia();
 
     media.add({ desktop: "(min-width: 900px)", mobile: "(max-width: 899px)", reduced: "(prefers-reduced-motion: reduce)" }, (context) => {
       if (context.conditions?.reduced) return;
@@ -93,7 +94,7 @@ export function ServicesMotion({ children }: { children: ReactNode }) {
         .to(element.querySelector(".services-arc"), { rotate: 24, yPercent: 8, ease: "none" }, 0)
         .to(plans.map((plan) => plan.querySelector(".service-plan-index")), { y: desktop ? -42 : -18, stagger: 0.08, ease: "none" }, 0);
 
-      ScrollTrigger.refresh();
+      scheduleScrollRefresh();
       return () => {
         cleanupTransition?.();
         revealTimelines.forEach(killCinematicReveal);
@@ -103,7 +104,8 @@ export function ServicesMotion({ children }: { children: ReactNode }) {
       };
     }, element);
 
-    return () => media.revert();
+      return () => media.revert();
+    });
   }, []);
 
   return <div ref={root} className="services-motion">{children}</div>;

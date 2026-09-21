@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
-import { gsap } from "gsap";
+import { gsap } from "@/components/animations/gsap-runtime";
 import type { Dictionary } from "@/i18n/dictionaries";
 import { profile } from "@/data/profile";
 import { ArrowIcon } from "@/components/ui/arrow-icon";
@@ -58,6 +58,7 @@ function AnimatedPrice({ amount, currency, locale, rate }: { amount: number; cur
 }
 
 export function ServicePricing({ copy, locale }: { copy: Dictionary["services"]; locale: "es" | "en" }) {
+  const pricingRoot = useRef<HTMLDivElement>(null);
   const [currency, setCurrency] = useState<Currency>("USD");
   const [exchangeRate, setExchangeRate] = useState<ExchangeRate | null>(null);
   const [rateFailed, setRateFailed] = useState(false);
@@ -77,8 +78,15 @@ export function ServicePricing({ copy, locale }: { copy: Dictionary["services"];
         if (!controller.signal.aborted) setRateFailed(true);
       }
     };
-    void loadRate();
-    return () => controller.abort();
+    const element = pricingRoot.current;
+    if (!element) return () => controller.abort();
+    const observer = new IntersectionObserver(([entry]) => {
+      if (!entry.isIntersecting) return;
+      observer.disconnect();
+      void loadRate();
+    }, { rootMargin: "1200px 0px", threshold: 0 });
+    observer.observe(element);
+    return () => { observer.disconnect(); controller.abort(); };
   }, []);
 
   const rateDate = exchangeRate?.date ? new Intl.DateTimeFormat(locale === "es" ? "es-CR" : "en-US", { day: "numeric", month: "short", year: "numeric", timeZone: "UTC" }).format(new Date(`${exchangeRate.date}T12:00:00Z`)) : "";
@@ -86,7 +94,7 @@ export function ServicePricing({ copy, locale }: { copy: Dictionary["services"];
     ? copy.exchangeNote.replace("{rate}", `₡${exchangeRate.rate.toLocaleString(locale === "es" ? "es-CR" : "en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`).replace("{date}", rateDate)
     : rateFailed ? copy.exchangeUnavailable : copy.exchangeLoading;
 
-  return <div className="services-pricing">
+  return <div ref={pricingRoot} className="services-pricing">
     <div className="services-currency" data-services-control>
       <div>
         <p className="micro-label">{copy.currencyLabel} <strong>{copy.currencyHint} <span aria-hidden="true">↔</span></strong></p>

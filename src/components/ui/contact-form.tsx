@@ -1,16 +1,15 @@
 "use client";
 
 import { useRef, useState, type FormEvent } from "react";
-import { sileo } from "sileo";
 import type { Dictionary } from "@/i18n/dictionaries";
 import { profile } from "@/data/profile";
 import { ArrowIcon } from "@/components/ui/arrow-icon";
 
-export function ContactForm({ copy }: { copy: Dictionary["contactSection"] }) {
+export function ContactForm({ copy, locale }: { copy: Dictionary["contactSection"]; locale: "es" | "en" }) {
   type RequiredField = "name" | "type" | "details";
   const [invalidFields, setInvalidFields] = useState<Set<RequiredField>>(() => new Set());
   const toastId = useRef<string | null>(null);
-  const submit = (event: FormEvent<HTMLFormElement>) => {
+  const submit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const form = event.currentTarget;
     const fields = new FormData(form);
@@ -24,6 +23,7 @@ export function ContactForm({ copy }: { copy: Dictionary["contactSection"] }) {
     if (!details) missing.push("details");
     if (missing.length) {
       setInvalidFields(new Set(missing));
+      const { sileo } = await import("sileo");
       if (toastId.current) sileo.dismiss(toastId.current);
       const first = missing[0];
       toastId.current = sileo.error({
@@ -36,15 +36,20 @@ export function ContactForm({ copy }: { copy: Dictionary["contactSection"] }) {
       return;
     }
     setInvalidFields(new Set());
-    if (toastId.current) sileo.dismiss(toastId.current);
+    if (toastId.current) {
+      const { sileo } = await import("sileo");
+      sileo.dismiss(toastId.current);
+    }
     toastId.current = null;
 
-    const message = [
+    const portfolioUrl = new URL(`/${locale}`, profile.portfolio).toString();
+    const projectDetails = [
       copy.messageGreeting.replace("{name}", name),
       copy.messageType.replace("{type}", type),
       goal ? copy.messageGoal.replace("{goal}", goal) : null,
       copy.messageDetails.replace("{details}", details),
     ].filter(Boolean).join("\n");
+    const message = `${projectDetails}\n\n${copy.messagePortfolio.replace("{url}", portfolioUrl)}`;
     window.open(`${profile.whatsapp}?text=${encodeURIComponent(message)}`, "_blank", "noopener,noreferrer");
   };
 

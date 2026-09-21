@@ -1,4 +1,4 @@
-import { gsap } from "gsap";
+import { gsap } from "./gsap-runtime";
 
 type RevealStep = {
   targets: gsap.TweenTarget;
@@ -16,8 +16,9 @@ type CinematicRevealOptions = {
 
 /**
  * Shared viewport reveal used by chapter intros and closing statements.
- * Each sequence keeps the same easing and blur-to-focus rhythm while letting
- * a section choose its own masks, directions and timing.
+ * Each sequence keeps the same easing and transform rhythm while letting a
+ * section choose its own masks, directions and timing. Filters are discarded
+ * here so reveals remain compositor-friendly even if a caller still supplies one.
  */
 export function createCinematicReveal({
   trigger,
@@ -36,9 +37,13 @@ export function createCinematicReveal({
   });
 
   steps.forEach(({ targets, from, to, at }) => {
+    const fromProperties = { ...from };
+    const toProperties = { ...to };
+    delete fromProperties.filter;
+    delete toProperties.filter;
     timeline.fromTo(
       targets,
-      from,
+      fromProperties,
       {
         opacity: 1,
         x: 0,
@@ -47,9 +52,8 @@ export function createCinematicReveal({
         yPercent: 0,
         scale: 1,
         rotate: 0,
-        filter: "blur(0px)",
         clipPath: "inset(0% 0% 0% 0%)",
-        ...to,
+        ...toProperties,
       },
       at,
     );

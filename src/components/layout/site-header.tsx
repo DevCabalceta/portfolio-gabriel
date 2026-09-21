@@ -1,7 +1,6 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
-import { AnimatePresence } from "framer-motion";
 import { profile } from "@/data/profile";
 import { sections } from "@/data/navigation";
 import type { Locale } from "@/i18n/config";
@@ -15,10 +14,15 @@ export function SiteHeader({ locale, copy }: { locale: Locale; copy: Dictionary[
   const trigger = useRef<HTMLButtonElement>(null);
   const header = useRef<HTMLElement>(null);
   useEffect(() => {
-    const update = () => { if (header.current) header.current.dataset.scrolled = String(window.scrollY > 32); };
-    update();
-    window.addEventListener("scroll", update, { passive: true });
-    return () => window.removeEventListener("scroll", update);
+    const sentinel = document.createElement("span");
+    sentinel.className = "header-scroll-sentinel";
+    sentinel.setAttribute("aria-hidden", "true");
+    document.body.prepend(sentinel);
+    const observer = new IntersectionObserver(([entry]) => {
+      if (header.current) header.current.dataset.scrolled = String(!entry.isIntersecting);
+    });
+    observer.observe(sentinel);
+    return () => { observer.disconnect(); sentinel.remove(); };
   }, []);
   const closeMenu = useCallback(() => setOpen(false), []);
   const links: { href: string; label: string; target?: "_blank" }[] = [
@@ -39,9 +43,7 @@ export function SiteHeader({ locale, copy }: { locale: Locale; copy: Dictionary[
           <button ref={trigger} type="button" className="menu-toggle" aria-label={copy.open} aria-haspopup="dialog" aria-expanded={open} aria-controls={open ? "mobile-menu" : undefined} onClick={() => setOpen(true)}><span /><span /></button>
         </div>
       </header>
-      <AnimatePresence>
-        {open && <MobileMenu key={locale} locale={locale} copy={copy} links={links} onClose={closeMenu} trigger={trigger} />}
-      </AnimatePresence>
+      {open && <MobileMenu key={locale} locale={locale} copy={copy} links={links} onClose={closeMenu} trigger={trigger} />}
     </>
   );
 }

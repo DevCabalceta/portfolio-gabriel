@@ -4,7 +4,7 @@ import { ArrowIcon } from "@/components/ui/arrow-icon";
 import { ContactForm } from "@/components/ui/contact-form";
 import { ContactMotion } from "@/components/animations/contact-motion";
 
-export function Contact({ copy }: { copy: Dictionary["contactSection"] }) {
+export function Contact({ copy, locale }: { copy: Dictionary["contactSection"]; locale: "es" | "en" }) {
   return <ContactMotion>
     <section id="contact" className="contact" aria-labelledby="contact-title" tabIndex={-1}>
       <div className="contact-grid">
@@ -36,7 +36,7 @@ export function Contact({ copy }: { copy: Dictionary["contactSection"] }) {
             <p className="contact-form-eyebrow micro-label" data-contact-form="eyebrow">{copy.formEyebrow}</p>
             <h3 data-contact-form="title">{copy.formTitle}</h3>
             <p className="contact-form-description" data-contact-form="description">{copy.formDescription}</p>
-            <ContactForm copy={copy} />
+            <ContactForm copy={copy} locale={locale} />
           </div>
           <div className="contact-panel-footer micro-label" data-contact-form="footer"><span>{copy.footer}</span><span>07 / 08</span></div>
         </div>

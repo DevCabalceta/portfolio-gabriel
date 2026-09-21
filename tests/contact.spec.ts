@@ -27,8 +27,9 @@ test("Contact form prepares a localized WhatsApp message without submitting it",
   for (const locale of ["es", "en"] as const) {
     await page.goto(`/${locale}#contact`);
     await expect(page.locator(".contact-motion")).toHaveAttribute("data-motion", "true");
+    await expect(page.locator("[data-sileo-ready]")).toBeAttached();
     const form = page.locator("#contact form");
-    await form.locator("button[type=submit]").click();
+    await form.evaluate((element: HTMLFormElement) => element.requestSubmit());
     expect(await page.evaluate(() => (window as Window & { openedContactUrl?: string }).openedContactUrl)).toBeUndefined();
     await expect(page.locator("[data-sileo-toast]")).toContainText(locale === "es" ? "Revisa el formulario" : "Check the form");
     await expect(form.locator('[name="name"]')).toHaveAttribute("aria-invalid", "true");
@@ -38,7 +39,8 @@ test("Contact form prepares a localized WhatsApp message without submitting it",
     await form.locator('[name="type"]').selectOption({ index: 1 });
     await form.locator('[name="goal"]').fill("Vender en línea");
     await form.locator('[name="details"]').fill("Necesito un catálogo y pagos.");
-    await form.locator("button[type=submit]").click();
+    await form.evaluate((element: HTMLFormElement) => element.requestSubmit());
+    await expect.poll(() => page.evaluate(() => (window as Window & { openedContactUrl?: string }).openedContactUrl)).toBeDefined();
     const url = await page.evaluate(() => (window as Window & { openedContactUrl?: string }).openedContactUrl);
     expect(url).toBeDefined();
     const parsed = new URL(url!);
@@ -48,7 +50,21 @@ test("Contact form prepares a localized WhatsApp message without submitting it",
     expect(message).toContain("Vender en línea");
     expect(message).toContain("Necesito un catálogo y pagos.");
     expect(message).toContain(locale === "es" ? "Me interesa: Landing Page." : "I'm interested in: Landing Page.");
+    expect(message).toContain(locale === "es" ? "Ver el portfolio:" : "View the portfolio:");
+    expect(message).toContain(`${process.env.NEXT_PUBLIC_SITE_URL ?? "https://portfolio-gabriel-lemon.vercel.app"}/${locale}`);
   }
+});
+
+test("Portfolio metadata exposes a large social preview for WhatsApp", async ({ page, request }) => {
+  await page.goto("/es");
+  await expect(page.locator('meta[property="og:type"]')).toHaveAttribute("content", "website");
+  const imageUrl = await page.locator('meta[property="og:image"]').getAttribute("content");
+  expect(imageUrl).toBeTruthy();
+  const previewPath = new URL(imageUrl!).pathname;
+  const preview = await request.get(previewPath);
+  expect(preview.ok()).toBe(true);
+  expect(preview.headers()["content-type"]).toContain("image/jpeg");
+  await expect(page.locator('meta[name="twitter:card"]')).toHaveAttribute("content", "summary_large_image");
 });
 
 test("Contact action arrows move on hover and stay still with reduced motion", async ({ page }, testInfo) => {

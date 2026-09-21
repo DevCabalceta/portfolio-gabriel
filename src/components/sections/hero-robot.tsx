@@ -32,10 +32,51 @@ function RobotScene({ copy }: { copy: RobotCopy }) {
   const root = useRef<HTMLDivElement>(null);
   const application = useRef<Application | null>(null);
   const active = useRef(true);
+  const aboutCovered = useRef(false);
   const reduced = useRef(false);
   const stillFrameTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [ready, setReady] = useState(false);
   const [attempt, setAttempt] = useState(0);
+  const [interactive, setInteractive] = useState(false);
+
+  useEffect(() => {
+    const element = root.current;
+    if (!element || interactive) return;
+    let activationDelay: ReturnType<typeof setTimeout> | undefined;
+    let idle = 0;
+    let visible = false;
+    const cancelScheduledLoad = () => {
+      if (activationDelay) clearTimeout(activationDelay);
+      activationDelay = undefined;
+      if (idle && "cancelIdleCallback" in window) window.cancelIdleCallback(idle);
+      idle = 0;
+    };
+    const activate = () => { cancelScheduledLoad(); setInteractive(true); };
+    const scheduleLoad = () => {
+      cancelScheduledLoad();
+      if (!visible || document.hidden) return;
+      // Keep the initial interaction window free of the WebGL runtime. Pointer
+      // interaction loads immediately; otherwise the scene starts later and
+      // only if the Hero is still visible.
+      activationDelay = setTimeout(() => {
+        if ("requestIdleCallback" in window) idle = window.requestIdleCallback(activate, { timeout: 2000 });
+        else activate();
+      }, 12000);
+    };
+    const observer = new IntersectionObserver(([entry]) => {
+      visible = entry.isIntersecting;
+      if (visible) scheduleLoad(); else cancelScheduledLoad();
+    }, { threshold: 0.2 });
+    observer.observe(element);
+    element.addEventListener("pointerenter", activate, { once: true, passive: true });
+    element.addEventListener("focusin", activate, { once: true });
+    return () => {
+      observer.disconnect();
+      cancelScheduledLoad();
+      element.removeEventListener("pointerenter", activate);
+      element.removeEventListener("focusin", activate);
+    };
+  }, [interactive]);
 
   useEffect(() => () => {
     if (stillFrameTimer.current) clearTimeout(stillFrameTimer.current);
@@ -44,10 +85,7 @@ function RobotScene({ copy }: { copy: RobotCopy }) {
   const syncPlayback = useCallback(() => {
     const app = application.current;
     if (!app) return;
-    const about = document.getElementById("about");
-    const anchorOffset = parseFloat(getComputedStyle(document.documentElement).scrollPaddingTop) || 0;
-    const covered = about ? about.getBoundingClientRect().top <= anchorOffset : false;
-    const shouldPause = reduced.current || !active.current || document.hidden || covered;
+    const shouldPause = reduced.current || !active.current || document.hidden || aboutCovered.current;
     if (root.current) root.current.dataset.playback = shouldPause ? "paused" : "running";
     if (shouldPause && !app.isStopped) app.stop();
     else if (!shouldPause && app.isStopped) app.play();
@@ -57,40 +95,52 @@ function RobotScene({ copy }: { copy: RobotCopy }) {
     const preference = window.matchMedia("(prefers-reduced-motion: reduce)");
     const updatePreference = () => { reduced.current = preference.matches; syncPlayback(); };
     updatePreference();
-    const observer = new IntersectionObserver(([entry]) => { active.current = entry.isIntersecting; syncPlayback(); }, { threshold: 0 });
-    const hero = root.current?.closest(".hero");
-    if (hero) observer.observe(hero);
+    const observer = new IntersectionObserver(([entry]) => { active.current = entry.isIntersecting; syncPlayback(); }, { threshold: 0.15 });
+    if (root.current) observer.observe(root.current);
+    const aboutObserver = new IntersectionObserver(([entry]) => {
+      aboutCovered.current = entry.isIntersecting || entry.boundingClientRect.top < 64;
+      syncPlayback();
+    }, { rootMargin: "-64px 0px -80% 0px", threshold: 0 });
+    const about = document.getElementById("about");
+    if (about) aboutObserver.observe(about);
     preference.addEventListener("change", updatePreference);
     document.addEventListener("visibilitychange", syncPlayback);
-    window.addEventListener("scroll", syncPlayback, { passive: true });
     syncPlayback();
     return () => {
       observer.disconnect();
+      aboutObserver.disconnect();
       preference.removeEventListener("change", updatePreference);
       document.removeEventListener("visibilitychange", syncPlayback);
-      window.removeEventListener("scroll", syncPlayback);
     };
   }, [syncPlayback]);
 
   const onLoad = useCallback((app: Application) => {
     // This scene starts with the robot outside the camera. Let that introduction
     // finish behind the loader before revealing a static reduced-motion frame.
-    const onRendered = () => {
+    let revealed = false;
+    const reveal = () => {
+      if (revealed) return;
+      revealed = true;
       app.removeEventListener("rendered", onRendered);
-      const reveal = () => {
-        application.current = app;
-        setReady(true);
-        syncPlayback();
-      };
+      if (stillFrameTimer.current) clearTimeout(stillFrameTimer.current);
+      stillFrameTimer.current = null;
+      application.current = app;
+      setReady(true);
+      syncPlayback();
+    };
+    const onRendered = () => {
       if (reduced.current) stillFrameTimer.current = setTimeout(reveal, 2500);
       else reveal();
     };
     app.addEventListener("rendered", onRendered);
     app.requestRender();
+    // Some WebGL implementations do not emit another rendered event after
+    // onLoad. Never leave the interface trapped behind the loader in that case.
+    stillFrameTimer.current = setTimeout(reveal, reduced.current ? 4000 : 2200);
   }, [syncPlayback]);
 
   return (
-    <div ref={root} className="hero-robot" data-ready={ready}>
+    <div ref={root} className="hero-robot" data-ready={ready} data-interactive={interactive}>
       <div className="robot-glow" aria-hidden="true" />
       <SceneBoundary key={attempt} fallback={
         <div className="robot-status robot-error" role="status">
@@ -99,9 +149,9 @@ function RobotScene({ copy }: { copy: RobotCopy }) {
         </div>
       }>
         {!ready && <div className="robot-status" role="status"><span className="robot-loader" aria-hidden="true" /><span>{copy.loading}</span></div>}
-        <Suspense fallback={null}>
+        {interactive && <Suspense fallback={null}>
           <Spline scene={scene} className="robot-scene" onLoad={onLoad} role="img" aria-label={copy.label} />
-        </Suspense>
+        </Suspense>}
       </SceneBoundary>
     </div>
   );
