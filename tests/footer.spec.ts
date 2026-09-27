@@ -1,7 +1,7 @@
 import { expect, test } from "@playwright/test";
 
 test.beforeEach(async ({ page }) => {
-  await page.route("https://prod.spline.design/**/scene.splinecode", () => {});
+  await page.route("**/scenes/hero-robot.splinecode*", () => {});
 });
 
 test("Footer closes Contact in both languages with confirmed destinations", async ({ page }) => {

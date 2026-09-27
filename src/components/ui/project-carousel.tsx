@@ -16,12 +16,21 @@ export function ProjectCarousel({ children, titles, copy }: { children: ReactNod
 
   useEffect(() => {
     if (!api) return;
-    const update = () => setSelected(api.selectedScrollSnap());
+    const loadVisibleImages = () => {
+      const visibleSlides = new Set([...api.slidesInView(), api.selectedScrollSnap()]);
+      visibleSlides.forEach((index) => {
+        api.slideNodes()[index]?.querySelectorAll("img").forEach((image) => { image.loading = "eager"; });
+      });
+    };
+    const update = () => {
+      setSelected(api.selectedScrollSnap());
+      loadVisibleImages();
+    };
     const down = () => setDragging(true);
     const up = () => setDragging(false);
     update();
-    api.on("select", update).on("reInit", update).on("pointerDown", down).on("pointerUp", up);
-    return () => { api.off("select", update).off("reInit", update).off("pointerDown", down).off("pointerUp", up); };
+    api.on("select", update).on("reInit", update).on("slidesInView", loadVisibleImages).on("pointerDown", down).on("pointerUp", up);
+    return () => { api.off("select", update).off("reInit", update).off("slidesInView", loadVisibleImages).off("pointerDown", down).off("pointerUp", up); };
   }, [api]);
 
   useEffect(() => {

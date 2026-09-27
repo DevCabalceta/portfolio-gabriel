@@ -2,7 +2,7 @@ import { expect, test } from "@playwright/test";
 
 // Layout/navigation checks hold the external 3D download; the real scene is verified separately.
 test.beforeEach(async ({ page }) => {
-  await page.route("https://prod.spline.design/**/scene.splinecode", () => {});
+  await page.route("**/scenes/hero-robot.splinecode*", () => {});
 });
 
 test("localized routes, persistence and real contact/download destinations", async ({ page, request }) => {
@@ -132,7 +132,7 @@ test("the introduction and locale links work without JavaScript", async ({ brows
   await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
   await page.getByRole("link", { name: "English", exact: true }).click();
   await expect(page.locator("html")).toHaveAttribute("lang", "en");
-  await expect(page.getByRole("link", { name: "Download CV" })).toBeVisible();
+  await expect(page.getByRole("link", { name: "Download CV", exact: true })).toBeVisible();
   await expect(page.locator(".gallery-track").first()).toHaveCSS("animation-play-state", "paused");
   await expect(page.locator("#about-title")).toHaveAccessibleName("Behind the code.");
   await expect(page.locator("#work-title")).toHaveAccessibleName("Code in action.");
@@ -140,7 +140,7 @@ test("the introduction and locale links work without JavaScript", async ({ brows
   await archivedProject.scrollIntoViewIfNeeded();
   await expect(archivedProject).toBeInViewport();
   await expect(archivedProject.locator(".project-links a")).toHaveAttribute("href", "https://gabriel-tesla-landing.netlify.app/");
-  await expect(archivedProject.locator(".project-gallery-trigger")).toHaveAttribute("href", "/images/projects/tesla.jpg");
+  await expect(archivedProject.locator(".project-gallery-trigger")).toHaveAttribute("href", "/images/projects/tesla-clone/01.jpg");
   expect(await page.locator(".chapter-outgoing").evaluate((element) => getComputedStyle(element).position)).toBe("relative");
   await context.close();
 });

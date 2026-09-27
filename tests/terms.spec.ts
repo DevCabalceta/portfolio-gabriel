@@ -1,7 +1,7 @@
 import { expect, test } from "@playwright/test";
 
 test.beforeEach(async ({ page }) => {
-  await page.route("https://prod.spline.design/**/scene.splinecode", () => {});
+  await page.route("**/scenes/hero-robot.splinecode*", () => {});
 });
 
 test("terms page is localized, complete and connected to its legal references", async ({ page }) => {

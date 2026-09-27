@@ -4,7 +4,7 @@ const browser = await chromium.launch();
 try {
   for (const [name, viewport] of [['desktop', {width:1440,height:900}], ['mobile', {width:390,height:744}]]) {
     const page = await browser.newPage({viewport, reducedMotion: 'no-preference'});
-    await page.route('https://prod.spline.design/**/scene.splinecode', () => {});
+    await page.route('**/scenes/hero-robot.splinecode*', () => {});
     await page.goto('http://localhost:3000/es');
     await page.evaluate(() => document.fonts.ready);
     await expect(page.locator('.process-motion')).toHaveAttribute('data-motion','true');

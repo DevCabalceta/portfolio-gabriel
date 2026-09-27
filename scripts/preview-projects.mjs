@@ -3,7 +3,7 @@ import { chromium, expect } from "@playwright/test";
 const browser = await chromium.launch();
 try {
   const page = await browser.newPage({ viewport: { width: 1440, height: 900 }, reducedMotion: "reduce" });
-  await page.route("https://prod.spline.design/**/scene.splinecode", () => {});
+  await page.route("**/scenes/hero-robot.splinecode*", () => {});
   await page.goto("http://localhost:3000/es#work");
   await page.evaluate(() => document.fonts.ready);
   for (const [name, viewport] of [["desktop", { width: 1440, height: 900 }], ["mobile", { width: 390, height: 664 }]]) {
@@ -21,8 +21,8 @@ try {
     await page.locator(".project-carousel").screenshot({ path: `artifacts/project-carousel-${name}.png`, style: cropStyle });
     await page.locator(".carousel-viewport").focus();
     await page.keyboard.press("End");
-    await expect(page.locator(".project-carousel")).toHaveAttribute("data-selected", "10");
-    await expect(page.locator(".carousel-position")).toContainText("11 / 11");
+    await expect(page.locator(".project-carousel")).toHaveAttribute("data-selected", "11");
+    await expect(page.locator(".carousel-position")).toContainText("12 / 12");
     // Capture the viewport without locator.screenshot's automatic scrolling:
     // scrolling the carousel wrapper into view can reset native scroll-snap.
     await page.screenshot({ path: `artifacts/project-carousel-end-${name}.png`, style: cropStyle });

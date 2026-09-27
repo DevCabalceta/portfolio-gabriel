@@ -7,5 +7,4 @@ export const heroGallery = [
   { id: "tailwind", src: "/images/gallery/tailwind.webp", source: "https://tailwindcss.com/" },
   { id: "gsap", src: "/images/gallery/gsap.webp", source: "https://gsap.com/" },
   { id: "nextjs", src: "/images/gallery/nextjs.webp", source: "https://nextjs.org/" },
-  { id: "nestjs", src: "/images/gallery/nestjs.webp", source: "https://nestjs.com/" },
 ] as const;

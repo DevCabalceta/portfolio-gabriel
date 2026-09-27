@@ -1,9 +1,9 @@
 import { test, expect } from "@playwright/test";
 import { networkInterfaces } from "node:os";
 
-// Layout/navigation checks hold the external 3D download; the real scene is verified separately.
+// Layout/navigation checks hold the local 3D scene; the real scene is verified separately.
 test.beforeEach(async ({ page }) => {
-  await page.route("https://prod.spline.design/**/scene.splinecode", () => {});
+  await page.route("**/scenes/hero-robot.splinecode*", () => {});
 });
 
 test("both Hero actions fit in the first mobile screen without a robot", async ({ page }) => {

@@ -11,7 +11,7 @@ for (const [name, viewport] of [
   ["narrow", { width: 320, height: 568 }],
 ]) {
   const page = await browser.newPage({ viewport, reducedMotion: "reduce" });
-  await page.route("https://prod.spline.design/**/scene.splinecode", () => {});
+  await page.route("**/scenes/hero-robot.splinecode*", () => {});
   await page.goto(`${baseURL}/es#site-footer`, { waitUntil: "domcontentloaded" });
   await page.locator("#site-footer").evaluate((element) => element.scrollIntoView({ block: "start" }));
   await page.evaluate(() => { document.documentElement.style.scrollBehavior = "auto"; scrollTo(0, document.documentElement.scrollHeight); });

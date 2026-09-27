@@ -8,8 +8,10 @@ try {
   page.on('pageerror', error => errors.push(error.message));
   await page.goto(`${baseURL}/es`);
   const robot = page.locator('.hero-robot');
-  await robot.hover();
+  const automaticLoadStarted = Date.now();
+  await expect(robot).toHaveAttribute('data-interactive', 'true', { timeout: 3000 });
   await expect(robot).toHaveAttribute('data-ready', 'true', { timeout: 90000 });
+  const automaticLoadDuration = Date.now() - automaticLoadStarted;
   await expect(robot.locator('canvas')).toBeVisible();
   await page.getByRole('button', { name: 'Pausar galería de fondo' }).click();
   await page.waitForTimeout(1500);
@@ -37,7 +39,7 @@ try {
   await page.screenshot({ path: 'artifacts/robot-reduced.png' });
   assert.deepEqual(errors, []);
   let requests = 0;
-  await page.route('https://prod.spline.design/**/scene.splinecode', route => { requests++; return route.abort(); });
+  await page.route('**/scenes/hero-robot.splinecode*', route => { requests++; return route.abort(); });
   await page.goto(`${baseURL}/en`);
   await robot.hover();
   await expect(page.getByText('The robot could not load')).toBeVisible({ timeout: 30000 });
@@ -45,5 +47,5 @@ try {
   await page.getByRole('button', { name: 'Retry', exact: true }).click();
   await expect.poll(() => requests).toBeGreaterThan(before);
   await expect(page.getByRole('link', { name: 'Download CV', exact: true })).toBeInViewport({ ratio: 1 });
-  console.log('Spline: desktop scene without pause button, automatic playback, no mobile robot, reduced motion and error/retry verified.');
+  console.log(`Spline local ready automatically in ${automaticLoadDuration} ms: desktop playback, no mobile robot, reduced motion and error/retry verified.`);
 } finally { await browser.close(); }

@@ -5,7 +5,9 @@ import type { Application } from "@splinetool/runtime";
 import type { Dictionary } from "@/i18n/dictionaries";
 
 const Spline = lazy(() => import("@splinetool/react-spline"));
-const scene = "https://prod.spline.design/kZDDjO5HuC9GJUM2/scene.splinecode";
+const scene = "/scenes/hero-robot.splinecode?v=1";
+const automaticLoadDelay = 350;
+const idleLoadTimeout = 1200;
 type RobotCopy = Dictionary["hero"]["robot"];
 
 class SceneBoundary extends Component<{ children: ReactNode; fallback: ReactNode }, { failed: boolean }> {
@@ -55,13 +57,12 @@ function RobotScene({ copy }: { copy: RobotCopy }) {
     const scheduleLoad = () => {
       cancelScheduledLoad();
       if (!visible || document.hidden) return;
-      // Keep the initial interaction window free of the WebGL runtime. Pointer
-      // interaction loads immediately; otherwise the scene starts later and
-      // only if the Hero is still visible.
+      // Give the primary content a brief head start. Pointer interaction loads
+      // immediately; otherwise the local scene starts while the Hero is visible.
       activationDelay = setTimeout(() => {
-        if ("requestIdleCallback" in window) idle = window.requestIdleCallback(activate, { timeout: 2000 });
+        if ("requestIdleCallback" in window) idle = window.requestIdleCallback(activate, { timeout: idleLoadTimeout });
         else activate();
-      }, 12000);
+      }, automaticLoadDelay);
     };
     const observer = new IntersectionObserver(([entry]) => {
       visible = entry.isIntersecting;

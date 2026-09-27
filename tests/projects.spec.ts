@@ -1,7 +1,7 @@
 import { expect, test } from "@playwright/test";
 
 test.beforeEach(async ({ page }) => {
-  await page.route("https://prod.spline.design/**/scene.splinecode", () => {});
+  await page.route("**/scenes/hero-robot.splinecode*", () => {});
 });
 
 test("Work navigation opens a complete, localized project selection", async ({ page }) => {
@@ -19,8 +19,8 @@ test("Work navigation opens a complete, localized project selection", async ({ p
   await expect(page.locator("#work-title")).toBeInViewport({ ratio: 1 });
   await expect(page.locator(".site-header")).toBeInViewport({ ratio: 1 });
   await expect(page.locator(".floating-actions")).toBeVisible();
-  await expect(page.locator("#work [data-project]")).toHaveCount(11);
-  await expect(page.locator(".featured-project")).toHaveCount(11);
+  await expect(page.locator("#work [data-project]")).toHaveCount(12);
+  await expect(page.locator(".featured-project")).toHaveCount(12);
   await expect(page.locator(".project-index, .project-row")).toHaveCount(0);
   expect(await page.locator(".featured-project").evaluateAll((items) => items.slice(0, 5).map((item) => item.getAttribute("data-project")))).toEqual(["upgrade", "fan-de-maiz", "spotify", "gif-search", "todo"]);
   const feature = page.locator('[data-project="fan-de-maiz"]');
@@ -57,9 +57,12 @@ test("all carousel cards retain images, ownership and real destinations", async 
       await expect(row.locator(".project-ownership")).toHaveText("Colaboré en el desarrollo frontend de este proyecto. Pertenece a CEDES Don Bosco.");
     }
   }
-  await expect(page.locator(".project-owner")).toHaveCount(5);
+  await expect(page.locator(".project-owner")).toHaveCount(6);
   await expect(page.locator('[data-project="bosconet"] h3')).toHaveText("BoscoNet");
   await expect(page.locator('[data-project="bosconet"] .project-links a')).toHaveAttribute("href", "https://bosconet.cedesdonbosco.ed.cr/v1/");
+  await expect(page.locator('[data-project="alianza-360"] .project-owner')).toContainText("Colaboración frontend · CEDES Don Bosco");
+  await expect(page.locator('[data-project="alianza-360"] .project-links a')).toHaveAttribute("href", "https://cedesdonbosco.ed.cr/infoagendas/alianza360/");
+  await expect(page.locator('[data-project="alianza-360"] img')).toHaveAttribute("src", /alianza-360/);
   await expect(page.locator("[data-work-char]").first()).toHaveCSS("transform", "none");
   await expect(page.locator(".about-frame")).toHaveCSS("filter", "none");
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
@@ -112,18 +115,19 @@ test("carousel stays in one row and screenshot galleries support keyboard and to
   expect(boxes.every((box) => box.y === boxes[0].y)).toBe(true);
   for (const id of ["upgrade", "todo"]) {
     const start = id === "upgrade" ? 0 : 6;
+    const folder = id === "upgrade" ? "upgrade" : "academic-todo";
     await page.locator(".carousel-dots button").nth(id === "upgrade" ? 0 : 4).click();
     const trigger = page.locator(`[data-project="${id}"] .project-gallery-trigger`);
     await trigger.click();
     const dialog = page.getByRole("dialog");
     await expect(dialog).toBeVisible();
-    await expect(dialog.locator(".gallery-caption")).toContainText(`${start + 1} de 15 · 1/3`);
+    await expect(dialog.locator(".gallery-caption")).toContainText(`${start + 1} de 16 · 1/3`);
     await expect(dialog.locator(".gallery-thumbnails")).toHaveCount(0);
-    await expect(dialog.locator(".gallery-stage img")).toHaveAttribute("src", new RegExp(`${id}-1`));
+    await expect(dialog.locator(".gallery-stage img")).toHaveAttribute("src", new RegExp(`${folder}(?:/|%2F)01`));
     await dialog.getByRole("button", { name: "Imagen siguiente" }).click();
     await expect(dialog.locator(".gallery-caption")).toContainText("2/3");
     await page.keyboard.press("ArrowRight");
-    await expect(dialog.locator(".gallery-stage img")).toHaveAttribute("src", new RegExp(`${id}-3`));
+    await expect(dialog.locator(".gallery-stage img")).toHaveAttribute("src", new RegExp(`${folder}(?:/|%2F)03`));
     await page.keyboard.press("ArrowLeft");
     await page.keyboard.press("ArrowLeft");
     await expect(dialog.locator(".gallery-caption")).toContainText("1/3");
@@ -162,14 +166,14 @@ test("carousel controls, dots and keyboard loop in both directions", async ({ pa
   const initialY = await page.evaluate(() => scrollY);
   await page.keyboard.press("End");
   await expect(next).toBeEnabled();
-  await expect(carousel).toHaveAttribute("data-selected", "10");
+  await expect(carousel).toHaveAttribute("data-selected", "11");
   const last = page.locator('[data-project="tesla"]');
   await expect(last).toBeInViewport();
   expect(await page.evaluate(() => scrollY)).toBe(initialY);
   await page.keyboard.press("ArrowRight");
   await expect(carousel).toHaveAttribute("data-selected", "0");
   await page.keyboard.press("ArrowLeft");
-  await expect(carousel).toHaveAttribute("data-selected", "10");
+  await expect(carousel).toHaveAttribute("data-selected", "11");
   await page.keyboard.press("Home");
   await expect(carousel).toHaveAttribute("data-selected", "0");
   await page.keyboard.press("ArrowRight");
@@ -195,13 +199,13 @@ test("shared gallery crosses project boundaries and wraps to the first project",
   await expect(dialog).toHaveAccessibleName("Fan de Maíz");
   await expect(dialog.locator(".gallery-stage img")).toHaveAttribute("src", /fan-de-maiz/);
   for (let step = 0; step < 5; step++) await page.keyboard.press("ArrowLeft");
-  await expect(dialog).toHaveAccessibleName("BoscoNet");
+  await expect(dialog).toHaveAccessibleName("Alianza 360");
   await expect(dialog.locator(".project-owner")).toHaveText("Colaboración frontend · CEDES Don Bosco");
   await page.keyboard.press("ArrowRight");
   await expect(dialog).toHaveAccessibleName("Tesla Landing Page Clone");
   await dialog.getByRole("button", { name: "Imagen siguiente" }).click();
   await expect(dialog).toHaveAccessibleName("Upgrade! Comunicación y Entretenimiento");
-  await expect(dialog.locator(".gallery-caption")).toContainText("1 de 15");
+  await expect(dialog.locator(".gallery-caption")).toContainText("1 de 16");
   await dialog.getByRole("button", { name: "Imagen anterior" }).click();
   await expect(dialog).toHaveAccessibleName("Tesla Landing Page Clone");
 });
@@ -223,7 +227,7 @@ test("gallery keeps its caption mounted while only the screenshot changes", asyn
   await page.keyboard.press("ArrowRight");
   await expect(dialog.locator("h2")).toHaveText("Fan de Maíz");
   expect(await caption!.evaluate((element) => element.isConnected)).toBe(true);
-  await expect(dialog.locator(".gallery-counter")).toContainText("4 de 15");
+  await expect(dialog.locator(".gallery-counter")).toContainText("4 de 16");
 });
 
 test("autoplay continues every three seconds through hover, controls and galleries", async ({ page }) => {

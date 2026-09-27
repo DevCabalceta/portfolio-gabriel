@@ -1,7 +1,7 @@
 import { expect, test } from "@playwright/test";
 
 test.beforeEach(async ({ page }) => {
-  await page.route("https://prod.spline.design/**/scene.splinecode", () => {});
+  await page.route("**/scenes/hero-robot.splinecode*", () => {});
   await page.route("**/api/exchange-rate", (route) => route.fulfill({ json: { rate: 449.49, date: "2026-09-16" } }));
 });
 

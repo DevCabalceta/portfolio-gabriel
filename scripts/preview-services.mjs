@@ -4,7 +4,7 @@ const browser = await chromium.launch({ headless: true });
 for (const viewport of [{ name: "desktop", width: 1440, height: 900 }, { name: "ultra-wide", width: 2560, height: 1200 }, { name: "mobile", width: 390, height: 744 }]) {
   const context = await browser.newContext({ viewport, reducedMotion: "no-preference" });
   const page = await context.newPage();
-  await page.route("https://prod.spline.design/**/scene.splinecode", (route) => route.abort());
+  await page.route("**/scenes/hero-robot.splinecode*", (route) => route.abort());
   await page.goto("http://localhost:3000/es", { waitUntil: "networkidle" });
   await page.locator("#services").evaluate((node) => scrollTo({ top: node.getBoundingClientRect().top + scrollY, behavior: "instant" }));
   await page.waitForTimeout(1500);
