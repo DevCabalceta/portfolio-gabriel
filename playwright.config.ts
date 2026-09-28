@@ -7,7 +7,7 @@ export default defineConfig({
   fullyParallel: true,
   use: { baseURL, browserName: "chromium", trace: "retain-on-failure" },
   projects: [
-    { name: "desktop", testMatch: ["portfolio.spec.ts", "projects.spec.ts", "process.spec.ts", "services.spec.ts", "faq.spec.ts", "contact.spec.ts", "footer.spec.ts", "privacy.spec.ts", "terms.spec.ts"] },
+    { name: "desktop", testMatch: ["portfolio.spec.ts", "projects.spec.ts", "process.spec.ts", "services.spec.ts", "faq.spec.ts", "contact.spec.ts", "footer.spec.ts", "privacy.spec.ts", "terms.spec.ts", "seo.spec.ts"] },
     { name: "mobile-chromium", testMatch: ["mobile.spec.ts", "projects.spec.ts", "process.spec.ts", "services.spec.ts", "faq.spec.ts", "contact.spec.ts", "footer.spec.ts", "privacy.spec.ts", "terms.spec.ts"], use: { ...devices["Pixel 7"] } },
     { name: "mobile-webkit", testMatch: ["mobile.spec.ts", "projects.spec.ts", "process.spec.ts", "services.spec.ts", "faq.spec.ts", "contact.spec.ts", "footer.spec.ts", "privacy.spec.ts", "terms.spec.ts"], use: { ...devices["iPhone 13"] } },
   ],

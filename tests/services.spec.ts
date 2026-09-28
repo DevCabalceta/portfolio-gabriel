@@ -162,11 +162,17 @@ test("Services uses the shared depth transition and a sequential reveal", async 
   await page.goto("/es");
   const services = page.locator(".services-motion");
   const processFooter = page.locator(".process-footer");
-  await expect(services).toHaveAttribute("data-section-transition", "cinematic");
-  await page.evaluate(() => {
-    const incoming = document.querySelector(".services-motion")!;
-    scrollTo({ top: incoming.getBoundingClientRect().top + scrollY - innerHeight * 0.48, behavior: "instant" });
+  await services.evaluate((element) => {
+    scrollTo({ top: element.getBoundingClientRect().top + scrollY - innerHeight * 1.25, behavior: "instant" });
   });
+  await expect(services).toHaveAttribute("data-section-transition", "cinematic");
+  for (let attempt = 0; attempt < 3; attempt++) {
+    await page.evaluate(() => {
+      const incoming = document.querySelector(".services-motion")!;
+      scrollTo({ top: incoming.getBoundingClientRect().top + scrollY - innerHeight * 0.48, behavior: "instant" });
+    });
+    await page.waitForTimeout(120);
+  }
   await expect(processFooter).toHaveCSS("position", "fixed");
   await expect.poll(() => processFooter.evaluate((el) => Number(getComputedStyle(el).opacity))).toBeLessThan(0.8);
   await expect.poll(() => processFooter.evaluate((el) => getComputedStyle(el).filter)).not.toBe("none");
@@ -183,6 +189,9 @@ test("Process closing statement reveals in sequence", async ({ page }) => {
   await page.emulateMedia({ reducedMotion: "no-preference" });
   await page.goto("/es");
   const footer = page.locator(".process-footer");
+  await page.locator(".process-motion").evaluate((element) => {
+    scrollTo({ top: element.getBoundingClientRect().top + scrollY - innerHeight * 1.25, behavior: "instant" });
+  });
   await expect(page.locator(".process-motion")).toHaveAttribute("data-motion", "true");
   // Stabilize the destination after the long pinned Process timeline updates
   // its spacer measurements in the development server.

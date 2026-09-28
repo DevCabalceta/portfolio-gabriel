@@ -28,12 +28,3 @@ export interface Project {
     results: Localized<string[]>;
   };
 }
-
-export interface Experience {
-  id: string;
-  company: string;
-  role: Localized<string>;
-  start: string;
-  end: string | null;
-  summary: Localized<string>;
-}

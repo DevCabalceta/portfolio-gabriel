@@ -1,6 +1,7 @@
 // Temporary public-site screenshots. Replace these with Gabriel's project media.
 import { chromium } from "@playwright/test";
 import { mkdir } from "node:fs/promises";
+import sharp from "sharp";
 
 const sources = [
   ["astro", "https://astro.build/"],
@@ -19,7 +20,10 @@ for (let offset = 0; offset < sources.length; offset += 3) {
       await page.goto(url, { waitUntil: "domcontentloaded", timeout: 45000 });
       await page.evaluate(() => document.fonts.ready);
       await page.waitForTimeout(2500);
-      await page.screenshot({ path: `public/images/gallery/${name}.jpg`, type: "jpeg", quality: 75 });
+      const screenshot = await page.screenshot({ type: "jpeg", quality: 85 });
+      await sharp(screenshot)
+        .webp({ quality: 82, effort: 5, smartSubsample: true })
+        .toFile(`public/images/gallery/${name}.webp`);
       console.log(`${name}: ${await page.title()} (${url})`);
     } finally {
       await page.close();

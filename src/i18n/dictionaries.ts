@@ -338,12 +338,12 @@ const es = {
     portraitAlt: "Retrato de Gabriel Cabalceta sobre un fondo naranja",
   },
   meta: {
-    title: "Gabriel Cabalceta — Full Stack Developer",
-    description: "Desarrollador full stack en Costa Rica. Desarrollo plataformas web, sistemas y experiencias digitales con especial atención al frontend y a cada detalle.",
+    title: "Gabriel Cabalceta | Desarrollador web en Costa Rica",
+    description: "Gabriel Cabalceta, desarrollador de software y páginas web en Costa Rica. Diseño y desarrollo landing pages, sitios web y soluciones a medida.",
   },
   nav: {
     label: "Navegación principal", home: "Inicio", about: "Sobre mí", work: "Proyectos",
-    process: "Proceso", services: "Servicios", faq: "Preguntas", experience: "Experiencia", stack: "Tecnologías", contact: "Hablemos", resume: "Mi CV",
+    process: "Proceso", services: "Servicios", faq: "Preguntas", contact: "Hablemos", resume: "Mi CV",
     open: "Abrir menú", close: "Cerrar menú", menu: "Explorar", language: "Seleccionar idioma",
   },
   hero: {
@@ -702,12 +702,12 @@ const en: Dictionary = {
     portraitAlt: "Portrait of Gabriel Cabalceta against an orange background",
   },
   meta: {
-    title: "Gabriel Cabalceta — Full Stack Developer",
-    description: "Full stack developer based in Costa Rica. Building web platforms, systems and digital experiences with a frontend perspective and attention to detail.",
+    title: "Gabriel Cabalceta | Full Stack Developer in Costa Rica",
+    description: "Gabriel Cabalceta is a software and web developer in Costa Rica, building landing pages, websites and custom digital solutions.",
   },
   nav: {
     label: "Main navigation", home: "Home", about: "About", work: "Work",
-    process: "Process", services: "Services", faq: "Questions", experience: "Experience", stack: "Stack", contact: "Let's talk", resume: "My CV",
+    process: "Process", services: "Services", faq: "Questions", contact: "Let's talk", resume: "My CV",
     open: "Open menu", close: "Close menu", menu: "Explore", language: "Select language",
   },
   hero: {

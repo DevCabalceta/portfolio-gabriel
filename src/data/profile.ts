@@ -7,5 +7,5 @@ export const profile = {
   whatsapp: "https://wa.me/50683442305",
   portfolio: (process.env.NEXT_PUBLIC_SITE_URL ?? "https://portfolio-gabriel-lemon.vercel.app").replace(/\/$/, ""),
   resume: "/documents/CV-GabrielCabalceta.pdf",
-  portrait: "/images/gabriel-cabalceta.png",
+  portrait: "/images/gabriel-cabalceta.webp",
 };

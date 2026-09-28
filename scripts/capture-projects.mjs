@@ -1,6 +1,7 @@
 // Public entry pages only. Never sign in or submit forms when generating previews.
 import { chromium } from "@playwright/test";
 import { mkdir } from "node:fs/promises";
+import sharp from "sharp";
 
 const sources = [
   ["enrollment", "matricula-en-linea", "https://cedesdonbosco.ed.cr/matricula/"],
@@ -34,7 +35,10 @@ try {
       await page.evaluate(() => document.fonts.ready);
       await page.waitForTimeout(3500);
       await mkdir(`public/images/projects/${folder}`, { recursive: true });
-      await page.screenshot({ path: `public/images/projects/${folder}/01.jpg`, type: "jpeg", quality: 85 });
+      const screenshot = await page.screenshot({ type: "jpeg", quality: 88 });
+      await sharp(screenshot)
+        .webp({ quality: 86, effort: 5, smartSubsample: true })
+        .toFile(`public/images/projects/${folder}/01.webp`);
       console.log(`${id}: ${await page.title()} — ${page.url()}`);
     } finally { await page.close(); }
   }));

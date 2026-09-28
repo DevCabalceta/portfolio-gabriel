@@ -19,7 +19,7 @@ export function FloatingActions({ copy, locale }: { copy: Dictionary; locale: Lo
       }
     };
     const headerHeight = header?.getBoundingClientRect().height ?? 72;
-    const activationLine = headerHeight + 16;
+    const activationLine = Math.max(headerHeight + 24, Math.min(280, window.innerHeight * 0.4));
     const observer = new IntersectionObserver(([entry]) => {
       setVisible(!entry.isIntersecting && entry.boundingClientRect.top < activationLine);
     }, { rootMargin: `-${activationLine}px 0px 0px 0px`, threshold: 0 });

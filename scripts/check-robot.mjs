@@ -5,7 +5,15 @@ const browser = await chromium.launch({ args: ['--use-angle=swiftshader', '--ena
 try {
   const page = await browser.newPage({ viewport: { width: 1366, height: 768 } });
   const errors = [];
+  const externalSplineRequests = [];
+  const localWasmResponses = [];
   page.on('pageerror', error => errors.push(error.message));
+  page.on('request', request => {
+    if (/splinetool|unpkg\.com/i.test(request.url()) && !request.url().startsWith(baseURL)) externalSplineRequests.push(request.url());
+  });
+  page.on('response', response => {
+    if (response.url().includes('/scenes/spline-wasm/')) localWasmResponses.push({ url: response.url(), status: response.status() });
+  });
   await page.goto(`${baseURL}/es`);
   const robot = page.locator('.hero-robot');
   const automaticLoadStarted = Date.now();
@@ -38,6 +46,8 @@ try {
   await expect(robot.locator('canvas')).toBeVisible();
   await page.screenshot({ path: 'artifacts/robot-reduced.png' });
   assert.deepEqual(errors, []);
+  assert.deepEqual(externalSplineRequests, []);
+  assert(localWasmResponses.some(({ url, status }) => url.endsWith('/process.wasm') && status === 200));
   let requests = 0;
   await page.route('**/scenes/hero-robot.splinecode*', route => { requests++; return route.abort(); });
   await page.goto(`${baseURL}/en`);

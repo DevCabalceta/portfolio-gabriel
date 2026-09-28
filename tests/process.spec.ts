@@ -34,6 +34,9 @@ test("Process navigation reveals seven chapters with a localized contact", async
 test("timeline draws on scroll and revealed content stays readable on return", async ({ page }) => {
   await page.emulateMedia({ reducedMotion: "no-preference" });
   await page.goto("/es");
+  await page.locator(".process-motion").evaluate((element) => {
+    scrollTo({ top: element.getBoundingClientRect().top + scrollY - innerHeight * 1.25, behavior: "instant" });
+  });
   await expect(page.locator(".process-motion")).toHaveAttribute("data-motion", "true");
   const steps = page.locator(".process-step");
   if (page.viewportSize()!.width >= 900) {
@@ -88,6 +91,9 @@ test("Process rises above Work with the shared cinematic depth transition", asyn
   await page.goto("/es");
   const process = page.locator(".process-motion");
   const work = page.locator(".work");
+  await process.evaluate((element) => {
+    scrollTo({ top: element.getBoundingClientRect().top + scrollY - innerHeight * 1.25, behavior: "instant" });
+  });
   await expect(process).toHaveAttribute("data-section-transition", "cinematic");
   await page.evaluate(() => {
     const incoming = document.querySelector(".process-motion")!;

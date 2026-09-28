@@ -10,12 +10,10 @@ export async function generateMetadata({ params }: PrivacyPageProps): Promise<Me
   const { locale } = await params;
   if (!isLocale(locale)) notFound();
   const copy = getDictionary(locale).privacyPage;
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL;
-
   return {
     title: copy.metaTitle,
     description: copy.metaDescription,
-    ...(siteUrl ? { alternates: { canonical: `/${locale}/privacy`, languages: { es: "/es/privacy", en: "/en/privacy", "x-default": "/es/privacy" } } } : {}),
+    alternates: { canonical: `/${locale}/privacy`, languages: { es: "/es/privacy", en: "/en/privacy", "x-default": "/es/privacy" } },
     openGraph: {
       title: copy.metaTitle,
       description: copy.metaDescription,
@@ -23,7 +21,7 @@ export async function generateMetadata({ params }: PrivacyPageProps): Promise<Me
       locale: locale === "es" ? "es_CR" : "en_US",
       alternateLocale: locale === "es" ? "en_US" : "es_CR",
       siteName: "Gabriel Cabalceta",
-      ...(siteUrl ? { url: `/${locale}/privacy` } : {}),
+      url: `/${locale}/privacy`,
     },
     twitter: { card: "summary", title: copy.metaTitle, description: copy.metaDescription },
   };

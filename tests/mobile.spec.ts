@@ -87,6 +87,9 @@ test("mobile menu keeps every destination visible without internal scrolling", a
     await page.getByRole("button", { name: "Abrir menú" }).tap();
     const dialog = page.getByRole("dialog");
     await expect(dialog).toBeVisible();
+    await dialog.evaluate(async (element) => {
+      await Promise.all(element.getAnimations({ subtree: true }).map((animation) => animation.finished.catch(() => undefined)));
+    });
     const layout = await dialog.evaluate((element) => {
       const panel = element.querySelector<HTMLElement>(".mobile-menu-panel")!;
       const visibleElements = [

@@ -14,13 +14,16 @@ import { SiteFooter } from "@/components/sections/site-footer";
 import { SmoothScroll } from "@/components/animations/smooth-scroll";
 import { ChapterTransition } from "@/components/animations/chapter-transition";
 import { DeferredToaster } from "@/components/ui/deferred-toaster";
+import { getHomeStructuredData, serializeStructuredData } from "@/lib/structured-data";
 
 export default async function Home({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
   if (!isLocale(locale)) notFound();
   const copy = getDictionary(locale);
+  const structuredData = getHomeStructuredData(locale);
   return (
     <>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: serializeStructuredData(structuredData) }} />
       <a href="#main" className="skip-link">{copy.hero.skip}</a>
       <DeferredToaster />
       <SmoothScroll />

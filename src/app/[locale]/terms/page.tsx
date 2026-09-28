@@ -10,12 +10,10 @@ export async function generateMetadata({ params }: TermsPageProps): Promise<Meta
   const { locale } = await params;
   if (!isLocale(locale)) notFound();
   const copy = getDictionary(locale).termsPage;
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL;
-
   return {
     title: copy.metaTitle,
     description: copy.metaDescription,
-    ...(siteUrl ? { alternates: { canonical: `/${locale}/terms`, languages: { es: "/es/terms", en: "/en/terms", "x-default": "/es/terms" } } } : {}),
+    alternates: { canonical: `/${locale}/terms`, languages: { es: "/es/terms", en: "/en/terms", "x-default": "/es/terms" } },
     openGraph: {
       title: copy.metaTitle,
       description: copy.metaDescription,
@@ -23,7 +21,7 @@ export async function generateMetadata({ params }: TermsPageProps): Promise<Meta
       locale: locale === "es" ? "es_CR" : "en_US",
       alternateLocale: locale === "es" ? "en_US" : "es_CR",
       siteName: "Gabriel Cabalceta",
-      ...(siteUrl ? { url: `/${locale}/terms` } : {}),
+      url: `/${locale}/terms`,
     },
     twitter: { card: "summary", title: copy.metaTitle, description: copy.metaDescription },
   };

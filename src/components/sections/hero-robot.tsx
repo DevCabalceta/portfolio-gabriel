@@ -6,6 +6,7 @@ import type { Dictionary } from "@/i18n/dictionaries";
 
 const Spline = lazy(() => import("@splinetool/react-spline"));
 const scene = "/scenes/hero-robot.splinecode?v=1";
+const splineWasmPath = "/scenes/spline-wasm";
 const automaticLoadDelay = 350;
 const idleLoadTimeout = 1200;
 type RobotCopy = Dictionary["hero"]["robot"];
@@ -151,7 +152,7 @@ function RobotScene({ copy }: { copy: RobotCopy }) {
       }>
         {!ready && <div className="robot-status" role="status"><span className="robot-loader" aria-hidden="true" /><span>{copy.loading}</span></div>}
         {interactive && <Suspense fallback={null}>
-          <Spline scene={scene} className="robot-scene" onLoad={onLoad} role="img" aria-label={copy.label} />
+          <Spline scene={scene} wasmPath={splineWasmPath} className="robot-scene" onLoad={onLoad} role="img" aria-label={copy.label} />
         </Suspense>}
       </SceneBoundary>
     </div>

@@ -9,7 +9,9 @@
     "lint": "eslint",
     "test:e2e": "playwright test",
     "perf:audit": "node scripts/perf-audit.mjs",
-    "preview:captures": "node scripts/preview.mjs"
+    "verify:production": "node scripts/verify-production.mjs",
+    "preview:captures": "node scripts/preview.mjs",
+    "images:optimize": "node scripts/optimize-images.mjs"
   },
   "dependencies": {
     "@splinetool/react-spline": "^4.1.0",
@@ -32,6 +34,7 @@
     "babel-plugin-react-compiler": "1.0.0",
     "eslint": "^9",
     "eslint-config-next": "16.3.4",
+    "sharp": "^0.35.4",
     "tailwindcss": "^4",
     "typescript": "^5"
   }

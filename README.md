@@ -96,9 +96,9 @@ src/
     layout/                  Header fijo, menú móvil, idiomas y botones flotantes
     sections/                Hero, Sobre mí, Proyectos, Proceso, Servicios, FAQ, Contacto y Footer
     ui/                      Enlaces animados, iconos, multimedia y detalles de proyectos
-  data/                      Perfil, navegación, proyectos, experiencia y tecnologías
+  data/                      Perfil, navegación, proyectos y tecnologías
   i18n/                      Configuración y diccionarios tipados ES/EN
-  types/                     Contratos para proyectos, multimedia y experiencia
+  types/                     Contratos para proyectos y multimedia
   styles/                   Estilos de secciones y transiciones narrativas
   proxy.ts                   Redirección de la raíz según cookie de idioma
 scripts/preview.mjs           Capturas locales de escritorio y móvil
@@ -112,11 +112,10 @@ Las páginas, el Hero y los datos se renderizan en servidor. Los componentes cli
 - Textos visibles y metadata: `src/i18n/dictionaries.ts`. El contrato `Dictionary` mantiene ambas traducciones sincronizadas.
 - Contacto y rutas de archivos: `src/data/profile.ts`.
 - Proyectos: `src/data/projects.ts`, con contratos en `src/types/content.ts`.
-- Experiencia: `src/data/experience.ts`.
 - Tecnologías solicitadas: `src/data/technologies.ts`.
 - Secciones del menú: `src/data/navigation.ts`. Activar `ready` cuando se implemente la sección y exista su ancla.
 
-La navegación ofrece Inicio, Sobre mí, Proyectos, Proceso, Servicios, Preguntas, CV y Contacto. «Mi CV» abre el PDF en una pestaña nueva desde el navbar de escritorio y desde el menú móvil, de modo que el portfolio permanece abierto. El correo permanece disponible en Contacto y en los botones flotantes. El stack tecnológico forma parte de Sobre mí; Experiencia se incorporará en una sección posterior. Las anclas de las secciones permanecen en contenedores estables; se animan sus contenidos para evitar que la navegación apunte a posiciones transformadas.
+La navegación ofrece Inicio, Sobre mí, Proyectos, Proceso, Servicios, Preguntas, CV y Contacto. «Mi CV» abre el PDF en una pestaña nueva desde el navbar de escritorio y desde el menú móvil, de modo que el portfolio permanece abierto. El correo permanece disponible en Contacto y en los botones flotantes. El stack tecnológico forma parte de Sobre mí. Las anclas de las secciones permanecen en contenedores estables; se animan sus contenidos para evitar que la navegación apunte a posiciones transformadas.
 
 El CV es la fuente de experiencia y proyectos. El perfil de GitHub fue proporcionado directamente por Gabriel. No se han inventado años, métricas, repositorios ni tecnologías por proyecto. Los campos aún no confirmados permanecen vacíos u opcionales. Las tecnologías de los clones Astro sí están especificadas en el CV. Los estados de los proyectos reflejan el documento recibido, no una auditoría de los sitios externos.
 
@@ -251,7 +250,7 @@ El navbar permanece fijo por encima de las secciones y fuera del contenedor que 
 
 ## Robot del Hero
 
-`src/components/sections/hero-robot.tsx` muestra únicamente «Cargando robot» y carga mediante `React.lazy` y `Suspense` la escena local `public/scenes/hero-robot.splinecode`, usando el [componente oficial React Spline](https://github.com/splinetool/react-spline). El portfolio ya no depende de `prod.spline.design` para obtener el robot. La carga comienza inmediatamente al interactuar o, sin interacción, después de una espera breve de 350 ms y un periodo ocioso con límite de 1.2 segundos si el Hero sigue visible. La escena requiere WebGL; el contenido y las acciones nunca esperan su inicialización.
+`src/components/sections/hero-robot.tsx` muestra únicamente «Cargando robot» y carga mediante `React.lazy` y `Suspense` la escena local `public/scenes/hero-robot.splinecode`, usando el [componente oficial React Spline](https://github.com/splinetool/react-spline). La escena y su módulo `process.wasm` se sirven desde `public/scenes`, por lo que el robot no depende de `prod.spline.design` ni de `unpkg`. La carga comienza inmediatamente al interactuar o, sin interacción, después de una espera breve de 350 ms y un periodo ocioso con límite de 1.2 segundos si el Hero sigue visible. La escena requiere WebGL; el contenido y las acciones nunca esperan su inicialización.
 
 - Desktop: escena a la derecha del contenido, con interacción del cursor y resplandor cálido discreto.
 - Móvil y tablet por debajo de 900 px: el robot no se monta ni descarga su escena. Al cambiar de breakpoint se monta o desmonta automáticamente. El rol aprovecha el ancho disponible y ambos CTA permanecen dentro del primer viewport.
@@ -269,7 +268,7 @@ La galería usa capturas temporales de sitios públicos, **no proyectos de Gabri
 Para reemplazarlas:
 
 1. Guardar las capturas de proyectos en `public/images/gallery/`.
-2. Cambiar las rutas `src` en `src/data/hero-gallery.ts`, o reemplazar los seis JPEG existentes conservando sus nombres.
+2. Cambiar las rutas `src` en `src/data/hero-gallery.ts`, o reemplazar los seis WebP existentes conservando sus nombres.
 3. Preferir capturas horizontales de unos 1280 px de ancho. Se muestran recortadas a 4:3 mediante `next/image`.
 
 Las capturas se sirven localmente; no se contactan esos sitios cuando alguien visita el portfolio. `scripts/capture-gallery.mjs` permite regenerar únicamente los placeholders y conserva sus URLs de origen.
@@ -353,3 +352,4 @@ Documentación: [internacionalización de Next.js](https://nextjs.org/docs/app/g
 - **Ajuste de Proceso y viewport de Servicios:** la comparación de Servicios ocupa ahora toda la altura útil bajo el navbar sin dejar el gran vacío superior y conserva beneficios y acciones dentro de la misma pantalla. En Proceso desktop, «Tu idea. Paso a paso.» permanece inmóvil y con presencia constante mientras cambian únicamente las etapas de la derecha. En móvil se sustituye la escena fijada por una línea de tiempo vertical continua: cada etapa permanece en el flujo, se revela en secuencia al llegar al viewport y una línea naranja muestra el avance. Los modos con movimiento reducido y sin JavaScript conservan la misma lectura vertical.
 - **2026-09-27 — Organización de proyectos:** las 16 capturas se agrupan en subcarpetas por proyecto y usan nombres numéricos consecutivos. Se incorpora Alianza 360 como colaboración frontend para CEDES Don Bosco, elevando el carrusel a doce proyectos; su captura, enlace, atribución, navegación circular y galería continua quedan cubiertos por las pruebas. El generador permite actualizar una captura concreta mediante el ID del proyecto y el carrusel activa la carga de las imágenes visibles para evitar vacíos con el desplazamiento transformado de Embla.
 - **2026-09-27 — Robot local:** la escena de Spline de 1.29 MB se almacena en `public/scenes` y se sirve desde el mismo portfolio con el tipo `application/json`, caché versionada e inmutable. La carga automática comienza después de 350 ms y usa el primer periodo ocioso disponible con un límite de 1.2 segundos; la interacción continúa activándola inmediatamente. Se conserva la pausa fuera del viewport, el fotograma de movimiento reducido, la exclusión móvil y el flujo de error/reintento.
+- **2026-09-27 — Rendimiento y SEO técnico:** el retrato y las 16 capturas de proyectos pasan a WebP, reduciendo los originales de aproximadamente 5.95 MB a 1.50 MB sin cambiar su encuadre. Las futuras capturas se generan directamente en WebP. Spline carga escena y módulos WebAssembly desde `public/scenes`, sin depender de una CDN externa, y conserva la pausa fuera del viewport. Se incorporan `robots.txt`, sitemap bilingüe, canonicales, hreflang, metadata social completa y datos estructurados Schema.org para la persona, el sitio y los servicios. Se retiran el modelo de experiencia y las entradas de navegación que no formaban parte de ninguna sección renderizada.
