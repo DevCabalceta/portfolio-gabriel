@@ -241,7 +241,7 @@ const es = {
     footer: "Tu proyecto define el alcance. La claridad define el proceso.",
     plans: [
       {
-        number: "01", kind: "Presencia esencial", title: "Landing Page", amount: 350, customPrice: "", recommended: false,
+        number: "01", kind: "Presencia esencial", title: "Landing Page", amount: 500, customPrice: "", recommended: false,
         summary: "Para profesionales, marcas y negocios que necesitan presentar una propuesta clara y convertir visitas en conversaciones.",
         features: [
           "Landing Page personalizada", "Responsive en desktop, tablet y móvil", "Dominio personalizado", "Despliegue a producción",
@@ -251,7 +251,7 @@ const es = {
         cta: "Solicitar Landing Page",
       },
       {
-        number: "02", kind: "Presencia completa", title: "Sitio Web", amount: 700, customPrice: "", recommended: true,
+        number: "02", kind: "Presencia completa", title: "Sitio Web", amount: 800, customPrice: "", recommended: true,
         summary: "Para negocios que necesitan contar mejor su historia, organizar sus servicios y crecer sobre una base preparada para evolucionar.",
         features: [
           "Todo lo incluido en Landing Page", "Desarrollo con múltiples páginas", "Arquitectura y navegación entre páginas", "Inicio, servicios y contacto",
@@ -605,7 +605,7 @@ const en: Dictionary = {
     footer: "Your project defines the scope. Clarity defines the process.",
     plans: [
       {
-        number: "01", kind: "Essential presence", title: "Landing Page", amount: 350, customPrice: "", recommended: false,
+        number: "01", kind: "Essential presence", title: "Landing Page", amount: 500, customPrice: "", recommended: false,
         summary: "For professionals, brands and businesses that need to present a clear offer and turn visits into conversations.",
         features: [
           "Custom Landing Page", "Responsive on desktop, tablet and mobile", "Custom domain", "Production deployment",
@@ -615,7 +615,7 @@ const en: Dictionary = {
         cta: "Request a Landing Page",
       },
       {
-        number: "02", kind: "Complete presence", title: "Website", amount: 700, customPrice: "", recommended: true,
+        number: "02", kind: "Complete presence", title: "Website", amount: 800, customPrice: "", recommended: true,
         summary: "For businesses that need to tell their story, organize their services and grow on a foundation built to evolve.",
         features: [
           "Everything in Landing Page", "Multi-page development", "Page architecture and navigation", "Home, services and contact pages",
